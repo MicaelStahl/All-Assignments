@@ -7,18 +7,22 @@ const Home = () => {
   return (
     <React.Fragment>
       <Title Title="Home" />
-      <div className=" border-warning container col-8">
+      <div className="container col-8 mb-5">
         <p className="text-justify">
           Hello user. This project is mainly something I wanted to work on
           during my summer-holiday <br />
           and is all my previous assignments in this course gathered into one
-          place.
+          place, but this time mostly created with React instead of C#. <br />
+          The main reason I wanted to work on this project was mostly to become
+          better at React. To learn the limits of React, and one perfect way of
+          doing so is to do assignments I've done in the past to learn the React
+          way of solving certain issues, like storing data in sessions for
+          example.
         </p>
-        <ul className="list-unstyled col-12">
+        <hr />
+        <ul className="list-unstyled container">
           <li className="row mt-1">
-            <Link to="/calculator" className="border-bottom float-left">
-              Assignment 1: Calculator
-            </Link>
+            <Link to="/calculator">Assignment 1: Calculator</Link>
           </li>
           <li className="row mt-1">Assignment 2: Golf-game (Not started)</li>
           <li className="row mt-1">
@@ -28,7 +32,9 @@ const Home = () => {
             Assignment 4: Vending Machine (Not started)
           </li>
           <li className="row mt-1">
-            Assignment 5: Front-End 1 - Webpage (Not started)
+            <Link to="/webpage">
+              Assignment 5: Front-End 1 - Webpage (ONLY HTML & CSS)
+            </Link>
           </li>
           <li className="row mt-1">
             Assignment 6: Front-End 2 - Sokoban (Not started)

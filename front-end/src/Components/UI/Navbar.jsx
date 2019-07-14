@@ -102,6 +102,12 @@ class Navbar extends Component {
                     <div className="dropdown-divider" />
                     <NavLink
                       className="btn btn-secondary dropdown-item"
+                      to="/webpage">
+                      Webpage
+                    </NavLink>
+                    <div className="dropdown-divider" />
+                    <NavLink
+                      className="btn btn-secondary dropdown-item"
                       to="/guessing-game">
                       Guessing Game
                     </NavLink>

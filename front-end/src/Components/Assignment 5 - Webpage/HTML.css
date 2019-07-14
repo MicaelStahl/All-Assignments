@@ -1,0 +1,89 @@
+#assignment5-main-body {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #999999;
+}
+
+#assignment5-header {
+  border-top: 1px white solid;
+  background-color: #696969;
+}
+
+#assignment5-nav-heading {
+  float: left;
+}
+
+.assignment5-nav-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.assignment5-nav-li {
+  float: left;
+}
+
+.assignment5-nav-links {
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  padding: 14px 16px;
+  color: black;
+  background-color: #696969;
+}
+
+.assignment5-nav-links:hover {
+  background-color: #887e7e;
+}
+
+#assignment5-main-content-body {
+  width: 70%;
+  margin: 5px;
+}
+
+#assignment5-content-body {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+#assignment5-body-header {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+#assignment5-first-article {
+  width: 30%;
+  float: left;
+  border: 1px black solid;
+}
+
+#assignment5-second-article {
+  width: 30%;
+  float: right;
+  margin-right: 20%;
+  margin-bottom: 20px;
+  border: 1px black solid;
+}
+
+#assignment5-picture {
+  width: 80%;
+  margin-left: 10%;
+}
+
+#assignment5-Aside {
+  float: right;
+  display: block;
+  width: 18%;
+  border: 1px black solid;
+}
+
+#assignment5-main-footer {
+  clear: both;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-top: 1px white solid;
+  border-bottom: 1px white solid;
+}

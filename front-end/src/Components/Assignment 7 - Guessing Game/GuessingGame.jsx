@@ -127,6 +127,14 @@ class GuessingGame extends Component {
             <div>Amount of guesses: {tries === 0 ? 0 : tries}</div>
           </div>
         </div>
+        <div className="col-6 container mt-5">
+          This project was constructed using "localStorage" as a main function
+          of this assignment.
+          <br />
+          localStorage in this aspect refers to the asp.net Core version of
+          Session which was the main focus of this assignment, to learn to store
+          and use data in a session.
+        </div>
       </React.Fragment>
     );
   }
