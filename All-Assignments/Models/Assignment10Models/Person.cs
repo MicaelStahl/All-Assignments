@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace All_Assignments.Models.Assignment10Models
 {
-    public class Student
+    public class Person
     {
         [Key]
         public Guid Id { get; set; }
@@ -21,6 +21,25 @@ namespace All_Assignments.Models.Assignment10Models
         [Display(Name = "Lastname")]
         public string LastName { get; set; }
 
+        [Required]
+        [Range(12, 110, ErrorMessage = "The user has to be between 12 to 110 years old.")]
+        public int Age { get; set; }
 
+        [Required]
+        [EmailAddress]
+        [DataType(DataType.EmailAddress)]
+        [Display(Name = "E-mail")]
+        public string Email { get; set; }
+
+        [Required]
+        public string Gender { get; set; }
+
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        [Display(Name = "Phonenumber")]
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        public City City { get; set; }
     }
 }

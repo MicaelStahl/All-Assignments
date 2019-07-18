@@ -14,13 +14,13 @@ namespace All_Assignments.Controllers
     /// Edit this controller later to not send down more userdata than necessary.
     /// </summary>
     [Authorize]
-    public class Assignment10IdentityController : Controller
+    public class IdentityController : Controller
     {
         public readonly UserManager<AppUser10> _userManager;
         public readonly RoleManager<IdentityRole> _roleManager;
         public readonly SignInManager<AppUser10> _signInManager;
 
-        public Assignment10IdentityController(UserManager<AppUser10> userManager,
+        public IdentityController(UserManager<AppUser10> userManager,
             RoleManager<IdentityRole> roleManager, SignInManager<AppUser10> signInManager)
         {
             _userManager = userManager;
