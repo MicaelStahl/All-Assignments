@@ -101,6 +101,35 @@ namespace All_Assignments.Repositories.Assignment_10
 
             return original;
         }
+
+        public async Task<Country> AddCities(Guid countryId, List<Guid> cityId)
+        {
+            if (countryId == null || string.IsNullOrWhiteSpace(countryId.ToString()) || cityId == null || cityId.Count == 0)
+            {
+                return null;
+            }
+
+            var country = await _db.Countries.SingleOrDefaultAsync(x => x.Id == countryId);
+
+            if (country == null)
+            {
+                return null;
+            }
+
+            foreach (var item in cityId)
+            {
+                var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == item);
+
+                if (city != null && !country.Cities.Contains(city))
+                {
+                    country.Cities.Add(city);
+                }
+            }
+
+            await _db.SaveChangesAsync();
+
+            return country;
+        }
         #endregion
 
         #region Delete

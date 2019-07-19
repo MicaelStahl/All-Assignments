@@ -17,6 +17,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Update
         Task<Country> Edit(Country country);
+        Task<Country> AddCities(Guid countryId, List<Guid> cityId);
 
         // Delete
         Task<bool> Delete(Guid id);

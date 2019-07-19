@@ -18,6 +18,8 @@ namespace All_Assignments.Interfaces.Assignment_10
         // Update
         Task<City> Edit(City city);
 
+        Task<City> AddPeople(Guid cityId, List<Guid> personId);
+
         // Delete
         Task<bool> Delete(Guid id);
     }

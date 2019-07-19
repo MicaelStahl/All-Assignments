@@ -1,5 +1,5 @@
 ﻿using All_Assignments.Database;
-using All_Assignments.Interfaces;
+using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
 using Microsoft.EntityFrameworkCore;
 using System;

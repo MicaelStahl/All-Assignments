@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using All_Assignments.Interfaces;
+using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,17 +13,17 @@ namespace All_Assignments.Controllers
     [ApiController]
     public class PersonAPIController : ControllerBase
     {
-        private readonly IPersonRepository _db;
+        private readonly IPersonRepository _service;
 
-        public PersonAPIController(IPersonRepository db)
+        public PersonAPIController(IPersonRepository service)
         {
-            _db = db;
+            _service = service;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var people = await _db.AllPeople();
+            var people = await _service.AllPeople();
 
             if (people == null)
             {
@@ -41,7 +41,7 @@ namespace All_Assignments.Controllers
                 return BadRequest();
             }
 
-            var person = await _db.FindPerson(id);
+            var person = await _service.FindPerson(id);
 
             if (person == null)
             {
@@ -60,7 +60,7 @@ namespace All_Assignments.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newPerson = await _db.Create(person);
+            var newPerson = await _service.Create(person);
 
             if (newPerson == null)
             {
@@ -79,7 +79,7 @@ namespace All_Assignments.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newPerson = await _db.Edit(person);
+            var newPerson = await _service.Edit(person);
 
             if (newPerson == null)
             {
@@ -98,7 +98,7 @@ namespace All_Assignments.Controllers
                 return BadRequest();
             }
 
-            var removed = await _db.Delete(id);
+            var removed = await _service.Delete(id);
 
             if (removed)
             {
