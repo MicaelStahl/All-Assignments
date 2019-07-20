@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { createStore, combineReducers, compose, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 
 import "bootstrap";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
@@ -11,11 +14,37 @@ import "./Components/css/site.css";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import personReducer from "./Components/Actions/Assignment 10 - reducers/personReducer";
+
+const reducer = combineReducers({
+  person: personReducer
+});
+
+const logger = store => {
+  return next => {
+    return action => {
+      console.log("[Middleware] dispatching", action);
+      const result = next(action);
+      console.log("[Middleware] next state", store.getState());
+      return result;
+    };
+  };
+};
+
+const composeEnchanters =
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(
+  reducer,
+  composeEnchanters(applyMiddleware(logger, thunk))
+);
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );
 
