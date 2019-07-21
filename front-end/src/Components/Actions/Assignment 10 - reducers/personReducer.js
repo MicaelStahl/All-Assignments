@@ -47,14 +47,13 @@ const reducer = (state = initialState, action) => {
         };
       }
       person = {
-        FirstName: action.person.firstName.value,
-        LastName: action.person.lastName.value,
-        Age: action.person.age.value,
-        Email: action.person.email.value,
-        Gender: action.person.gender.value,
-        PhoneNumber: action.person.phoneNumber.value,
-        City:
-          action.person.city === "Select one" ? null : action.person.city.value
+        FirstName: action.person.firstName,
+        LastName: action.person.lastName,
+        Age: action.person.age,
+        Email: action.person.email,
+        Gender: action.person.gender,
+        PhoneNumber: action.person.phoneNumber,
+        City: action.person.city === "Select one" ? null : action.person.city
       };
 
       if (person === undefined || person === null) {
