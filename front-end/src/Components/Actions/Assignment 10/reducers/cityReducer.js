@@ -1,4 +1,4 @@
-import * as actionTypes from "../Assignment 10 - actions/cityActions";
+import * as actionTypes from "../actions/cityActions";
 import axios from "axios";
 
 const initialState = {
@@ -183,10 +183,10 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.ADD_PERSON_TO_CITY:
       if (
-        action.id === undefined ||
-        action.id === null ||
-        action.person === undefined ||
-        action.person === null
+        action.cityId === undefined ||
+        action.cityId === null ||
+        action.people === undefined ||
+        action.people === null
       ) {
         return {
           ...state,
@@ -195,7 +195,7 @@ const reducer = (state = initialState, action) => {
       }
 
       axios
-        .put(apiUrl + "add-person", (action.id, action.person))
+        .put(apiUrl + "add-person", (action.cityId, action.people))
         .then(response => {
           if (response.data === null) {
             return {

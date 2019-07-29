@@ -1,4 +1,4 @@
-import * as actionTypes from "../Assignment 10 - actions/personActions";
+import * as actionTypes from "../actions/personActions";
 import axios from "axios";
 
 const initialState = {

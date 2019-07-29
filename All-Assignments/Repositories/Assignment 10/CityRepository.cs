@@ -103,34 +103,27 @@ namespace All_Assignments.Repositories.Assignment_10
             return original;
         }
 
-        public async Task<City> AddPeople(Guid cityId, List<Guid> personId)
+        public async Task<City> AddPeople(Guid cityId, List<Person> personId)
         {
             if (cityId == null || string.IsNullOrWhiteSpace(cityId.ToString()) || personId == null || personId.Count == 0)
             {
                 return null;
             }
 
-            var city = await _db.Cities.SingleOrDefaultAsync(x=>x.Id == cityId);
+            var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == cityId);
 
             if (city == null)
             {
                 return null;
             }
 
-            foreach (var item in personId)
-            {
-                var person = await _db.People.SingleOrDefaultAsync(x => x.Id == item);
-
-                if (person != null && !city.People.Contains(person))
-                {
-                    city.People.Add(person);
-                }
-            }
+            city.People.AddRange(personId);
 
             await _db.SaveChangesAsync();
 
             return city;
         }
+
         #endregion
 
         #region Delete

@@ -66,18 +66,18 @@ export function EditCityAsync(city) {
   };
 }
 
-function AddPersonToCity(id, person) {
+function AddPersonToCity(cityId, people) {
   return {
     type: ADD_PERSON_TO_CITY,
-    id: id,
-    person: person
+    cityId: cityId,
+    people: people
   };
 }
 
-export function AddPersonToCityAsync(id, person) {
+export function AddPersonToCityAsync(cityId, people) {
   return dispatch => {
     setTimeout(() => {
-      dispatch(AddPersonToCity(id, person));
+      dispatch(AddPersonToCity(cityId, people));
     }, 1000);
   };
 }

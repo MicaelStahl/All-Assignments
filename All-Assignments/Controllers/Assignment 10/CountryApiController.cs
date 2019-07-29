@@ -87,22 +87,22 @@ namespace All_Assignments.Controllers
             return Created(nameof(Edit), newCountry);
         }
 
-        [HttpPut("{add-people}")]
-        public async Task<IActionResult> AddPeople(Guid countryId, List<Guid> cityId)
+        [HttpPut("{add-city}")]
+        public async Task<IActionResult> AddCity(Guid countryId, List<City> cities)
         {
-            if (countryId == null || string.IsNullOrWhiteSpace(countryId.ToString()) || cityId == null || cityId.Count == 0)
+            if (countryId == null || string.IsNullOrWhiteSpace(countryId.ToString()) || cities == null || cities.Count == 0)
             {
                 return BadRequest();
             }
 
-            var city = await _service.AddCities(countryId, cityId);
+            var country = await _service.AddCities(countryId, cities);
 
-            if (city == null)
+            if (country == null)
             {
                 return Content("Something went wrong. Please try again.");
             }
 
-            return Created(nameof(AddPeople), city);
+            return Created(nameof(AddCity), country);
         }
 
         [HttpDelete]

@@ -18,7 +18,7 @@ namespace All_Assignments.Interfaces.Assignment_10
         // Update
         Task<City> Edit(City city);
 
-        Task<City> AddPeople(Guid cityId, List<Guid> personId);
+        Task<City> AddPeople(Guid cityId, List<Person> personId);
 
         // Delete
         Task<bool> Delete(Guid id);

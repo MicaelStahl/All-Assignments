@@ -66,18 +66,18 @@ export function EditCountryAsync(country) {
   };
 }
 
-function AddCityToCountry(id, city) {
+function AddCityToCountry(countryId, cities) {
   return {
     type: ADD_CITY_TO_COUNTRY,
-    id: id,
-    city: city
+    countryId: countryId,
+    cities: cities
   };
 }
 
-export function AddCityToCountryAsync(id, city) {
+export function AddCityToCountryAsync(countryId, cities) {
   return dispatch => {
     setTimeout(() => {
-      dispatch(AddCityToCountry(id, city));
+      dispatch(AddCityToCountry(countryId, cities));
     }, 1000);
   };
 }

@@ -57,7 +57,7 @@ namespace All_Assignments.Controllers
 
             user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
 
-            var result = await _userManager.CreateAsync(user, user.Password);
+            var result = await _userManager.CreateAsync(user);
 
             if (result.Succeeded)
             {
@@ -85,7 +85,7 @@ namespace All_Assignments.Controllers
 
             user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
 
-            var result = await _userManager.CreateAsync(user, user.Password);
+            var result = await _userManager.CreateAsync(user);
 
             if (result.Succeeded)
             {
@@ -349,9 +349,9 @@ namespace All_Assignments.Controllers
 
             var user = await _userManager.FindByIdAsync(change.UserId);
 
-            if (user.Password != change.OldPassword)
+            if (change.OldPassword == change.NewPassword)
             {
-                return BadRequest();
+                return Content("Your password cannot be the same as your old password. Please try something else.");
             }
 
             if (user == null)
@@ -366,7 +366,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong.");
             }
 
-            var result = await _userManager.ChangePasswordAsync(user, user.Password, change.NewPassword);
+            var result = await _userManager.ChangePasswordAsync(user, change.OldPassword, change.NewPassword);
 
             if (result.Succeeded)
             {

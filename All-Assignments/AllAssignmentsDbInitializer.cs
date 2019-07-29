@@ -44,9 +44,11 @@ namespace All_Assignments
                     Email = "Administrator@Admin.com",
                     PhoneNumber = "123456789",
                 };
-                userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken).Wait();
+                //user.UserToken = userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication").Result;
 
                 var result = userManager.CreateAsync(user, "Password!23").Result;
+                
+                //userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken).Wait();
 
                 if (result.Succeeded)
                 {
@@ -66,9 +68,12 @@ namespace All_Assignments
                     Age = 18,
                     PhoneNumber = "987654321",
                 };
-                userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken).Wait();
+
+                //user.UserToken = userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication").Result;
 
                 var result = userManager.CreateAsync(user, "Password!23").Result;
+
+                //userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken).Wait();
 
                 if (result.Succeeded)
                 {

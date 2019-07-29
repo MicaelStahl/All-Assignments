@@ -102,9 +102,9 @@ namespace All_Assignments.Repositories.Assignment_10
             return original;
         }
 
-        public async Task<Country> AddCities(Guid countryId, List<Guid> cityId)
+        public async Task<Country> AddCities(Guid countryId, List<City> cities)
         {
-            if (countryId == null || string.IsNullOrWhiteSpace(countryId.ToString()) || cityId == null || cityId.Count == 0)
+            if (countryId == null || string.IsNullOrWhiteSpace(countryId.ToString()) || cities == null || cities.Count == 0)
             {
                 return null;
             }
@@ -116,15 +116,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 return null;
             }
 
-            foreach (var item in cityId)
-            {
-                var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == item);
-
-                if (city != null && !country.Cities.Contains(city))
-                {
-                    country.Cities.Add(city);
-                }
-            }
+            country.Cities.AddRange(cities);
 
             await _db.SaveChangesAsync();
 

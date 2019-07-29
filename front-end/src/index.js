@@ -14,9 +14,9 @@ import "./Components/css/site.css";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import personReducer from "./Components/Actions/Assignment 10 - reducers/personReducer";
-import cityReducer from "./Components/Actions/Assignment 10 - reducers/cityReducer";
-import countryReducer from "./Components/Actions/Assignment 10 - reducers/countryReducer";
+import personReducer from "./Components/Actions/Assignment 10/reducers/personReducer";
+import cityReducer from "./Components/Actions/Assignment 10/reducers/cityReducer";
+import countryReducer from "./Components/Actions/Assignment 10/reducers/countryReducer";
 
 const reducer = combineReducers({
   person: personReducer,

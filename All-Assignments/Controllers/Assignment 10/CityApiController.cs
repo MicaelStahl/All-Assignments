@@ -90,14 +90,14 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPut("{add-people}")]
-        public async Task<IActionResult> AddPeople(Guid cityId, List<Guid> personId)
+        public async Task<IActionResult> AddPeople(Guid cityId, List<Person> people)
         {
-            if (cityId == null || string.IsNullOrWhiteSpace(cityId.ToString()) || personId == null || personId.Count == 0)
+            if (cityId == null || string.IsNullOrWhiteSpace(cityId.ToString()) || people == null || people.Count == 0)
             {
                 return BadRequest();
             }
 
-            var city = await _service.AddPeople(cityId, personId);
+            var city = await _service.AddPeople(cityId, people);
 
             if (city == null)
             {

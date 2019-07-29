@@ -15,9 +15,8 @@ const Home = () => {
           place, but this time mostly created with React instead of C#. <br />
           The main reason I wanted to work on this project was mostly to become
           better at React. To learn the limits of React, and one perfect way of
-          doing so is to do assignments I've done in the past to learn the React
-          way of solving certain issues, like storing data in sessions for
-          example.
+          doing so is to use previous assignments from C# to expand my knowledge
+          in React, to learn how to for example use sessions, Identity etc.
         </p>
         <hr />
         <ul className="list-unstyled container">
