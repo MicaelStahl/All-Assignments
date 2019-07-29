@@ -41,14 +41,14 @@ namespace All_Assignments.Controllers
                 return BadRequest();
             }
 
-            var city = await _service.FindCity(id);
+            var country = await _service.FindCountry(id);
 
-            if (city == null)
+            if (country == null)
             {
                 return NotFound("The requested city was not found. Please try again.");
             }
 
-            return Accepted(nameof(Get), city);
+            return Accepted(nameof(Get), country);
         }
 
         [HttpPost]

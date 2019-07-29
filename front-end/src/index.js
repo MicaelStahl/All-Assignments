@@ -40,7 +40,7 @@ const composeEnchanters =
 
 const store = createStore(
   reducer,
-  composeEnchanters(applyMiddleware(logger, thunk))
+  composeEnchanters(applyMiddleware(thunk, logger))
 );
 
 ReactDOM.render(

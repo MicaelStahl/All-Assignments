@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import Title from "../UI/Title";
 import "./GuessingGame.css";
+import assignmentPicture from "./Assignment 7.png";
 
 class GuessingGame extends Component {
   state = {
@@ -80,7 +81,7 @@ class GuessingGame extends Component {
   }
 
   render() {
-    const { wrong, correct, randomNumber, tries } = this.state;
+    const { wrong, correct, tries } = this.state;
     return (
       <React.Fragment>
         <Title Title={"Guessing game"} />
@@ -134,6 +135,13 @@ class GuessingGame extends Component {
           localStorage in this aspect refers to the asp.net Core version of
           Session which was the main focus of this assignment, to learn to store
           and use data in a session.
+        </div>
+        <div className="col-7 container mt-4">
+          <img
+            className="col-12 mb-2"
+            alt="Assignment 7"
+            src={assignmentPicture}
+          />
         </div>
       </React.Fragment>
     );

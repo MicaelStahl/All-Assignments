@@ -1,6 +1,5 @@
 import * as actionTypes from "../actions/countryActions";
 import axios from "axios";
-import { stat } from "fs";
 
 const initialState = {
   oneCountry: [],

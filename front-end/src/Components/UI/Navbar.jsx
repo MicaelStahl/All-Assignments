@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 
 class Navbar extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
   // Fix these links later.
   render() {
     return (
@@ -111,8 +112,46 @@ class Navbar extends Component {
                       to="/guessing-game">
                       Guessing Game
                     </NavLink>
+                    <div className="dropdown-divider" />
+                    <NavLink
+                      className="btn btn-secondary dropdown-item"
+                      to="/identity">
+                      Identity
+                    </NavLink>
                   </div>
                 </li>
+                {this.props.location.pathname.includes("/identity") === true ? (
+                  <ul className="navbar-nav mr-auto">
+                    <li className="nav-item dropdown">
+                      <a
+                        className="DropdownList nav-link text-light dropdown-toggle"
+                        data-toggle="dropdown">
+                        Identity
+                      </a>
+                      <div className="dropdown-menu">
+                        <NavLink
+                          to="/identity/person"
+                          className="btn btn-secondary dropdown-item">
+                          Person
+                        </NavLink>
+                        <div className="dropdown-divider" />
+                        <NavLink
+                          to="/identity/city"
+                          className="btn btn-secondary dropdown-item">
+                          City
+                        </NavLink>
+                        <div className="dropdown-divider" />
+                        <NavLink
+                          to="/identity/country"
+                          className="btn btn-secondary dropdown-item">
+                          Country
+                        </NavLink>
+                      </div>
+                    </li>
+                  </ul>
+                ) : (
+                  console.log(this.props.location)
+                )}
               </ul>
             </div>
           </div>
@@ -122,4 +161,4 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar;
+export default withRouter(Navbar);

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import Title from "../UI/Title";
 import "./Calculator.css";
+import assignmentPicture from "./Assignment 1.png";
 
 class Calculator extends Component {
   state = {
@@ -291,6 +292,14 @@ class Calculator extends Component {
               .
             </button>
           </div>
+        </div>
+        <div className="mt-5 mb-2 text-center container col-12">
+          <p>Assignment:</p>
+          <img
+            className="col-7 mb-2"
+            alt="Assignment 1"
+            src={assignmentPicture}
+          />
         </div>
       </React.Fragment>
     );

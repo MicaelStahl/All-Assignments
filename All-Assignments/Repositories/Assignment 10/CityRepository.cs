@@ -66,6 +66,23 @@ namespace All_Assignments.Repositories.Assignment_10
             return city;
         }
 
+        public async Task<City> FindPeopleInCityAndCountry(Guid id)
+        {
+            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
+            {
+                return null;
+            }
+
+            var city = await _db.Cities.Include(x => x.People).Include(x => x.Country).SingleOrDefaultAsync(x => x.Id == id);
+
+            if (city == null)
+            {
+                return null;
+            }
+
+            return city;
+        }
+
         public async Task<List<City>> AllCities()
         {
             var cities = await _db.Cities.ToListAsync();

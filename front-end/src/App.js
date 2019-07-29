@@ -1,4 +1,5 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 
 import Navbar from "./Components/UI/Navbar";
 import Main from "./Components/UI/Main";
@@ -16,4 +17,4 @@ function App() {
   );
 }
 
-export default App;
+export default withRouter(App);

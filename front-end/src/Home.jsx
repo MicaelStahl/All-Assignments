@@ -47,7 +47,9 @@ const Home = () => {
           <li className="row mt-1">
             Assignment 9: Entity Framework (Not started)
           </li>
-          <li className="row mt-1">Assignment 10: Identity (Not finished)</li>
+          <li className="row mt-1">
+            <Link to="/identity">Assignment 10: Identity (Not finished)</Link>
+          </li>
           <li className="row mt-1">Assignment 11: React - SPA (Not started)</li>
           <li className="row mt-1">
             Assignment 12: Final Project (Not started)

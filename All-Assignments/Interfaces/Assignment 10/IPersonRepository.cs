@@ -13,6 +13,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Read
         Task<Person> FindPerson(Guid id);
+        Task<Person> FindPersonInCity(Guid id);
         Task<List<Person>> AllPeople();
 
         // Update
