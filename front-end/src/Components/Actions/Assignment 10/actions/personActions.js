@@ -7,8 +7,16 @@ export const CREATE_PERSON = "CREATE_PERSON";
 export const FIND_PERSON = "FIND_PERSON";
 export const EDIT_PERSON = "EDIT_PERSON";
 export const DELETE_PERSON = "DELETE_PERSON";
+export const ERROR404MESSAGE = "ERROR404MESSAGE";
 
 const apiUrl = "http://localhost:50691/api/PersonApi/";
+
+function Error404(err = "404 Error") {
+  return {
+    type: ERROR404MESSAGE,
+    error: err
+  };
+}
 
 function AllPeople(allPeople) {
   return {
@@ -18,14 +26,19 @@ function AllPeople(allPeople) {
 }
 
 export function AllPeopleAsync() {
-  return async dispatch => {
-    const response = await axios.get(apiUrl, {
-      "Content-Type": "application/json"
-    });
-    console.log("[Response]", response);
-    if (response.data !== null) {
-      dispatch(AllPeople(response.data));
-    }
+  return dispatch => {
+    axios
+      .get(apiUrl, {
+        "Content-Type": "application/json"
+      })
+      .then(response => {
+        console.log("[Response]", response);
+        if (response.data !== null) {
+          dispatch(AllPeople(response.data));
+        } else {
+          dispatch(Error404("Could not find any people. Please try again."));
+        }
+      });
   };
 }
 
@@ -42,16 +55,24 @@ export function CreatePersonAsync(person) {
   };
 }
 
-function FindPerson(id) {
+function FindPerson(person) {
   return {
     type: FIND_PERSON,
-    id: id
+    person: person
   };
 }
 
 export function FindPersonAsync(id) {
-  return function(dispatch) {
-    dispatch(FindPerson(id));
+  return dispatch => {
+    axios.get(apiUrl + id).then(response => {
+      if (response.data !== null) {
+        dispatch(FindPerson(response.data));
+      } else {
+        dispatch(
+          Error404("Could not find the requested person. Please try again.")
+        );
+      }
+    });
   };
 }
 

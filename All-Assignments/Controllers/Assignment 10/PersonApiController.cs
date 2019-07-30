@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -86,7 +87,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong while updating the person. Please try again");
             }
 
-            return RedirectToAction(nameof(Get), "PersonApi", new { id = newPerson.Id });
+            return Created(nameof(Edit), newPerson);
         }
 
         [HttpDelete]

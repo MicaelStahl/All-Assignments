@@ -1,6 +1,7 @@
 ﻿using All_Assignments.Database;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -53,49 +54,54 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Read
-        public async Task<Person> FindPerson(Guid id)
+        public async Task<PersonWithCityVM> FindPerson(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
                 return null;
             }
 
-            var person = await _db.People.SingleOrDefaultAsync(x => x.Id == id);
+            var person = await _db.People
+                .Include(x => x.City)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            PersonWithCityVM personVM = new PersonWithCityVM();
+
+            personVM.CityName = person.City.Name;
+            person.City = null;
+            personVM.Person = person;
 
             if (person == null)
             {
                 return null;
             }
-            return person;
+            return personVM;
         }
 
-        public async Task<Person> FindPersonInCity(Guid id)
-        {
-            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
-            {
-                return null;
-            }
-
-            var person = await _db.People.Include(x => x.City).ThenInclude(x=>x.Country).SingleOrDefaultAsync(x => x.Id == id);
-
-            if (person == null)
-            {
-                return null;
-            }
-            return person;
-        }
-
-        public async Task<List<Person>> AllPeople()
+        public async Task<List<PersonWithCityVM>> AllPeople()
         {
             var people = await _db.People
-                .Include(x => x.City.Name)
+                .Include(x => x.City)
                 .ToListAsync();
+
 
             if (people == null || people.Count == 0)
             {
                 return null;
             }
-            return people;
+
+            List<PersonWithCityVM> peopleVM = new List<PersonWithCityVM>();
+
+            foreach (var item in people)
+            {
+                PersonWithCityVM personVM = new PersonWithCityVM();
+                personVM.CityName = item.City.Name ?? "Homeless";
+                item.City = null;
+                personVM.Person = item;
+                peopleVM.Add(personVM);
+            }
+
+            return peopleVM;
         }
         #endregion
 

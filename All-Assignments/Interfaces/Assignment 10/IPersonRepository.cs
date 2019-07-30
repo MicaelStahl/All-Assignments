@@ -1,4 +1,5 @@
 ﻿using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,8 @@ namespace All_Assignments.Interfaces.Assignment_10
         Task<Person> Create(Person person);
 
         // Read
-        Task<Person> FindPerson(Guid id);
-        Task<Person> FindPersonInCity(Guid id);
-        Task<List<Person>> AllPeople();
+        Task<PersonWithCityVM> FindPerson(Guid id);
+        Task<List<PersonWithCityVM>> AllPeople();
 
         // Update
         Task<Person> Edit(Person person);

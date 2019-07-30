@@ -13,9 +13,9 @@ const apiUrl = "http://localhost:50691/api/PersonApi/";
 
 const reducer = (state = initialState, action) => {
   // ToDo
+  console.log(action);
   switch (action.type) {
     case actionTypes.ALL_PEOPLE:
-      console.log(action);
       if (action.allPeople !== null || action.allPeople !== undefined) {
         return {
           ...state,
@@ -29,34 +29,34 @@ const reducer = (state = initialState, action) => {
             "Something went wrong when fetching the people. Please try again."
         };
       }
-      // axios
-      //   .get(apiUrl, { "Content-Type": "application/json" })
-      //   .then(response => {
-      //     console.log("ALL_PEOPLE", response.data);
-      //     if (response.data === null) {
-      //       return {
-      //         ...state,
-      //         personError: "Nothing found"
-      //       };
-      //     }
-      //     const people = response.data;
-      //     console.log("I happen too when response.data isn't empty");
-      //     return {
-      //       ...state,
-      //       allPeople: people,
-      //       personError: ""
-      //     };
-      //   })
-      //   .catch(err => {
-      //     console.error(err);
-      //     return {
-      //       ...state,
-      //       personError: err
-      //     };
-      //   });
-      // console.log(state);
+    // axios
+    //   .get(apiUrl, { "Content-Type": "application/json" })
+    //   .then(response => {
+    //     console.log("ALL_PEOPLE", response.data);
+    //     if (response.data === null) {
+    //       return {
+    //         ...state,
+    //         personError: "Nothing found"
+    //       };
+    //     }
+    //     const people = response.data;
+    //     console.log("I happen too when response.data isn't empty");
+    //     return {
+    //       ...state,
+    //       allPeople: people,
+    //       personError: ""
+    //     };
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //     return {
+    //       ...state,
+    //       personError: err
+    //     };
+    //   });
+    // console.log(state);
 
-      break;
+    // break;
 
     case actionTypes.CREATE_PERSON:
       if (action.person === null || action.person === undefined) {
@@ -111,35 +111,40 @@ const reducer = (state = initialState, action) => {
       break;
 
     case actionTypes.FIND_PERSON:
-      if (action.id === null || action.id === undefined) {
+      if (action.person === null || action.person === undefined) {
         return {
           ...state,
           personError: "Something went wrong, please try again."
         };
+      } else {
+        return {
+          ...state,
+          onePerson: action.person
+        };
       }
-      axios
-        .get(apiUrl + action.id)
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              personError: "Something went wrong, please try again."
-            };
-          }
-          return {
-            ...state,
-            onePerson: response.data,
-            personError: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            personError: err
-          };
-        });
-      break;
+    // axios
+    //   .get(apiUrl + action.id)
+    //   .then(response => {
+    //     if (response.data === null) {
+    //       return {
+    //         ...state,
+    //         personError: "Something went wrong, please try again."
+    //       };
+    //     }
+    //     return {
+    //       ...state,
+    //       onePerson: response.data,
+    //       personError: ""
+    //     };
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //     return {
+    //       ...state,
+    //       personError: err
+    //     };
+    //   });
+    // break;
 
     case actionTypes.EDIT_PERSON:
       if (action.person === null || action.person === undefined) {
@@ -247,8 +252,16 @@ const reducer = (state = initialState, action) => {
           };
         });
       break;
+
+    case actionTypes.ERROR404MESSAGE:
+      return {
+        ...state,
+        error: action.error
+      };
+
+    default:
+      break;
   }
-  console.log(state.allPeople);
   return state;
 };
 

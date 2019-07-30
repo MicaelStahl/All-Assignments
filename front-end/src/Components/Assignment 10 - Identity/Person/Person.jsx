@@ -1,34 +1,19 @@
-import React, { Component } from "react";
-// import { connect } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import React from "react";
+import { Route, Switch, withRouter } from "react-router-dom";
 
-// import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
 import AllPeople from "./AllPeople";
+import Details from "./Details";
 
-class Person extends Component {
-  state = {};
+const Person = props => {
+  console.log(props.match.url);
+  return (
+    <React.Fragment>
+      <Switch>
+        <Route exact path={props.match.url + "/details/"} component={Details} />
+        <Route exact path={props.match.url} component={AllPeople} />
+      </Switch>
+    </React.Fragment>
+  );
+};
 
-  // async componentWillMount() {
-  //   this.props.onGetAllPeople();
-  // }
-
-  render() {
-    console.log("Do I happen?");
-    return (
-      <React.Fragment>
-        <Switch>
-          <Route exact path={this.props.match.url} component={AllPeople} />
-        </Switch>
-      </React.Fragment>
-    );
-  }
-}
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     onGetAllPeople: () => dispatch({ type: actionTypes.AllPeopleAsync })
-//   };
-// };
-
-// connect(  null,  mapDispatchToProps)
-export default Person;
+export default withRouter(Person);

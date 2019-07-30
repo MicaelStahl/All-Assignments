@@ -13,34 +13,38 @@ class AllPeople extends Component {
   }
 
   render() {
-    console.log(this.props.people);
     const rows = this.props.people.map((person, index) => (
       <tr key={index} className="d-table-row">
-        <td className="d-table-cell">{person.firstName}</td>
-        <td className="d-table-cell">{person.lastName}</td>
-        <td className="d-table-cell">{person.age}</td>
-        <td className="d-table-cell">{person.email}</td>
-        <td className="d-table-cell">{person.gender}</td>
-        <td className="d-table-cell">{person.phoneNumber}</td>
+        <td className="d-table-cell">{person.person.firstName}</td>
+        <td className="d-table-cell">{person.person.lastName}</td>
+        <td className="d-table-cell">{person.person.age}</td>
+        <td className="d-table-cell">{person.person.email}</td>
+        <td className="d-table-cell">{person.person.gender}</td>
+        <td className="d-table-cell">{person.person.phoneNumber}</td>
+        <td className="d-table-cell">{person.cityName}</td>
         <td className="d-table-cell">
-          {person.city === null ? "Homeless" : person.city}
-        </td>
-        <td className="d-table-cell">
-          <Link to={this.props.match.url + "/edit/:" + person.id}>Edit</Link>
-          <Link to={this.props.match.url + "/details/:" + person.id}>
+          <Link
+            className="btn btn-warning btn-sm"
+            to={this.props.match.url + "/edit/" + person.person.id}>
+            Edit
+          </Link>
+          <Link
+            onClick={() => this.props.onDetailsLoad(person.person.id)}
+            className="btn btn-primary btn-sm ml-1"
+            to={this.props.match.url + "/details/" + person.person.id}>
             Details
           </Link>
-          <Link to={this.props.match.url + "/delete/:" + person.id}>
+          <Link
+            className="btn btn-danger btn-sm ml-1"
+            to={this.props.match.url + "/delete/" + person.person.id}>
             Delete
           </Link>
         </td>
       </tr>
     ));
-    console.log(rows);
     return (
       <React.Fragment>
         <Title Title="List of all people" />
-        <div>Hello world!</div>
         {this.props.error}
         <table className="table table-active table-striped table-hover rounded">
           <caption>List of all people</caption>
@@ -72,7 +76,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSiteLoad: () => dispatch(actionTypes.AllPeopleAsync())
+    onSiteLoad: () => dispatch(actionTypes.AllPeopleAsync()),
+    onDetailsLoad: id => dispatch(actionTypes.FindPersonAsync(id))
   };
 };
 
