@@ -87,7 +87,9 @@ namespace All_Assignments.Repositories.Assignment_10
 
         public async Task<List<Person>> AllPeople()
         {
-            var people = await _db.People.ToListAsync();
+            var people = await _db.People
+                .Include(x => x.City.Name)
+                .ToListAsync();
 
             if (people == null || people.Count == 0)
             {

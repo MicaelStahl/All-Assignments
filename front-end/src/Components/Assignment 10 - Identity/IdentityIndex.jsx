@@ -1,13 +1,8 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
 
 import Title from "../UI/Title";
-import * as actionTypes from "../Actions/Assignment 10/actions/identityActions";
 
 class IdentityIndex extends Component {
-  componentWillMount() {
-    this.props.onSiteLoad();
-  }
   render() {
     return (
       <div>
@@ -22,13 +17,4 @@ class IdentityIndex extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onSiteLoad: () => dispatch({ type: actionTypes.EnableIdentityNavbarAsync })
-  };
-};
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(IdentityIndex);
+export default IdentityIndex;

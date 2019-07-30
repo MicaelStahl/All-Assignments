@@ -27,33 +27,6 @@ class Navbar extends Component {
             </button>
             <div className="navbar-collapse justify-content-between collapse d-sm-inline-flex flex-sm-row-reverse">
               <ul className="navbar-nav ml-auto">
-                <li className="nav-item dropdown">
-                  <a
-                    className="DropdownList nav-link text-light dropdown-toggle"
-                    data-toggle="dropdown">
-                    Identity
-                  </a>
-                  <div className="dropdown-menu">
-                    <a
-                      id="AccountIndex"
-                      className="nav-link dropdown-item"
-                      href="/Account/Index">
-                      Index
-                    </a>
-                    <a
-                      id="AccountUserList"
-                      className="nav-link dropdown-item"
-                      href="/Account/UserList">
-                      User list
-                    </a>
-                    <a
-                      id="AccountRoleList"
-                      className="nav-link dropdown-item"
-                      href="/Account/RoleList">
-                      Role list
-                    </a>
-                  </div>
-                </li>
                 {this.state.authenticated ? (
                   <React.Fragment>
                     <li className="nav-item">
@@ -129,6 +102,12 @@ class Navbar extends Component {
                         Identity
                       </a>
                       <div className="dropdown-menu">
+                        <NavLink
+                          to="/identity"
+                          className="btn btn-secondary dropdown-item">
+                          Index
+                        </NavLink>
+                        <div className="dropdown-divider" />
                         <NavLink
                           to="/identity/person"
                           className="btn btn-secondary dropdown-item">

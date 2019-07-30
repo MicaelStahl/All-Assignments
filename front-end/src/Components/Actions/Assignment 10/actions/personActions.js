@@ -1,22 +1,31 @@
 // ----- Person ----- \\
 
+import axios from "axios";
+
 export const ALL_PEOPLE = "ALL_PEOPLE";
 export const CREATE_PERSON = "CREATE_PERSON";
 export const FIND_PERSON = "FIND_PERSON";
 export const EDIT_PERSON = "EDIT_PERSON";
 export const DELETE_PERSON = "DELETE_PERSON";
 
-function AllPeople() {
+const apiUrl = "http://localhost:50691/api/PersonApi/";
+
+function AllPeople(allPeople) {
   return {
-    type: ALL_PEOPLE
+    type: ALL_PEOPLE,
+    allPeople
   };
 }
 
 export function AllPeopleAsync() {
-  return dispatch => {
-    setTimeout(() => {
-      dispatch(AllPeople());
-    }, 1000);
+  return async dispatch => {
+    const response = await axios.get(apiUrl, {
+      "Content-Type": "application/json"
+    });
+    console.log("[Response]", response);
+    if (response.data !== null) {
+      dispatch(AllPeople(response.data));
+    }
   };
 }
 
@@ -28,10 +37,8 @@ function CreatePerson(person) {
 }
 
 export function CreatePersonAsync(person) {
-  return dispatch => {
-    setTimeout(() => {
-      dispatch(CreatePerson(person));
-    }, 1000);
+  return function(dispatch) {
+    dispatch(CreatePerson(person));
   };
 }
 
@@ -43,10 +50,8 @@ function FindPerson(id) {
 }
 
 export function FindPersonAsync(id) {
-  return dispatch => {
-    setTimeout(() => {
-      dispatch(FindPerson(id));
-    }, 1000);
+  return function(dispatch) {
+    dispatch(FindPerson(id));
   };
 }
 
@@ -58,10 +63,8 @@ function EditPerson(person) {
 }
 
 export function EditPersonAsync(person) {
-  return dispatch => {
-    setTimeout(() => {
-      dispatch(EditPerson(person));
-    }, 1000);
+  return function(dispatch) {
+    dispatch(EditPerson(person));
   };
 }
 
@@ -73,9 +76,7 @@ function DeletePerson(id) {
 }
 
 export function DeletePersonAsync(id) {
-  return dispatch => {
-    setTimeout(() => {
-      dispatch(DeletePerson(id));
-    }, 1000);
+  return function(dispatch) {
+    dispatch(DeletePerson(id));
   };
 }

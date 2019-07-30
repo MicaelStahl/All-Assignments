@@ -6,6 +6,7 @@ import Calculator from "../Assignment 1 - Calculator/Calculator";
 import HTML from "../Assignment 5 - Webpage/HTML";
 import GuessingGame from "../Assignment 7 - Guessing Game/GuessingGame";
 import IdentityIndex from "../Assignment 10 - Identity/IdentityIndex";
+import Person from "../Assignment 10 - Identity/Person/Person";
 
 const Main = () => {
   return (
@@ -14,6 +15,7 @@ const Main = () => {
       <Route exact path="/webpage" component={HTML} />
       <Route exact path="/guessing-game" component={GuessingGame} />
       <Route exact path="/identity" component={IdentityIndex} />
+      <Route exact path="/identity/person" component={Person} />
       <Route exact path="/" component={Home} />
     </Switch>
   );
