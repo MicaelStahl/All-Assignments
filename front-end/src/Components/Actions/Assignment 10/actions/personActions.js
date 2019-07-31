@@ -8,8 +8,11 @@ export const FIND_PERSON = "FIND_PERSON";
 export const EDIT_PERSON = "EDIT_PERSON";
 export const DELETE_PERSON = "DELETE_PERSON";
 export const ERROR404MESSAGE = "ERROR404MESSAGE";
+export const GET_ALL_CITIES = "GET_ALL_CITIES";
 
 const apiUrl = "http://localhost:50691/api/PersonApi/";
+
+//#region Error404
 
 function Error404(err = "404 Error") {
   return {
@@ -17,6 +20,10 @@ function Error404(err = "404 Error") {
     error: err
   };
 }
+
+//#endregion
+
+//#region AllPeople
 
 function AllPeople(allPeople) {
   return {
@@ -27,20 +34,20 @@ function AllPeople(allPeople) {
 
 export function AllPeopleAsync() {
   return dispatch => {
-    axios
-      .get(apiUrl, {
-        "Content-Type": "application/json"
-      })
-      .then(response => {
-        console.log("[Response]", response);
-        if (response.data !== null) {
-          dispatch(AllPeople(response.data));
-        } else {
-          dispatch(Error404("Could not find any people. Please try again."));
-        }
-      });
+    axios.get(apiUrl, { "Content-Type": "application/json" }).then(response => {
+      console.log("[Response]", response);
+      if (response.data !== null) {
+        dispatch(AllPeople(response.data));
+      } else {
+        dispatch(Error404("Could not find any people. Please try again."));
+      }
+    });
   };
 }
+
+//#endregion
+
+//#region Create
 
 function CreatePerson(person) {
   return {
@@ -49,11 +56,28 @@ function CreatePerson(person) {
   };
 }
 
-export function CreatePersonAsync(person) {
-  return function(dispatch) {
-    dispatch(CreatePerson(person));
+export function CreatePersonAsync(person, cityId) {
+  return dispatch => {
+    axios
+      .post(apiUrl, { person: person, cityId: cityId })
+      .then(response => {
+        console.log("[Response]", response);
+
+        if (response.data !== null) {
+          dispatch(CreatePerson(response.data));
+        } else {
+          dispatch(Error404("Could not create person. Please try again"));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 }
+
+//#endregion
+
+//#region FindPerson
 
 function FindPerson(person) {
   return {
@@ -64,17 +88,48 @@ function FindPerson(person) {
 
 export function FindPersonAsync(id) {
   return dispatch => {
-    axios.get(apiUrl + id).then(response => {
+    axios
+      .get(apiUrl + id, { "Content-Type": "application/json" })
+      .then(response => {
+        console.log("[Response]", response);
+        if (response.data !== null) {
+          dispatch(FindPerson(response.data));
+        } else {
+          dispatch(
+            Error404("Could not find the requested person. Please try again.")
+          );
+        }
+      });
+  };
+}
+
+//#endregion
+
+//#region AllCities
+
+function AllCities(cities) {
+  return {
+    type: GET_ALL_CITIES,
+    cities
+  };
+}
+
+export function AllCitiesAsync() {
+  return dispatch => {
+    axios.get("http://localhost:50691/api/cityApi/").then(response => {
+      console.log("[Response]", response);
       if (response.data !== null) {
-        dispatch(FindPerson(response.data));
+        dispatch(AllCities(response.data));
       } else {
-        dispatch(
-          Error404("Could not find the requested person. Please try again.")
-        );
+        dispatch(Error404("Couldn't find any cities. Please try again."));
       }
     });
   };
 }
+
+//#endregion
+
+//#region Edit
 
 function EditPerson(person) {
   return {
@@ -89,6 +144,10 @@ export function EditPersonAsync(person) {
   };
 }
 
+//#endregion
+
+//#region Delete
+
 function DeletePerson(id) {
   return {
     type: DELETE_PERSON,
@@ -101,3 +160,5 @@ export function DeletePersonAsync(id) {
     dispatch(DeletePerson(id));
   };
 }
+
+//#endregion

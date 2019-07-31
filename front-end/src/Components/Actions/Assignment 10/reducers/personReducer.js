@@ -4,10 +4,12 @@ import axios from "axios";
 const initialState = {
   onePerson: [],
   allPeople: [],
+  allCities: [],
   personError: ""
 };
 
 let person = [];
+let people = [];
 let index = 0;
 const apiUrl = "http://localhost:50691/api/PersonApi/";
 
@@ -16,7 +18,11 @@ const reducer = (state = initialState, action) => {
   console.log(action);
   switch (action.type) {
     case actionTypes.ALL_PEOPLE:
-      if (action.allPeople !== null || action.allPeople !== undefined) {
+      if (
+        action.allPeople !== null ||
+        action.allPeople !== undefined ||
+        action.allPeople.length !== 0
+      ) {
         return {
           ...state,
           allPeople: action.allPeople,
@@ -29,89 +35,40 @@ const reducer = (state = initialState, action) => {
             "Something went wrong when fetching the people. Please try again."
         };
       }
-    // axios
-    //   .get(apiUrl, { "Content-Type": "application/json" })
-    //   .then(response => {
-    //     console.log("ALL_PEOPLE", response.data);
-    //     if (response.data === null) {
-    //       return {
-    //         ...state,
-    //         personError: "Nothing found"
-    //       };
-    //     }
-    //     const people = response.data;
-    //     console.log("I happen too when response.data isn't empty");
-    //     return {
-    //       ...state,
-    //       allPeople: people,
-    //       personError: ""
-    //     };
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //     return {
-    //       ...state,
-    //       personError: err
-    //     };
-    //   });
-    // console.log(state);
 
-    // break;
+    // -------------------------- CREATE -------------------------- \\
 
     case actionTypes.CREATE_PERSON:
-      if (action.person === null || action.person === undefined) {
+      if (
+        action.person === null ||
+        action.person === undefined ||
+        action.person.length === 0
+      ) {
         return {
           ...state,
           personError: "Please fill all the required fields."
         };
-      }
-      person = {
-        FirstName: action.person.firstName,
-        LastName: action.person.lastName,
-        Age: action.person.age,
-        Email: action.person.email,
-        Gender: action.person.gender,
-        PhoneNumber: action.person.phoneNumber,
-        City: action.person.city === "Select one" ? null : action.person.city
-      };
+      } else {
+        people = state.allPeople;
 
-      if (person === undefined || person === null) {
+        people.push(action.person);
+
         return {
           ...state,
-          personError: "Something went wrong. Please try again"
+          onePerson: action.person,
+          allPeople: people,
+          personError: ""
         };
       }
-      axios
-        .post(apiUrl, person)
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              personError: "Something went wrong. Please try again"
-            };
-          }
-          const { allPeople } = state;
 
-          allPeople.push(response.data);
-
-          return {
-            ...state,
-            onePerson: response.data,
-            allPeople,
-            personError: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            personError: err
-          };
-        });
-      break;
+    // -------------------------- FIND -------------------------- \\
 
     case actionTypes.FIND_PERSON:
-      if (action.person === null || action.person === undefined) {
+      if (
+        action.person === null ||
+        action.person === undefined ||
+        action.person.length === 0
+      ) {
         return {
           ...state,
           personError: "Something went wrong, please try again."
@@ -122,29 +79,8 @@ const reducer = (state = initialState, action) => {
           onePerson: action.person
         };
       }
-    // axios
-    //   .get(apiUrl + action.id)
-    //   .then(response => {
-    //     if (response.data === null) {
-    //       return {
-    //         ...state,
-    //         personError: "Something went wrong, please try again."
-    //       };
-    //     }
-    //     return {
-    //       ...state,
-    //       onePerson: response.data,
-    //       personError: ""
-    //     };
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //     return {
-    //       ...state,
-    //       personError: err
-    //     };
-    //   });
-    // break;
+
+    // -------------------------- EDIT -------------------------- \\
 
     case actionTypes.EDIT_PERSON:
       if (action.person === null || action.person === undefined) {
@@ -180,8 +116,8 @@ const reducer = (state = initialState, action) => {
               personError: "No data was retrieved. Please try again."
             };
           }
-          let { allPeople } = state;
-          index = allPeople.findIndex(x => x.Id === response.data.Id);
+          people = state.allPeople;
+          index = people.findIndex(x => x.Id === response.data.Id);
 
           if (index === -1) {
             return {
@@ -190,12 +126,12 @@ const reducer = (state = initialState, action) => {
             };
           }
 
-          allPeople = allPeople.splice(index, 1, response.data);
+          people = people.splice(index, 1, response.data);
 
           return {
             ...state,
             onePerson: response.data,
-            allPeople,
+            allPeople: people,
             personError: ""
           };
         })
@@ -208,6 +144,8 @@ const reducer = (state = initialState, action) => {
         });
       break;
 
+    // -------------------------- DELETE -------------------------- \\
+
     case actionTypes.DELETE_PERSON:
       if (action.id === undefined || action.id === null) {
         return {
@@ -215,9 +153,9 @@ const reducer = (state = initialState, action) => {
           personError: "Something went wrong. Please try again"
         };
       }
-      let { allPeople } = state;
+      people = state.allPeople;
 
-      person = allPeople.find(x => x.id === action.id);
+      person = people.find(x => x.id === action.id);
 
       if (person === undefined) {
         return {
@@ -236,11 +174,11 @@ const reducer = (state = initialState, action) => {
               personError: "The person could not be removed, please try again."
             };
           }
-          allPeople = allPeople.filter(x => x.id !== action.id);
+          people = people.filter(x => x.id !== action.id);
 
           return {
             ...state,
-            allPeople,
+            allPeople: people,
             personError: ""
           };
         })
@@ -253,11 +191,33 @@ const reducer = (state = initialState, action) => {
         });
       break;
 
+    // -------------------------- ERROR404 -------------------------- \\
+
     case actionTypes.ERROR404MESSAGE:
       return {
         ...state,
         error: action.error
       };
+
+    // -------------------------- GET_ALL_CITIES -------------------------- \\
+
+    case actionTypes.GET_ALL_CITIES:
+      if (
+        action.cities.length !== 0 ||
+        action.cities !== undefined ||
+        action.cities !== null
+      ) {
+        return {
+          ...state,
+          allCities: action.cities
+        };
+      } else {
+        return {
+          ...state,
+          personError:
+            "Could not find any cities. Please try reloading the webpage"
+        };
+      }
 
     default:
       break;

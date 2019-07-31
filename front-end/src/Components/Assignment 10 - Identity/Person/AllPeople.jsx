@@ -46,6 +46,12 @@ class AllPeople extends Component {
       <React.Fragment>
         <Title Title="List of all people" />
         {this.props.error}
+        <Link
+          onClick={() => this.props.onCreateLoad()}
+          to={this.props.match.url + "/create-person"}
+          className="btn btn-primary btn-sm mb-2">
+          Create person
+        </Link>
         <table className="table table-active table-striped table-hover rounded">
           <caption>List of all people</caption>
           <thead>
@@ -77,6 +83,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSiteLoad: () => dispatch(actionTypes.AllPeopleAsync()),
+    onCreateLoad: () => dispatch(actionTypes.AllCitiesAsync()),
     onDetailsLoad: id => dispatch(actionTypes.FindPersonAsync(id))
   };
 };

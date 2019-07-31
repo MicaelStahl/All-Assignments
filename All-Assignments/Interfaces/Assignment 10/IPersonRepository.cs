@@ -10,7 +10,7 @@ namespace All_Assignments.Interfaces.Assignment_10
     public interface IPersonRepository
     {
         // Create
-        Task<Person> Create(Person person);
+        Task<Person> Create(Person person, Guid cityId);
 
         // Read
         Task<PersonWithCityVM> FindPerson(Guid id);

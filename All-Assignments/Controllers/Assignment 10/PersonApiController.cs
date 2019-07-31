@@ -31,11 +31,11 @@ namespace All_Assignments.Controllers
                 return Content("There's no people available. Please either create some or contact administration");
             }
 
-            return Created(nameof(Get), people);
+            return Ok(people);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id) 
+        public async Task<IActionResult> Get(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
@@ -49,26 +49,33 @@ namespace All_Assignments.Controllers
                 return Content("The requested person was not found. Please try again");
             }
 
-            return Created(nameof(GetAll), person);
+            return Ok(person);
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Create(Person person)
+        //[AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Create(CreatePersonVM person)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var newPerson = await _service.Create(person);
+            if (person.CityId == null || string.IsNullOrWhiteSpace(person.CityId.ToString()))
+            {
+                return BadRequest();
+            }
+
+            //Guid guid = new Guid(cityId);
+
+            var newPerson = await _service.Create(person.Person, person.CityId);
 
             if (newPerson == null)
             {
                 return Content("Something went wrong during the creation. Please try again.");
             }
 
-            return Created(nameof(Create), newPerson);
+            return Ok(newPerson);
         }
 
         [HttpPut]
@@ -87,7 +94,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong while updating the person. Please try again");
             }
 
-            return Created(nameof(Edit), newPerson);
+            return Ok( newPerson);
         }
 
         [HttpDelete]
@@ -103,7 +110,7 @@ namespace All_Assignments.Controllers
 
             if (removed)
             {
-                return Content("The person was successfully removed.");
+                return Ok("The person was successfully removed.");
             }
 
             return Content("Something went wrong when removing person. Please try again");

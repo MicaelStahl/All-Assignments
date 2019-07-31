@@ -1,19 +1,28 @@
 import React from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import AllPeople from "./AllPeople";
 import Details from "./Details";
+import Create from "./Create";
 
 const Person = props => {
-  console.log(props.match.url);
   return (
-    <React.Fragment>
+    <Router>
       <Switch>
-        <Route exact path={props.match.url + "/details/"} component={Details} />
+        <Route
+          exact
+          path={props.match.url + "/details/:id"}
+          component={Details}
+        />
+        <Route
+          exact
+          path={props.match.url + "/create-person"}
+          component={Create}
+        />
         <Route exact path={props.match.url} component={AllPeople} />
       </Switch>
-    </React.Fragment>
+    </Router>
   );
 };
 
-export default withRouter(Person);
+export default Person;

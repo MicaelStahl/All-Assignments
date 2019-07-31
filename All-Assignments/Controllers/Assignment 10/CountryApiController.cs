@@ -30,7 +30,7 @@ namespace All_Assignments.Controllers
                 return Content("There are no cities available in the database. Please add some.");
             }
 
-            return Created(nameof(GetAll), cities);
+            return Ok(cities);
         }
 
         [HttpGet("{id}")]
@@ -48,7 +48,7 @@ namespace All_Assignments.Controllers
                 return NotFound("The requested city was not found. Please try again.");
             }
 
-            return Accepted(nameof(Get), country);
+            return Ok(country);
         }
 
         [HttpPost]
@@ -66,7 +66,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong when creating the city. Please try again");
             }
 
-            return Created(nameof(Create), newCountry);
+            return Ok(newCountry);
         }
 
         [HttpPut]
@@ -84,7 +84,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong when updating the city. Please try again.");
             }
 
-            return Created(nameof(Edit), newCountry);
+            return Ok(newCountry);
         }
 
         [HttpPut("{add-city}")]
@@ -102,7 +102,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong. Please try again.");
             }
 
-            return Created(nameof(AddCity), country);
+            return Ok(country);
         }
 
         [HttpDelete]
@@ -120,7 +120,7 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong when trying to delete city. Please try again.");
             }
 
-            return Created(nameof(Delete), result);
+            return Ok(result);
         }
     }
 }

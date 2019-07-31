@@ -22,9 +22,21 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Create
-        public async Task<Person> Create(Person person)
+        public async Task<Person> Create(Person person, Guid cityId)
         {
             if (string.IsNullOrWhiteSpace(person.FirstName) || string.IsNullOrWhiteSpace(person.LastName) || string.IsNullOrWhiteSpace(person.Email) || string.IsNullOrWhiteSpace(person.Gender) || string.IsNullOrWhiteSpace(person.PhoneNumber))
+            {
+                return null;
+            }
+
+            if (cityId == null || string.IsNullOrWhiteSpace(cityId.ToString()))
+            {
+                return null;
+            }
+
+            var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == cityId);
+
+            if (city == null)
             {
                 return null;
             }
@@ -37,7 +49,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 Email = person.Email,
                 PhoneNumber = person.PhoneNumber,
                 Gender = person.Gender,
-                City = person.City
+                City = city
             };
 
             if (newPerson == null)

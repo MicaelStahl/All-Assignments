@@ -12,4 +12,11 @@ namespace All_Assignments.ViewModels
 
         public string CityName { get; set; }
     }
+
+    public class CreatePersonVM
+    {
+        public Person Person { get; set; }
+
+        public Guid CityId { get; set; }
+    }
 }
