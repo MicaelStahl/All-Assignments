@@ -37,6 +37,7 @@ class AllPeople extends Component {
               Details
             </Link>
             <Link
+              onClick={() => this.props.onDeleteLoad(person.person.id)}
               className="btn btn-danger btn-sm ml-1"
               to={this.props.match.url + "/delete/" + person.person.id}>
               Delete
@@ -91,7 +92,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onSiteLoad: () => dispatch(actionTypes.AllPeopleAsync()),
     onCreateLoad: () => dispatch(actionTypes.AllCitiesAsync()),
-    onDetailsLoad: id => dispatch(actionTypes.FindPersonAsync(id))
+    onDetailsLoad: id => dispatch(actionTypes.FindPersonAsync(id)),
+    onDeleteLoad: id => dispatch(actionTypes.FindPersonAsync(id))
   };
 };
 

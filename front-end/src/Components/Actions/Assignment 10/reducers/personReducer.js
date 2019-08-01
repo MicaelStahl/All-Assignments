@@ -159,54 +159,14 @@ const reducer = (state = initialState, action) => {
     // -------------------------- DELETE -------------------------- \\
 
     case actionTypes.DELETE_PERSON:
-      if (action.id === undefined || action.id === null) {
-        return {
-          ...state,
-          personError: "Something went wrong. Please try again",
-          status: action.status
-        };
-      }
       people = state.allPeople;
 
-      person = people.find(x => x.id === action.id);
-
-      if (person === undefined) {
-        return {
-          ...state,
-          personError:
-            "The requested person could not be found. Please try again.",
-          status: action.status
-        };
-      }
-
-      axios
-        .delete(apiUrl + action)
-        .then(response => {
-          if (response.data === false) {
-            return {
-              ...state,
-              personError: "The person could not be removed, please try again.",
-              status: action.status
-            };
-          }
-          people = people.filter(x => x.id !== action.id);
-
-          return {
-            ...state,
-            allPeople: people,
-            personError: "",
-            status: action.status
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            personError: err,
-            status: action.status
-          };
-        });
-      break;
+      return {
+        ...state,
+        allPeople: people.filter(x => x.id !== action.id),
+        personError: "",
+        status: action.status
+      };
 
     // -------------------------- ERROR404 -------------------------- \\
 

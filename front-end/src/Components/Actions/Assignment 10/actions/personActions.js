@@ -129,12 +129,15 @@ function FindPerson(person, status) {
 
 export function FindPersonAsync(id) {
   return dispatch => {
+    dispatch(ItemsAreLoading(true));
     axios
       .get(apiUrl + id, { "Content-Type": "application/json" })
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(FindPerson(response.data, response.status));
+
+          dispatch(ItemsAreLoading(false));
         } else {
           dispatch(
             Error404(
@@ -143,6 +146,9 @@ export function FindPersonAsync(id) {
             )
           );
         }
+      })
+      .catch(err => {
+        console.error(err);
       });
   };
 }
@@ -161,19 +167,24 @@ function AllCities(cities, status) {
 
 export function AllCitiesAsync() {
   return dispatch => {
-    axios.get("http://localhost:50691/api/cityApi/").then(response => {
-      console.log("[Response]", response);
-      if (response.data !== null) {
-        dispatch(AllCities(response.data, response.status));
-      } else {
-        dispatch(
-          Error404(
-            "Couldn't find any cities. Please try again.",
-            response.status
-          )
-        );
-      }
-    });
+    axios
+      .get("http://localhost:50691/api/cityApi/")
+      .then(response => {
+        console.log("[Response]", response);
+        if (response.data !== null) {
+          dispatch(AllCities(response.data, response.status));
+        } else {
+          dispatch(
+            Error404(
+              "Couldn't find any cities. Please try again.",
+              response.status
+            )
+          );
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 }
 
@@ -206,8 +217,24 @@ function DeletePerson(id) {
 }
 
 export function DeletePersonAsync(id) {
-  return function(dispatch) {
-    dispatch(DeletePerson(id));
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    axios
+      .delete(apiUrl, id)
+      .then(response => {
+        if (response.status === 200 && response.data === true) {
+          dispatch(DeletePerson(id));
+          dispatch(ItemsAreLoading(false));
+          this.props.history.push("/identity/person");
+        } else {
+          dispatch(
+            Error404("Could not remove the requested person. Please try again.")
+          );
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 }
 

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 import Title from "../../UI/Title";
+import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
 
 class Details extends Component {
   state = {};
@@ -62,6 +63,7 @@ class Details extends Component {
                   Edit
                 </Link>
                 <Link
+                  onClick={() => this.props.onDeleteLoad(person.person.id)}
                   className="btn btn-danger btn-sm ml-1"
                   to={"/identity/person/delete/" + person.person.id}>
                   Delete
@@ -81,4 +83,13 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Details);
+const mapDispatchToProps = dispatch => {
+  return {
+    onDeleteLoad: id => dispatch(actionTypes.FindPersonAsync(id))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Details);

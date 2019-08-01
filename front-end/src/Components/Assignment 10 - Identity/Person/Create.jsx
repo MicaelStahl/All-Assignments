@@ -48,14 +48,20 @@ class Create extends Component {
       PhoneNumber: event.target.phoneNumber.value
     };
     console.log("[Form Submitted]", person);
-    // "xxxxxxxx-xxxx-xxxx-xxx-xxxxxxxxxxx"
     const cityId =
-      event.target.city.value == "None" ? null : event.target.city.value;
+      event.target.city.value === "None" ? null : event.target.city.value;
 
     this.props.onCreated(person, cityId);
 
     if (this.props.status === 200) {
       this.setState({ userMessage: "Person was successfully created!" });
+
+      event.target.firstName.value = "";
+      event.target.lastName.value = "";
+      event.target.age.value = "";
+      event.target.email.value = "";
+      event.target.gender.value = "";
+      event.target.phoneNumber.value = "";
     } else {
       this.props.history.push("/Error404");
     }
