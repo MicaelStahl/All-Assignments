@@ -22,23 +22,31 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Create
-        public async Task<Person> Create(Person person, Guid cityId)
+        public async Task<Person> Create(Person person, Guid? cityId)
         {
-            if (string.IsNullOrWhiteSpace(person.FirstName) || string.IsNullOrWhiteSpace(person.LastName) || string.IsNullOrWhiteSpace(person.Email) || string.IsNullOrWhiteSpace(person.Gender) || string.IsNullOrWhiteSpace(person.PhoneNumber))
+            if (string.IsNullOrWhiteSpace(person.FirstName) || 
+                string.IsNullOrWhiteSpace(person.LastName) || 
+                string.IsNullOrWhiteSpace(person.Email) || 
+                string.IsNullOrWhiteSpace(person.Gender) || 
+                string.IsNullOrWhiteSpace(person.PhoneNumber))
             {
                 return null;
             }
 
-            if (cityId == null || string.IsNullOrWhiteSpace(cityId.ToString()))
-            {
-                return null;
-            }
+            City city = new City();
 
-            var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == cityId);
+            city = null;
 
-            if (city == null)
+            // Checks if the user picked a city when creating a person. If the user did, then it'll try to
+            // Find the chosen city, if the city doesn't exist however, it returns a null.
+            if (cityId != null)
             {
-                return null;
+                city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == cityId);
+
+                if (city == null)
+                {
+                    return null;
+                }
             }
 
             var newPerson = new Person()
@@ -77,9 +85,10 @@ namespace All_Assignments.Repositories.Assignment_10
                 .Include(x => x.City)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
-            PersonWithCityVM personVM = new PersonWithCityVM();
-
-            personVM.CityName = person.City.Name;
+            PersonWithCityVM personVM = new PersonWithCityVM
+            {
+                CityName = person.City?.Name
+            };
             person.City = null;
             personVM.Person = person;
 
@@ -107,7 +116,7 @@ namespace All_Assignments.Repositories.Assignment_10
             foreach (var item in people)
             {
                 PersonWithCityVM personVM = new PersonWithCityVM();
-                personVM.CityName = item.City.Name ?? "Homeless";
+                personVM.CityName = item.City?.Name ?? "Homeless";
                 item.City = null;
                 personVM.Person = item;
                 peopleVM.Add(personVM);

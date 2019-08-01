@@ -17,6 +17,6 @@ namespace All_Assignments.ViewModels
     {
         public Person Person { get; set; }
 
-        public Guid CityId { get; set; }
+        public Guid? CityId { get; set; }
     }
 }

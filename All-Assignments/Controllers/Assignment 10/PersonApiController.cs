@@ -61,21 +61,16 @@ namespace All_Assignments.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (person.CityId == null || string.IsNullOrWhiteSpace(person.CityId.ToString()))
-            {
-                return BadRequest();
-            }
-
-            //Guid guid = new Guid(cityId);
-
             var newPerson = await _service.Create(person.Person, person.CityId);
 
             if (newPerson == null)
             {
-                return Content("Something went wrong during the creation. Please try again.");
+                return NoContent();
             }
 
-            return Ok(newPerson);
+            //return Ok(newPerson);
+
+            return RedirectToAction(nameof(Get), "PersonApi", new { id = newPerson.Id });
         }
 
         [HttpPut]

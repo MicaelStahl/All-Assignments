@@ -9,15 +9,26 @@ export const EDIT_PERSON = "EDIT_PERSON";
 export const DELETE_PERSON = "DELETE_PERSON";
 export const ERROR404MESSAGE = "ERROR404MESSAGE";
 export const GET_ALL_CITIES = "GET_ALL_CITIES";
+export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
 
 const apiUrl = "http://localhost:50691/api/PersonApi/";
 
+//#region ItemsAreLoading
+export function ItemsAreLoading(bool) {
+  return {
+    type: ITEMS_ARE_LOADING,
+    isLoading: bool
+  };
+}
+//#endregion
+
 //#region Error404
 
-function Error404(err = "404 Error") {
+function Error404(err = "404 Error", status) {
   return {
     type: ERROR404MESSAGE,
-    error: err
+    error: err,
+    status
   };
 }
 
@@ -25,7 +36,7 @@ function Error404(err = "404 Error") {
 
 //#region AllPeople
 
-function AllPeople(allPeople) {
+function AllPeople(allPeople, status) {
   return {
     type: ALL_PEOPLE,
     allPeople
@@ -34,14 +45,26 @@ function AllPeople(allPeople) {
 
 export function AllPeopleAsync() {
   return dispatch => {
-    axios.get(apiUrl, { "Content-Type": "application/json" }).then(response => {
-      console.log("[Response]", response);
-      if (response.data !== null) {
-        dispatch(AllPeople(response.data));
-      } else {
-        dispatch(Error404("Could not find any people. Please try again."));
-      }
-    });
+    dispatch(ItemsAreLoading(true));
+    axios
+      .get(apiUrl, { "Content-Type": "application/json" })
+      .then(response => {
+        console.log("[Response]", response);
+        if (response.status === 200) {
+          dispatch(AllPeople(response.data, response.status));
+          dispatch(ItemsAreLoading(false));
+        } else {
+          dispatch(
+            Error404(
+              "Could not find any people. Please try again.",
+              response.status
+            )
+          );
+        }
+      })
+      .catch(err => {
+        dispatch(Error404(err, 400));
+      });
   };
 }
 
@@ -49,24 +72,41 @@ export function AllPeopleAsync() {
 
 //#region Create
 
-function CreatePerson(person) {
+function CreatePerson(person, status) {
   return {
     type: CREATE_PERSON,
-    person: person
+    person,
+    status
   };
 }
 
 export function CreatePersonAsync(person, cityId) {
   return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    console.log(cityId);
     axios
       .post(apiUrl, { person: person, cityId: cityId })
       .then(response => {
         console.log("[Response]", response);
-
-        if (response.data !== null) {
-          dispatch(CreatePerson(response.data));
+        dispatch(ItemsAreLoading(false));
+        if (response.status === 200) {
+          dispatch(CreatePerson(response.data, response.status));
+        } else if (response.status === 204) {
+          dispatch(
+            Error404(
+              "The requested person could not be created. Please try again.",
+              response.status
+            )
+          );
         } else {
-          dispatch(Error404("Could not create person. Please try again"));
+          dispatch(
+            Error404(
+              response.statusText !== "No Content"
+                ? "Something went wrong. Please try again"
+                : response.statusText,
+              response.status
+            )
+          );
         }
       })
       .catch(err => {
@@ -79,10 +119,11 @@ export function CreatePersonAsync(person, cityId) {
 
 //#region FindPerson
 
-function FindPerson(person) {
+function FindPerson(person, status) {
   return {
     type: FIND_PERSON,
-    person: person
+    person,
+    status
   };
 }
 
@@ -92,11 +133,14 @@ export function FindPersonAsync(id) {
       .get(apiUrl + id, { "Content-Type": "application/json" })
       .then(response => {
         console.log("[Response]", response);
-        if (response.data !== null) {
-          dispatch(FindPerson(response.data));
+        if (response.status === 200) {
+          dispatch(FindPerson(response.data, response.status));
         } else {
           dispatch(
-            Error404("Could not find the requested person. Please try again.")
+            Error404(
+              "Could not find the requested person. Please try again.",
+              response.status
+            )
           );
         }
       });
@@ -107,10 +151,11 @@ export function FindPersonAsync(id) {
 
 //#region AllCities
 
-function AllCities(cities) {
+function AllCities(cities, status) {
   return {
     type: GET_ALL_CITIES,
-    cities
+    cities,
+    status
   };
 }
 
@@ -119,9 +164,14 @@ export function AllCitiesAsync() {
     axios.get("http://localhost:50691/api/cityApi/").then(response => {
       console.log("[Response]", response);
       if (response.data !== null) {
-        dispatch(AllCities(response.data));
+        dispatch(AllCities(response.data, response.status));
       } else {
-        dispatch(Error404("Couldn't find any cities. Please try again."));
+        dispatch(
+          Error404(
+            "Couldn't find any cities. Please try again.",
+            response.status
+          )
+        );
       }
     });
   };

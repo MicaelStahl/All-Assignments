@@ -5,7 +5,9 @@ const initialState = {
   onePerson: [],
   allPeople: [],
   allCities: [],
-  personError: ""
+  personError: "",
+  status: "",
+  isLoading: Boolean
 };
 
 let person = [];
@@ -26,13 +28,15 @@ const reducer = (state = initialState, action) => {
         return {
           ...state,
           allPeople: action.allPeople,
-          error: ""
+          error: "",
+          status: action.status
         };
       } else {
         return {
           ...state,
           error:
-            "Something went wrong when fetching the people. Please try again."
+            "Something went wrong when fetching the people. Please try again.",
+          status: action.status
         };
       }
 
@@ -71,12 +75,14 @@ const reducer = (state = initialState, action) => {
       ) {
         return {
           ...state,
-          personError: "Something went wrong, please try again."
+          personError: "Something went wrong, please try again.",
+          status: action.status
         };
       } else {
         return {
           ...state,
-          onePerson: action.person
+          onePerson: action.person,
+          status: action.status
         };
       }
 
@@ -86,7 +92,8 @@ const reducer = (state = initialState, action) => {
       if (action.person === null || action.person === undefined) {
         return {
           ...state,
-          personError: "Please fill all required fields."
+          personError: "Please fill all required fields.",
+          status: action.status
         };
       }
       person = {
@@ -104,7 +111,8 @@ const reducer = (state = initialState, action) => {
       if (person === undefined || person === null) {
         return {
           ...state,
-          personError: "Something went wrong, please try again."
+          personError: "Something went wrong, please try again.",
+          status: action.status
         };
       }
       axios
@@ -113,7 +121,8 @@ const reducer = (state = initialState, action) => {
           if (response.data === null) {
             return {
               ...state,
-              personError: "No data was retrieved. Please try again."
+              personError: "No data was retrieved. Please try again.",
+              status: action.status
             };
           }
           people = state.allPeople;
@@ -122,7 +131,8 @@ const reducer = (state = initialState, action) => {
           if (index === -1) {
             return {
               ...state,
-              personError: "Person could not be found. Please try again."
+              personError: "Person could not be found. Please try again.",
+              status: action.status
             };
           }
 
@@ -132,14 +142,16 @@ const reducer = (state = initialState, action) => {
             ...state,
             onePerson: response.data,
             allPeople: people,
-            personError: ""
+            personError: "",
+            status: action.status
           };
         })
         .catch(err => {
           console.error(err);
           return {
             ...state,
-            personError: err
+            personError: err,
+            status: action.status
           };
         });
       break;
@@ -150,7 +162,8 @@ const reducer = (state = initialState, action) => {
       if (action.id === undefined || action.id === null) {
         return {
           ...state,
-          personError: "Something went wrong. Please try again"
+          personError: "Something went wrong. Please try again",
+          status: action.status
         };
       }
       people = state.allPeople;
@@ -161,7 +174,8 @@ const reducer = (state = initialState, action) => {
         return {
           ...state,
           personError:
-            "The requested person could not be found. Please try again."
+            "The requested person could not be found. Please try again.",
+          status: action.status
         };
       }
 
@@ -171,7 +185,8 @@ const reducer = (state = initialState, action) => {
           if (response.data === false) {
             return {
               ...state,
-              personError: "The person could not be removed, please try again."
+              personError: "The person could not be removed, please try again.",
+              status: action.status
             };
           }
           people = people.filter(x => x.id !== action.id);
@@ -179,14 +194,16 @@ const reducer = (state = initialState, action) => {
           return {
             ...state,
             allPeople: people,
-            personError: ""
+            personError: "",
+            status: action.status
           };
         })
         .catch(err => {
           console.error(err);
           return {
             ...state,
-            personError: err
+            personError: err,
+            status: action.status
           };
         });
       break;
@@ -196,7 +213,8 @@ const reducer = (state = initialState, action) => {
     case actionTypes.ERROR404MESSAGE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
+        status: action.status
       };
 
     // -------------------------- GET_ALL_CITIES -------------------------- \\
@@ -209,15 +227,23 @@ const reducer = (state = initialState, action) => {
       ) {
         return {
           ...state,
-          allCities: action.cities
+          allCities: action.cities,
+          status: action.status
         };
       } else {
         return {
           ...state,
           personError:
-            "Could not find any cities. Please try reloading the webpage"
+            "Could not find any cities. Please try reloading the webpage",
+          status: action.status
         };
       }
+
+    case actionTypes.ITEMS_ARE_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading
+      };
 
     default:
       break;
