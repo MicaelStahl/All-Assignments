@@ -17,7 +17,7 @@ namespace All_Assignments.Interfaces.Assignment_10
         Task<List<PersonWithCityVM>> AllPeople();
 
         // Update
-        Task<Person> Edit(Person person);
+        Task<Person> Edit(Person person, Guid? cityId);
 
         // Delete
         Task<bool> Delete(Guid id);

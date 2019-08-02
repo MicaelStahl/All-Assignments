@@ -13,38 +13,37 @@ class AllPeople extends Component {
   }
 
   render() {
-    console.log(this.props.isLoading);
     if (!this.props.isLoading) {
-      const rows = this.props.people.map((person, index) => (
-        <tr key={index} className="d-table-row">
-          <td className="d-table-cell">{person.person.firstName}</td>
-          <td className="d-table-cell">{person.person.lastName}</td>
-          <td className="d-table-cell">{person.person.age}</td>
-          <td className="d-table-cell">{person.person.email}</td>
-          <td className="d-table-cell">{person.person.gender}</td>
-          <td className="d-table-cell">{person.person.phoneNumber}</td>
-          <td className="d-table-cell">{person.cityName}</td>
-          <td className="d-table-cell">
-            <Link
-              className="btn btn-warning btn-sm"
-              to={this.props.match.url + "/edit/" + person.person.id}>
-              Edit
-            </Link>
-            <Link
-              onClick={() => this.props.onDetailsLoad(person.person.id)}
-              className="btn btn-primary btn-sm ml-1"
-              to={this.props.match.url + "/details/" + person.person.id}>
-              Details
-            </Link>
-            <Link
-              onClick={() => this.props.onDeleteLoad(person.person.id)}
-              className="btn btn-danger btn-sm ml-1"
-              to={this.props.match.url + "/delete/" + person.person.id}>
-              Delete
-            </Link>
-          </td>
-        </tr>
-      ));
+      // const rows = this.props.people.map((person, index) => (
+      //   <tr key={index} className="d-table-row">
+      //     <td className="d-table-cell">{person.person.firstName}</td>
+      //     <td className="d-table-cell">{person.person.lastName}</td>
+      //     <td className="d-table-cell">{person.person.age}</td>
+      //     <td className="d-table-cell">{person.person.email}</td>
+      //     <td className="d-table-cell">{person.person.gender}</td>
+      //     <td className="d-table-cell">{person.person.phoneNumber}</td>
+      //     <td className="d-table-cell">{person.cityName}</td>
+      //     <td className="d-table-cell">
+      //       <Link
+      //         className="btn btn-warning btn-sm"
+      //         to={this.props.match.url + "/edit/" + person.person.id}>
+      //         Edit
+      //       </Link>
+      //       <Link
+      //         onClick={() => this.props.onDetailsLoad(person.person.id)}
+      //         className="btn btn-primary btn-sm ml-1"
+      //         to={this.props.match.url + "/details/" + person.person.id}>
+      //         Details
+      //       </Link>
+      //       <Link
+      //         onClick={() => this.props.onDeleteLoad(person.person.id)}
+      //         className="btn btn-danger btn-sm ml-1"
+      //         to={this.props.match.url + "/delete/" + person.person.id}>
+      //         Delete
+      //       </Link>
+      //     </td>
+      //   </tr>
+      // ));
       return (
         <React.Fragment>
           <Title Title="List of all people" />
@@ -69,7 +68,41 @@ class AllPeople extends Component {
                 <th className="d-table-cell">Options</th>
               </tr>
             </thead>
-            <tbody>{rows}</tbody>
+            <tbody>
+              {this.props.people.map((person, index) => (
+                <tr key={index} className="d-table-row">
+                  <td className="d-table-cell">{person.person.firstName}</td>
+                  <td className="d-table-cell">{person.person.lastName}</td>
+                  <td className="d-table-cell">{person.person.age}</td>
+                  <td className="d-table-cell">{person.person.email}</td>
+                  <td className="d-table-cell">{person.person.gender}</td>
+                  <td className="d-table-cell">{person.person.phoneNumber}</td>
+                  <td className="d-table-cell">{person.cityName}</td>
+                  <td className="d-table-cell">
+                    <Link
+                      onClick={() => this.props.onEditLoad(person.person.id)}
+                      className="btn btn-warning btn-sm"
+                      to={this.props.match.url + "/edit/" + person.person.id}>
+                      Edit
+                    </Link>
+                    <Link
+                      onClick={() => this.props.onDetailsLoad(person.person.id)}
+                      className="btn btn-primary btn-sm ml-1"
+                      to={
+                        this.props.match.url + "/details/" + person.person.id
+                      }>
+                      Details
+                    </Link>
+                    <Link
+                      onClick={() => this.props.onDeleteLoad(person.person.id)}
+                      className="btn btn-danger btn-sm ml-1"
+                      to={this.props.match.url + "/delete/" + person.person.id}>
+                      Delete
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </React.Fragment>
       );
@@ -93,6 +126,7 @@ const mapDispatchToProps = dispatch => {
     onSiteLoad: () => dispatch(actionTypes.AllPeopleAsync()),
     onCreateLoad: () => dispatch(actionTypes.AllCitiesAsync()),
     onDetailsLoad: id => dispatch(actionTypes.FindPersonAsync(id)),
+    onEditLoad: id => dispatch(actionTypes.FindPersonToEditAsync(id)),
     onDeleteLoad: id => dispatch(actionTypes.FindPersonAsync(id))
   };
 };

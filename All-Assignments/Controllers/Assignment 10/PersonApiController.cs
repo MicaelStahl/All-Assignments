@@ -54,7 +54,7 @@ namespace All_Assignments.Controllers
 
         [HttpPost]
         //[AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Create(CreatePersonVM person)
+        public async Task<IActionResult> Create(PersonWithCityIdVM person)
         {
             if (!ModelState.IsValid)
             {
@@ -74,34 +74,34 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPut]
-        [AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Edit(Person person)
+        //[AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Edit(PersonWithCityIdVM person)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var newPerson = await _service.Edit(person);
+            var newPerson = await _service.Edit(person.Person, person.CityId);
 
             if (newPerson == null)
             {
                 return Content("Something went wrong while updating the person. Please try again");
             }
 
-            return Ok( newPerson);
+            return Ok(newPerson);
         }
 
-        [HttpDelete]
-        [AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete("{id}")]
+        //[AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
                 return BadRequest();
             }
 
-            var removed = await _service.Delete(id);
+            var removed = await _service.Delete((Guid)id);
 
             if (removed)
             {

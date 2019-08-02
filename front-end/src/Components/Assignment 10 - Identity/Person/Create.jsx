@@ -7,7 +7,6 @@ import * as actionTypes from "../../Actions/Assignment 10/actions/personActions"
 class Create extends Component {
   state = {
     cityId: "",
-    userMessage: "",
     error: ""
   };
 
@@ -31,7 +30,7 @@ class Create extends Component {
     if (
       event.target.gender.value !== "Male" &&
       event.target.gender.value !== "Female" &&
-      event.target.gender.value !== "Apache-helicopter"
+      event.target.gender.value !== "Apache"
     ) {
       this.setState({
         error: "You didn't pick a valid gender. Please try again."
@@ -60,8 +59,8 @@ class Create extends Component {
       event.target.lastName.value = "";
       event.target.age.value = "";
       event.target.email.value = "";
-      event.target.gender.value = "";
       event.target.phoneNumber.value = "";
+      setTimeout(this.props.history.push("/identity/person"), 200);
     } else {
       this.props.history.push("/Error404");
     }
@@ -81,12 +80,6 @@ class Create extends Component {
           onClick={() => this.props.history.push("/identity/person")}>
           Return
         </button>
-
-        {this.state.userMessage === "" ? null : (
-          <div className="font-weight-bold text-success text-center">
-            {this.state.userMessage}
-          </div>
-        )}
 
         {this.state.error === "" ? null : (
           <div className="font-weight-bold text-danger text-center">
@@ -150,7 +143,7 @@ class Create extends Component {
               <select name="gender" className="form-inline">
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Apache-helicopter">Apache-helicopter</option>
+                <option value="Apache">Apache</option>
               </select>
             </div>
 

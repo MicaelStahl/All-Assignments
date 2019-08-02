@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace All_Assignments.Repositories.Assignment_10
@@ -24,10 +25,10 @@ namespace All_Assignments.Repositories.Assignment_10
         #region Create
         public async Task<Person> Create(Person person, Guid? cityId)
         {
-            if (string.IsNullOrWhiteSpace(person.FirstName) || 
-                string.IsNullOrWhiteSpace(person.LastName) || 
-                string.IsNullOrWhiteSpace(person.Email) || 
-                string.IsNullOrWhiteSpace(person.Gender) || 
+            if (string.IsNullOrWhiteSpace(person.FirstName) ||
+                string.IsNullOrWhiteSpace(person.LastName) ||
+                string.IsNullOrWhiteSpace(person.Email) ||
+                string.IsNullOrWhiteSpace(person.Gender) ||
                 string.IsNullOrWhiteSpace(person.PhoneNumber))
             {
                 return null;
@@ -87,7 +88,8 @@ namespace All_Assignments.Repositories.Assignment_10
 
             PersonWithCityVM personVM = new PersonWithCityVM
             {
-                CityName = person.City?.Name
+                CityName = person.City?.Name,
+                cityId = person.City?.Id
             };
             person.City = null;
             personVM.Person = person;
@@ -115,8 +117,11 @@ namespace All_Assignments.Repositories.Assignment_10
 
             foreach (var item in people)
             {
-                PersonWithCityVM personVM = new PersonWithCityVM();
-                personVM.CityName = item.City?.Name ?? "Homeless";
+                PersonWithCityVM personVM = new PersonWithCityVM
+                {
+                    CityName = item.City?.Name ?? "Homeless",
+                    cityId = item.City?.Id ?? null
+                };
                 item.City = null;
                 personVM.Person = item;
                 peopleVM.Add(personVM);
@@ -127,7 +132,7 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Update
-        public async Task<Person> Edit(Person person)
+        public async Task<Person> Edit(Person person, Guid? cityId)
         {
             if (string.IsNullOrWhiteSpace(person.FirstName) || string.IsNullOrWhiteSpace(person.LastName) || string.IsNullOrWhiteSpace(person.Email) || string.IsNullOrWhiteSpace(person.Gender) || string.IsNullOrWhiteSpace(person.PhoneNumber))
             {
@@ -135,6 +140,22 @@ namespace All_Assignments.Repositories.Assignment_10
             }
 
             var original = await _db.People.SingleOrDefaultAsync(x => x.Id == person.Id);
+
+            City city = new City();
+
+            city = null;
+
+            // Checks if the user picked a city when creating a person. If the user did, then it'll try to
+            // Find the chosen city, if the city doesn't exist however, it returns a null.
+            if (cityId != null)
+            {
+                city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == cityId);
+
+                if (city == null)
+                {
+                    return null;
+                }
+            }
 
             if (original == null)
             {
@@ -147,9 +168,9 @@ namespace All_Assignments.Repositories.Assignment_10
             original.Email = person.Email;
             original.PhoneNumber = person.PhoneNumber;
             original.Gender = person.Gender;
-            original.City = person.City;
+            original.City = city;
 
-            await _db.SaveChangesAsync(true);
+            await _db.SaveChangesAsync();
 
             return original;
         }

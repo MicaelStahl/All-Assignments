@@ -5,6 +5,7 @@ import axios from "axios";
 export const ALL_PEOPLE = "ALL_PEOPLE";
 export const CREATE_PERSON = "CREATE_PERSON";
 export const FIND_PERSON = "FIND_PERSON";
+export const FIND_PERSON_TO_EDIT = "FIND_PERSON_TO_EDIT";
 export const EDIT_PERSON = "EDIT_PERSON";
 export const DELETE_PERSON = "DELETE_PERSON";
 export const ERROR404MESSAGE = "ERROR404MESSAGE";
@@ -39,32 +40,35 @@ function Error404(err = "404 Error", status) {
 function AllPeople(allPeople, status) {
   return {
     type: ALL_PEOPLE,
-    allPeople
+    allPeople,
+    status
   };
 }
 
 export function AllPeopleAsync() {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    axios
-      .get(apiUrl, { "Content-Type": "application/json" })
-      .then(response => {
-        console.log("[Response]", response);
-        if (response.status === 200) {
-          dispatch(AllPeople(response.data, response.status));
-          dispatch(ItemsAreLoading(false));
-        } else {
-          dispatch(
-            Error404(
-              "Could not find any people. Please try again.",
-              response.status
-            )
-          );
-        }
-      })
-      .catch(err => {
-        dispatch(Error404(err, 400));
-      });
+    setTimeout(() => {
+      axios
+        .get(apiUrl, { "Content-Type": "application/json" })
+        .then(response => {
+          console.log("[Response]", response);
+          if (response.status === 200) {
+            dispatch(AllPeople(response.data, response.status));
+          } else {
+            dispatch(
+              Error404(
+                "Could not find any people. Please try again.",
+                response.status
+              )
+            );
+          }
+        })
+        .catch(err => {
+          dispatch(Error404(err, 400));
+        });
+      dispatch(ItemsAreLoading(false));
+    }, 200);
   };
 }
 
@@ -88,7 +92,6 @@ export function CreatePersonAsync(person, cityId) {
       .post(apiUrl, { person: person, cityId: cityId })
       .then(response => {
         console.log("[Response]", response);
-        dispatch(ItemsAreLoading(false));
         if (response.status === 200) {
           dispatch(CreatePerson(response.data, response.status));
         } else if (response.status === 204) {
@@ -108,6 +111,7 @@ export function CreatePersonAsync(person, cityId) {
             )
           );
         }
+        dispatch(ItemsAreLoading(false));
       })
       .catch(err => {
         console.error(err);
@@ -153,6 +157,13 @@ export function FindPersonAsync(id) {
   };
 }
 
+export function FindPersonToEditAsync(id) {
+  return dispatch => {
+    dispatch(AllCitiesAsync());
+    dispatch(FindPersonAsync(id));
+  };
+}
+
 //#endregion
 
 //#region AllCities
@@ -167,6 +178,7 @@ function AllCities(cities, status) {
 
 export function AllCitiesAsync() {
   return dispatch => {
+    // dispatch(ItemsAreLoading(true));
     axios
       .get("http://localhost:50691/api/cityApi/")
       .then(response => {
@@ -181,6 +193,7 @@ export function AllCitiesAsync() {
             )
           );
         }
+        // dispatch(ItemsAreLoading(false));
       })
       .catch(err => {
         console.error(err);
@@ -199,9 +212,33 @@ function EditPerson(person) {
   };
 }
 
-export function EditPersonAsync(person) {
-  return function(dispatch) {
-    dispatch(EditPerson(person));
+export function EditPersonAsync(person, cityId) {
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    axios
+      .put(apiUrl, { person: person, cityId: cityId })
+      .then(response => {
+        console.log("[Response]", response);
+        if (response.status === 200) {
+          dispatch(EditPerson(response.data));
+        } else if (response.status === 204) {
+          dispatch(
+            Error404(
+              "Something went wrong when updating the person. Please try again.",
+              response.status
+            )
+          );
+        } else {
+          dispatch(
+            Error404("Something went wrong, Please try again.", response.status)
+          );
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(Error404(err));
+      });
+    dispatch(ItemsAreLoading(false));
   };
 }
 
@@ -220,12 +257,12 @@ export function DeletePersonAsync(id) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
     axios
-      .delete(apiUrl, id)
+      .delete(apiUrl + id)
       .then(response => {
-        if (response.status === 200 && response.data === true) {
+        console.log("[Response]", response);
+        if (response.status === 200) {
           dispatch(DeletePerson(id));
           dispatch(ItemsAreLoading(false));
-          this.props.history.push("/identity/person");
         } else {
           dispatch(
             Error404("Could not remove the requested person. Please try again.")

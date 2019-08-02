@@ -1,5 +1,4 @@
 import * as actionTypes from "../actions/personActions";
-import axios from "axios";
 
 const initialState = {
   onePerson: [],
@@ -10,35 +9,20 @@ const initialState = {
   isLoading: Boolean
 };
 
-let person = [];
 let people = [];
 let index = 0;
-const apiUrl = "http://localhost:50691/api/PersonApi/";
 
 const reducer = (state = initialState, action) => {
   // ToDo
   console.log(action);
   switch (action.type) {
     case actionTypes.ALL_PEOPLE:
-      if (
-        action.allPeople !== null ||
-        action.allPeople !== undefined ||
-        action.allPeople.length !== 0
-      ) {
-        return {
-          ...state,
-          allPeople: action.allPeople,
-          error: "",
-          status: action.status
-        };
-      } else {
-        return {
-          ...state,
-          error:
-            "Something went wrong when fetching the people. Please try again.",
-          status: action.status
-        };
-      }
+      return {
+        ...state,
+        allPeople: action.allPeople,
+        error: "",
+        status: action.status
+      };
 
     // -------------------------- CREATE -------------------------- \\
 
@@ -96,65 +80,27 @@ const reducer = (state = initialState, action) => {
           status: action.status
         };
       }
-      person = {
-        Id: action.person.id.value,
-        FirstName: action.person.firstName.value,
-        LastName: action.person.lastName.value,
-        Age: action.person.age.value,
-        Email: action.person.email.value,
-        Gender: action.person.gender.value,
-        PhoneNumber: action.person.phoneNumber.value,
-        City:
-          action.person.city === "Select one" ? null : action.person.city.value
-      };
 
-      if (person === undefined || person === null) {
+      people = state.allPeople;
+      index = people.findIndex(x => x.Id === action.person.id);
+
+      if (index === -1) {
         return {
           ...state,
-          personError: "Something went wrong, please try again.",
+          personError: "Person could not be found. Please try again.",
           status: action.status
         };
       }
-      axios
-        .put(apiUrl + person.Id, person)
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              personError: "No data was retrieved. Please try again.",
-              status: action.status
-            };
-          }
-          people = state.allPeople;
-          index = people.findIndex(x => x.Id === response.data.Id);
 
-          if (index === -1) {
-            return {
-              ...state,
-              personError: "Person could not be found. Please try again.",
-              status: action.status
-            };
-          }
+      people = people.splice(index, 1, action.person);
 
-          people = people.splice(index, 1, response.data);
-
-          return {
-            ...state,
-            onePerson: response.data,
-            allPeople: people,
-            personError: "",
-            status: action.status
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            personError: err,
-            status: action.status
-          };
-        });
-      break;
+      return {
+        ...state,
+        onePerson: action.person,
+        allPeople: people,
+        personError: "",
+        status: action.status
+      };
 
     // -------------------------- DELETE -------------------------- \\
 

@@ -5,6 +5,7 @@ import AllPeople from "./AllPeople";
 import Create from "./Create";
 import Details from "./Details";
 import Delete from "./Delete";
+import Edit from "./Edit";
 
 const Person = props => {
   return (
@@ -15,16 +16,21 @@ const Person = props => {
           path={props.match.url + "/create-person"}
           component={Create}
         />
+
         <Route
           exact
           path={props.match.url + "/details/:id"}
           component={Details}
         />
+
+        <Route exact path={props.match.url + "/edit/:id"} component={Edit} />
+
         <Route
           exact
           path={props.match.url + "/delete/:id"}
           component={Delete}
         />
+
         <Route exact path={props.match.url} component={AllPeople} />
       </Switch>
     </Router>

@@ -11,9 +11,11 @@ namespace All_Assignments.ViewModels
         public Person Person { get; set; }
 
         public string CityName { get; set; }
+
+        public Guid? cityId { get; set; }
     }
 
-    public class CreatePersonVM
+    public class PersonWithCityIdVM
     {
         public Person Person { get; set; }
 

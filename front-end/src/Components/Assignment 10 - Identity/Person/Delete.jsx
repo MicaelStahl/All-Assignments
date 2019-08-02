@@ -1,10 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
 import Title from "../../UI/Title";
 
 const Delete = props => {
+  const onDeleteSubmit = id => {
+    props.onDeleteAccept(id);
+
+    props.history.push("/identity/person");
+  };
   if (!props.isLoading) {
     return (
       <React.Fragment>
@@ -30,11 +36,12 @@ const Delete = props => {
             {props.person.person.firstName + " " + props.person.person.lastName}{" "}
             ?
           </p>
-          <button
-            onClick={() => props.onDeleteAccept(props.person.person.id)}
+          <Link
+            to="/identity/person"
+            onClick={() => onDeleteSubmit(props.person.person.id)}
             className="btn btn-danger btn-sm float-right">
             Delete
-          </button>
+          </Link>
         </div>
         <table className="table table-active table-striped table-hover rounded">
           <caption>
