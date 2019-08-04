@@ -73,7 +73,7 @@ namespace All_Assignments.Controllers
             return RedirectToAction(nameof(Get), "PersonApi", new { id = newPerson.Id });
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         //[AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Edit(PersonWithCityIdVM person)
         {
@@ -89,7 +89,15 @@ namespace All_Assignments.Controllers
                 return Content("Something went wrong while updating the person. Please try again");
             }
 
-            return Ok(newPerson);
+            PersonWithCityVM personVM = new PersonWithCityVM
+            {
+                CityName = newPerson.City?.Name ?? "Homeless",
+                cityId = newPerson.City?.Id ?? null
+            };
+            newPerson.City = null;
+            personVM.Person = newPerson;
+
+            return Ok(personVM);
         }
 
         [HttpDelete("{id}")]

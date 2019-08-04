@@ -212,11 +212,12 @@ function EditPerson(person) {
   };
 }
 
-export function EditPersonAsync(person, cityId) {
+export function EditPersonAsync(person) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
+    console.log("[EditPersonAsync]", person);
     axios
-      .put(apiUrl, { person: person, cityId: cityId })
+      .put(apiUrl + person.Person.Id, person)
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {

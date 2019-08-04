@@ -18,10 +18,8 @@ class Edit extends Component {
   };
 
   handleChange = event => {
-    const [name, value] = event.target;
-    console.log([name]);
-    console.log([value]);
-    this.setState({ [name]: [value] });
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
   };
 
   handleCityAndGenderChange = event => {
@@ -48,13 +46,32 @@ class Edit extends Component {
     }
 
     const person = {
-      FirstName: this.state.firstName,
-      LastName: this.state.lastName,
-      Age: this.state.age,
-      Email: this.state.email,
-      Gender: this.state.gender,
-      PhoneNumber: this.state.phoneNumber
+      Id: event.target.id.value,
+      FirstName: event.target.firstName.value,
+      LastName: event.target.lastName.value,
+      Age: event.target.age.value,
+      Email: event.target.email.value,
+      Gender: event.target.gender.value,
+      PhoneNumber: event.target.phoneNumber.value
     };
+
+    const personEdit = {
+      Person: person,
+      CityId: event.target.city.value
+    };
+
+    if (person === undefined || person === null) {
+      this.setState({
+        error:
+          "Something went wrong when submitting the data. Please try again."
+      });
+    } else {
+      this.props.onEditAccept(personEdit);
+
+      setTimeout(() => {
+        this.props.history.push("/identity/person/details/" + person.Id);
+      }, 100);
+    }
 
     // ToDo
   };
@@ -95,6 +112,11 @@ class Edit extends Component {
             <div className="float-left">
               <p>Required fields are marked with *</p>
               <div className="form-group col-4">
+                <input
+                  type="hidden"
+                  name="id"
+                  value={this.props.person.person.id}
+                />
                 <label className="col-form-label">Firstname*</label>
                 <input
                   className="form-inline"
@@ -245,8 +267,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onEditAccept: (person, cityId) =>
-      dispatch(actionTypes.EditPersonAsync(person, cityId))
+    onEditAccept: person => dispatch(actionTypes.EditPersonAsync(person))
   };
 };
 
