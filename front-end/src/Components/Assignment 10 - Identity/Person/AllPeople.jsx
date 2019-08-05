@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
 import Title from "../../UI/Title";
+import Loading from "../../UI/Loading";
 
 class AllPeople extends Component {
   state = {};
@@ -77,7 +78,7 @@ class AllPeople extends Component {
         </React.Fragment>
       );
     } else {
-      return <p>Loading...</p>;
+      return <Loading />;
     }
   }
 }

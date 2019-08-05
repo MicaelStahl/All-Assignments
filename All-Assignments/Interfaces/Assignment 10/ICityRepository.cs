@@ -1,4 +1,5 @@
 ﻿using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ namespace All_Assignments.Interfaces.Assignment_10
     public interface ICityRepository
     {
         // Create
-        Task<City> Create(City city);
+        Task<City> Create(City city, Guid? countryId);
 
         // Read
-        Task<City> FindCity(Guid id);
+        Task<CityWithCountryVM> FindCity(Guid id);
         Task<City> FindPeopleInCityAndCountry(Guid id);
-        Task<List<City>> AllCities();
+        Task<List<CityWithCountryVM>> AllCities();
 
         // Update
         Task<City> Edit(City city);

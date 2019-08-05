@@ -140,7 +140,6 @@ export function FindPersonAsync(id) {
         console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(FindPerson(response.data, response.status));
-
           dispatch(ItemsAreLoading(false));
         } else {
           dispatch(

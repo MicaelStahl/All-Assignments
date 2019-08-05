@@ -1,6 +1,7 @@
 ﻿using All_Assignments.Database;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,25 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Create
-        public async Task<City> Create(City city)
+        public async Task<City> Create(City city, Guid? countryId)
         {
             if (string.IsNullOrWhiteSpace(city.Name) || string.IsNullOrWhiteSpace(city.Population))
             {
                 return null;
+            }
+
+            Country country = new Country();
+
+            country = null;
+
+            if (countryId != null)
+            {
+                country = await _db.Countries.SingleOrDefaultAsync(x => x.Id == countryId);
+
+                if (country == null)
+                {
+                    return null;
+                }
             }
 
             var newCity = new City()
@@ -33,7 +48,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 Name = city.Name,
                 Population = city.Population,
                 People = city.People,
-                Country = city.Country
+                Country = country
             };
 
             if (newCity == null)
@@ -50,22 +65,38 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Read
-        public async Task<City> FindCity(Guid id)
+        public async Task<CityWithCountryVM> FindCity(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
                 return null;
             }
 
-            var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == id);
+            var city = await _db.Cities
+                .Include(x=>x.Country)
+                .Include(x=>x.People)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
 
             if (city == null)
             {
                 return null;
             }
-            return city;
+
+            CityWithCountryVM cityVM = new CityWithCountryVM
+            {
+                CountryId = city.Country?.Id ?? null,
+                CountryName = city.Country?.Name ?? null
+            };
+            city.Country = null;
+            cityVM.City = city;
+
+            return cityVM;
         }
 
+        /// <summary>
+        /// This one is not used as of right now. (2019-08-05)
+        /// </summary>
         public async Task<City> FindPeopleInCityAndCountry(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
@@ -83,20 +114,41 @@ namespace All_Assignments.Repositories.Assignment_10
             return city;
         }
 
-        public async Task<List<City>> AllCities()
+        public async Task<List<CityWithCountryVM>> AllCities()
         {
-            var cities = await _db.Cities.ToListAsync();
+            var cities = await _db.Cities
+                .Include(x=>x.People)
+                .Include(x=>x.Country)
+                .ToListAsync();
+
 
             if (cities == null || cities.Count == 0)
             {
                 return null;
             }
-            return cities;
+
+            List<CityWithCountryVM>citiesVM = new List<CityWithCountryVM>();
+
+            foreach (var item in cities)
+            {
+                CityWithCountryVM city = new CityWithCountryVM()
+                {
+                    CountryId = item.Country?.Id,
+                    CountryName = item.Country?.Name
+                };
+
+                item.Country = null;
+                city.City = item;
+
+                citiesVM.Add(city);
+            }
+
+            return citiesVM;
         }
         #endregion
 
         #region Update
-        public async Task<City> Edit(City city)
+        public async Task<City> Edit(City city, Guid? countryId)
         {
             if (string.IsNullOrWhiteSpace(city.Name) || string.IsNullOrWhiteSpace(city.Population))
             {
@@ -110,9 +162,21 @@ namespace All_Assignments.Repositories.Assignment_10
                 return null;
             }
 
+            Country country = new Country();
+
+            if (countryId != null)
+            {
+                country = await _db.Countries.SingleOrDefaultAsync(x => x.Id == countryId);
+
+                if (country == null)
+                {
+                    return null;
+                }
+            }
+
             original.Name = city.Name;
             original.Population = city.Population;
-            original.Country = city.Country;
+            original.Country = country;
             original.People = city.People;
 
             await _db.SaveChangesAsync(true);

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
+import Loading from "../../UI/Loading";
 
 class Edit extends Component {
   state = {
@@ -57,7 +58,8 @@ class Edit extends Component {
 
     const personEdit = {
       Person: person,
-      CityId: event.target.city.value
+      CityId:
+        event.target.city.value === "None" ? null : event.target.city.value
     };
 
     if (person === undefined || person === null) {
@@ -247,12 +249,7 @@ class Edit extends Component {
         </React.Fragment>
       );
     } else {
-      return (
-        <React.Fragment>
-          <Title Title="Loading..." />
-          <p>Loading...</p>
-        </React.Fragment>
-      );
+      return <Loading />;
     }
   }
 }

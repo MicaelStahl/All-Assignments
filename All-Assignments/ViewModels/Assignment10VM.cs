@@ -21,4 +21,20 @@ namespace All_Assignments.ViewModels
 
         public Guid? CityId { get; set; }
     }
+
+    public class CityWithCountryVM
+    {
+        public City City { get; set; }
+
+        public string CountryName { get; set; }
+
+        public Guid? CountryId { get; set; }
+    }
+
+    public class CityWithCountryIdVM
+    {
+        public City City { get; set; }
+
+        public Guid? CountryId { get; set; }
+    }
 }

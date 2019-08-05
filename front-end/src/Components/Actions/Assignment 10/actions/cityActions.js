@@ -1,3 +1,5 @@
+import Axios from "axios";
+
 // ----- City ----- \\
 
 export const ALL_CITIES = "ALL_CITIES";
@@ -6,18 +8,39 @@ export const FIND_CITY = "FIND_CITY";
 export const EDIT_CITY = "EDIT_CITY";
 export const ADD_PERSON_TO_CITY = "ADD_PERSON_TO_CITY";
 export const DELETE_CITY = "DELETE_CITY";
+export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
 
-function AllCities() {
+const apiUrl = "http://localhost:50691/api/cityApi/";
+
+function ItemsAreLoading(bool) {
   return {
-    type: ALL_CITIES
+    type: ITEMS_ARE_LOADING,
+    isLoading: bool
+  };
+}
+
+function AllCities(cities, status) {
+  return {
+    type: ALL_CITIES,
+    cities
   };
 }
 
 export function AllCitiesAsync() {
   return dispatch => {
     setTimeout(() => {
-      dispatch(AllCities());
-    }, 1000);
+      dispatch(ItemsAreLoading(true));
+      Axios.get(apiUrl, { "Content-Type": "application/json" })
+        .then(response => {
+          if (response.status === 200) {
+            dispatch(AllCities(response.data, response.status));
+            dispatch(ItemsAreLoading(false));
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }, 100);
   };
 }
 

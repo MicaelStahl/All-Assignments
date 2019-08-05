@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
 import Title from "../../UI/Title";
+import Loading from "../../UI/Loading";
 
 const Delete = props => {
   const onDeleteSubmit = id => {
@@ -75,7 +76,7 @@ const Delete = props => {
       </React.Fragment>
     );
   } else {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 };
 

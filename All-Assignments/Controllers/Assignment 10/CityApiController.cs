@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -54,14 +55,14 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(City city)
+        public async Task<IActionResult> Create(CityWithCountryIdVM city)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var newCity = await _service.Create(city);
+            var newCity = await _service.Create(city.City, city.CountryId);
 
             if (newCity == null)
             {
@@ -72,7 +73,7 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(City city)
+        public async Task<IActionResult> Edit(CityWithCountryIdVM city)
         {
             if (!ModelState.IsValid)
             {

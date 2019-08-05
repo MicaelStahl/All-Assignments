@@ -4,11 +4,15 @@ import React from "react";
 // In my project. This function makes the website look more "alive" however,
 // So it's more than worth implementing.
 const Title = props => {
-  const { Title } = props;
+  const { Title, isLoading = false } = props;
 
   return (
     <React.Fragment>
-      <h1>{Title}</h1>
+      <h1>
+        {Title}
+        {isLoading === true ? <i className="fa fa-cog fa-spin" /> : null}
+      </h1>
+
       <hr />
     </React.Fragment>
   );
