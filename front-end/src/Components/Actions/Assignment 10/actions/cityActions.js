@@ -9,8 +9,13 @@ export const EDIT_CITY = "EDIT_CITY";
 export const ADD_PERSON_TO_CITY = "ADD_PERSON_TO_CITY";
 export const DELETE_CITY = "DELETE_CITY";
 export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
+export const GET_COUNTRIES_FOR_CREATE_N_EDIT =
+  "GET_COUNTRIES_FOR_CREATE_N_EDIT";
 
 const apiUrl = "http://localhost:50691/api/cityApi/";
+
+const CancelToken = Axios.CancelToken;
+const source = CancelToken.source();
 
 function ItemsAreLoading(bool) {
   return {
@@ -29,9 +34,12 @@ function AllCities(cities, status) {
 
 export function AllCitiesAsync() {
   return dispatch => {
+    dispatch(ItemsAreLoading(true));
     setTimeout(() => {
-      dispatch(ItemsAreLoading(true));
-      Axios.get(apiUrl + "cities", { "Content-Type": "application/json" })
+      Axios.get(apiUrl + "cities", {
+        "Content-Type": "application/json",
+        cancelToken: source.token
+      })
         .then(response => {
           console.log("[Response]", response.data);
           if (response.status === 200) {
@@ -42,7 +50,34 @@ export function AllCitiesAsync() {
         .catch(err => {
           console.error(err);
         });
-    }, 100);
+    }, 200);
+  };
+}
+
+function GetCountries(countries) {
+  return {
+    type: GET_COUNTRIES_FOR_CREATE_N_EDIT,
+    countries
+  };
+}
+
+export function GetCountriesAsync() {
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    Axios.get("http://localhost:50691/api/countryApi/simple", {
+      "Content-Type": "application/json",
+      cancelToken: source.token
+    })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(GetCountries(response.data));
+          dispatch(ItemsAreLoading(false));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -55,12 +90,13 @@ function CreateCity(city) {
 
 export function CreateCityAsync(city) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
-    Axios.post(apiUrl + city.city.Id, city)
+    Axios.post(apiUrl, city, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(CreateCity(city));
-          dispatch(ItemsAreLoading(false));
+        } else {
+          console.error("Something went wrong");
+          // ToDo
         }
       })
       .catch(err => {
@@ -81,7 +117,10 @@ export function FindCityAsync(id) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
     setTimeout(() => {
-      Axios.get(apiUrl + id)
+      Axios.get(apiUrl + id, {
+        "Content-Type": "application/json",
+        cancelToken: source.token
+      })
         .then(response => {
           if (response.status === 200) {
             dispatch(FindCity(id));
@@ -106,7 +145,7 @@ function EditCity(city) {
 export function EditCityAsync(city) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    Axios.put(apiUrl + city.city.Id, city)
+    Axios.put(apiUrl + city.city.Id, city, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(EditCity(city));
@@ -131,7 +170,11 @@ function AddPersonToCity(cityId, people) {
 export function AddPersonToCityAsync(cityId, people) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    Axios.put(apiUrl + "/add-people", { cityId: cityId, people: people })
+    Axios.put(
+      apiUrl + "/add-people",
+      { cityId: cityId, people: people },
+      { cancelToken: source.token }
+    )
       .then(response => {
         if (response.status === 200) {
           dispatch(AddPersonToCity(cityId, people));
@@ -155,7 +198,7 @@ function DeleteCity(id) {
 export function DeleteCityAsync(id) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    Axios.delete(apiUrl + id)
+    Axios.delete(apiUrl + id, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200 && response.data === true) {
           dispatch(DeleteCity(id));

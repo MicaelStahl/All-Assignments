@@ -1,11 +1,13 @@
 import * as actionTypes from "../actions/cityActions";
 
 const initialState = {
+  countries: [],
   cities: [],
   oneCity: [],
   error: "",
   isLoading: false,
-  status: ""
+  status: "",
+  createSuccess: ""
 };
 
 let index = 0;
@@ -49,7 +51,8 @@ const reducer = (state = initialState, action) => {
         ...state,
         oneCity: action.city,
         cities,
-        error: ""
+        error: "",
+        createSuccess: "City was successfully created!"
       };
 
     // --------------- Find City --------------- \\
@@ -153,6 +156,14 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         error: "Something went wrong. Please try again!"
+      };
+
+    // --------------- Get Countries for Create and Edit --------------- \\
+
+    case actionTypes.GET_COUNTRIES_FOR_CREATE_N_EDIT:
+      return {
+        ...state,
+        countries: action.countries
       };
   }
 };

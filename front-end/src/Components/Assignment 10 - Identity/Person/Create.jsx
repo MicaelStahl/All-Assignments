@@ -46,7 +46,6 @@ class Create extends Component {
       City: null,
       PhoneNumber: event.target.phoneNumber.value
     };
-    console.log("[Form Submitted]", person);
     const cityId =
       event.target.city.value === "None" ? null : event.target.city.value;
 

@@ -87,11 +87,9 @@ function CreatePerson(person, status) {
 export function CreatePersonAsync(person, cityId) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    console.log(cityId);
     axios
       .post(apiUrl, { person: person, cityId: cityId })
       .then(response => {
-        console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(CreatePerson(response.data, response.status));
         } else if (response.status === 204) {

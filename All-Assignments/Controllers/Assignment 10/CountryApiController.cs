@@ -20,17 +20,35 @@ namespace All_Assignments.Controllers
             _service = service;
         }
 
+        [HttpGet("simple")]
+        public async Task<IActionResult> GetAllForCity()
+        {
+            var countries = await _service.AllCountries();
+
+            if (countries == null)
+            {
+                return null;
+            }
+
+            return Ok(countries);
+        }
+
+        /// <summary>
+        /// Change this one later to match the required needs for the front-end list.
+        /// Will also have to change the Repository when I change this one.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var cities = await _service.AllCountries();
+            var countries = await _service.AllCountries();
 
-            if (cities == null)
+            if (countries == null)
             {
                 return Content("There are no cities available in the database. Please add some.");
             }
 
-            return Ok(cities);
+            return Ok(countries);
         }
 
         [HttpGet("{id}")]

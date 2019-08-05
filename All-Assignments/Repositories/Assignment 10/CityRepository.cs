@@ -150,7 +150,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 CityWithCountryVM city = new CityWithCountryVM()
                 {
                     CountryId = item.Country?.Id,
-                    CountryName = item.Country?.Name,
+                    CountryName = item.Country?.Name ?? "Stateless",
                     People = item.People ?? null
                 };
 
