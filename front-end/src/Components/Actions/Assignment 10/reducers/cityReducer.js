@@ -1,282 +1,153 @@
 import * as actionTypes from "../actions/cityActions";
-import axios from "axios";
 
 const initialState = {
   cities: [],
   oneCity: [],
-  error: ""
+  error: "",
+  isLoading: false,
+  status: ""
 };
 
-let city = [];
 let index = 0;
-const apiUrl = "http://localhost:50691/api/cityApi/";
+let cities = [];
 
 const reducer = (state = initialState, action) => {
   //Todo
   switch (action.type) {
+    // --------------- All Cities --------------- \\
+
     case actionTypes.ALL_CITIES:
-      axios
-        .get(apiUrl, { "Content-Type": "application/json" })
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              error: "No cities were found. Please try again"
-            };
-          }
-          return {
-            ...state,
-            cities: response.data,
-            error: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            error: err
-          };
-        });
-      break;
+      if (action.cities === null) {
+        return {
+          ...state,
+          error:
+            "Something went wrong when fetching all cities. Please try again.",
+          status: action.status
+        };
+      }
+      return {
+        ...state,
+        cities: action.cities,
+        error: ""
+      };
+
+    // --------------- Create --------------- \\
 
     case actionTypes.CREATE_CITY:
       if (action.city === undefined || action.city === null) {
         return {
           ...state,
-          error: "Please fill all fields, then try again."
+          error: "Please fill all fields, then try again.",
+          status: action.status
         };
       }
-      city = {
-        Name: action.city.name,
-        Population: action.city.population,
-        Country: action.city.country,
-        People: action.city.people
+      cities = state.cities;
+
+      cities.push(action.city);
+
+      return {
+        ...state,
+        oneCity: action.city,
+        cities,
+        error: ""
       };
 
-      if (city === undefined || city === null) {
-        return {
-          ...state,
-          error: "Please fill all fields, then try again."
-        };
-      }
-
-      axios
-        .post(apiUrl, city)
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              error: "Something went wrong when creating city. Please try again"
-            };
-          }
-          const { cities } = state;
-
-          cities.push(response.data);
-
-          return {
-            ...state,
-            oneCity: response.data,
-            cities,
-            error: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            error: err
-          };
-        });
-      break;
+    // --------------- Find City --------------- \\
 
     case actionTypes.FIND_CITY:
-      if (action.id === null || action.id === undefined) {
+      if (action.city === null || action.city === undefined) {
         return {
           ...state,
-          error: "Something went wrong. Please try again!"
+          error: "Something went wrong. Please try again!",
+          status: action.status
         };
       }
-      axios
-        .get(apiUrl + action.id)
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              error: "Can't find the specificed city. Please try again."
-            };
-          }
-          return {
-            ...state,
-            oneCity: response.data,
-            error: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            error: err
-          };
-        });
-      break;
+      return {
+        ...state,
+        oneCity: action.city,
+        error: ""
+      };
+
+    // --------------- Edit --------------- \\
 
     case actionTypes.EDIT_CITY:
       if (action.city === null || action.city === undefined) {
         return {
           ...state,
-          error: "Something went wrong"
+          error: "Something went wrong",
+          status: action.status
         };
       }
-      city = {
-        Id: action.city.id,
-        Name: action.city.name,
-        Population: action.city.population,
-        Country: action.city.country,
-        People: action.city.people
+      cities = state.cities;
+
+      index = cities.findIndex(x => x.id === action.city.id);
+
+      if (index === -1) {
+        return {
+          ...state,
+          error: "Something went wrong, please try again.",
+          status: action.status
+        };
+      }
+
+      cities = cities.splice(index, 1, action.city);
+
+      return {
+        ...state,
+        oneCity: action.city,
+        cities,
+        error: ""
       };
 
-      if (city === undefined || city === null) {
-        return {
-          ...state,
-          error: "Please fill all fields, then try again."
-        };
-      }
-
-      axios
-        .put(apiUrl + action.city.id, city)
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              error:
-                "Something went wrong when updating city. Please try again."
-            };
-          }
-          let { cities } = state;
-          index = cities.findIndex(x => x.id === action.city.id);
-
-          if (index === -1) {
-            return {
-              ...state,
-              error: "Something went wrong, please try again."
-            };
-          }
-
-          cities = cities.splice(index, 1, response.data);
-
-          return {
-            ...state,
-            oneCity: response.data,
-            cities,
-            error: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            error: err
-          };
-        });
-
-      break;
+    // --------------- Add Person To City --------------- \\
 
     case actionTypes.ADD_PERSON_TO_CITY:
-      if (
-        action.cityId === undefined ||
-        action.cityId === null ||
-        action.people === undefined ||
-        action.people === null
-      ) {
+      if (action.city === null) {
         return {
           ...state,
-          error: "Something went wrong. Please try again."
+          error: "Something went wrong. Please try again",
+          status: action.status
+        };
+      }
+      cities = state.cities;
+
+      index = cities.findIndex(x => x.id === action.id);
+
+      if (index === -1) {
+        return {
+          ...state,
+          error: "Something went wrong. Please try again,"
         };
       }
 
-      axios
-        .put(apiUrl + "add-person", (action.cityId, action.people))
-        .then(response => {
-          if (response.data === null) {
-            return {
-              ...state,
-              error:
-                "Something went wrong when adding person to city. Please try again."
-            };
-          }
-          let { cities } = state;
-          index = cities.findIndex(x => x.id === action.id);
-          if (index === -1) {
-            return {
-              ...state,
-              error: "Something went wrong. Please try again,"
-            };
-          }
+      cities = cities.splice(index, 1, action.city);
 
-          cities = cities.splice(index, 1, response.data);
+      return {
+        ...state,
+        oneCity: action.city,
+        cities,
+        error: ""
+      };
 
-          return {
-            ...state,
-            oneCity: response.data,
-            cities,
-            error: ""
-          };
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            error: err
-          };
-        });
-      break;
+    // --------------- Delete --------------- \\
 
     case actionTypes.DELETE_CITY:
-      if (action.id === null || action.id === undefined) {
-        return {
-          ...state,
-          error: "Something went wrong, please try again."
-        };
-      }
+      cities = state.cities;
 
-      axios
-        .delete(apiUrl + action.id)
-        .then(response => {
-          if (response.data === false) {
-            return {
-              ...state,
-              error:
-                "Something went wrong when deleting city. Please try again."
-            };
-          }
-          let { cities } = state;
+      return {
+        ...state,
 
-          cities = cities.filter(x => x.id !== action.id);
+        cities: cities.filter(x => x.id !== action.id),
+        error: ""
+      };
 
-          const verify = cities.find(x => x.id === action.id);
+    // --------------- IsLoading --------------- \\
 
-          if (verify === undefined) {
-            return {
-              ...state,
-              cities,
-              error: ""
-            };
-          } else {
-            return {
-              ...state,
-              error:
-                "Something went wrong when deleting city. Please try again."
-            };
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          return {
-            ...state,
-            error: err
-          };
-        });
-      break;
+    case actionTypes.ITEMS_ARE_LOADING:
+      return {
+        ...state,
+        isLoading: action.isLoading
+      };
 
     default:
       return {
@@ -284,10 +155,6 @@ const reducer = (state = initialState, action) => {
         error: "Something went wrong. Please try again!"
       };
   }
-  return {
-    ...state,
-    error: "Something went wrong. Please try again!"
-  };
 };
 
 export default reducer;

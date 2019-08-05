@@ -8,7 +8,6 @@ const City = props => {
     <Router>
       <Switch>
         <Route path={props.match.url} component={AllCities} />
-        <div>hello world!</div>
       </Switch>
     </Router>
   );

@@ -92,7 +92,7 @@ namespace All_Assignments.Controllers
             PersonWithCityVM personVM = new PersonWithCityVM
             {
                 CityName = newPerson.City?.Name ?? "Homeless",
-                cityId = newPerson.City?.Id ?? null
+                CityId = newPerson.City?.Id ?? null
             };
             newPerson.City = null;
             personVM.Person = newPerson;

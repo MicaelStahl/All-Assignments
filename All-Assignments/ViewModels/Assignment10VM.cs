@@ -12,7 +12,7 @@ namespace All_Assignments.ViewModels
 
         public string CityName { get; set; }
 
-        public Guid? cityId { get; set; }
+        public Guid? CityId { get; set; }
     }
 
     public class PersonWithCityIdVM
@@ -29,6 +29,8 @@ namespace All_Assignments.ViewModels
         public string CountryName { get; set; }
 
         public Guid? CountryId { get; set; }
+
+        public List<Person> People { get; set; }
     }
 
     public class CityWithCountryIdVM

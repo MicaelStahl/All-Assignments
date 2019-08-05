@@ -22,7 +22,8 @@ function ItemsAreLoading(bool) {
 function AllCities(cities, status) {
   return {
     type: ALL_CITIES,
-    cities
+    cities,
+    status
   };
 }
 
@@ -30,8 +31,9 @@ export function AllCitiesAsync() {
   return dispatch => {
     setTimeout(() => {
       dispatch(ItemsAreLoading(true));
-      Axios.get(apiUrl, { "Content-Type": "application/json" })
+      Axios.get(apiUrl + "cities", { "Content-Type": "application/json" })
         .then(response => {
+          console.log("[Response]", response.data);
           if (response.status === 200) {
             dispatch(AllCities(response.data, response.status));
             dispatch(ItemsAreLoading(false));
@@ -53,9 +55,18 @@ function CreateCity(city) {
 
 export function CreateCityAsync(city) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(CreateCity(city));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    Axios.post(apiUrl + city.city.Id, city)
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(CreateCity(city));
+          dispatch(ItemsAreLoading(false));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -68,9 +79,20 @@ function FindCity(id) {
 
 export function FindCityAsync(id) {
   return dispatch => {
+    dispatch(ItemsAreLoading(true));
     setTimeout(() => {
-      dispatch(FindCity(id));
-    }, 1000);
+      Axios.get(apiUrl + id)
+        .then(response => {
+          if (response.status === 200) {
+            dispatch(FindCity(id));
+            dispatch(ItemsAreLoading(false));
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          // ToDo
+        });
+    }, 100);
   };
 }
 
@@ -83,9 +105,18 @@ function EditCity(city) {
 
 export function EditCityAsync(city) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(EditCity(city));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    Axios.put(apiUrl + city.city.Id, city)
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(EditCity(city));
+          dispatch(ItemsAreLoading(false));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -99,9 +130,18 @@ function AddPersonToCity(cityId, people) {
 
 export function AddPersonToCityAsync(cityId, people) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(AddPersonToCity(cityId, people));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    Axios.put(apiUrl + "/add-people", { cityId: cityId, people: people })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(AddPersonToCity(cityId, people));
+          dispatch(ItemsAreLoading(false));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -114,8 +154,17 @@ function DeleteCity(id) {
 
 export function DeleteCityAsync(id) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(DeleteCity(id));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    Axios.delete(apiUrl + id)
+      .then(response => {
+        if (response.status === 200 && response.data === true) {
+          dispatch(DeleteCity(id));
+          dispatch(ItemsAreLoading(false));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }

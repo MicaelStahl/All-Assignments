@@ -29,8 +29,7 @@ class AllPeople extends Component {
             <caption>List of all people</caption>
             <thead>
               <tr className="d-table-row">
-                <th className="d-table-cell">Firstname</th>
-                <th className="d-table-cell">Lastname</th>
+                <th className="d-table-cell">Name</th>
                 <th className="d-table-cell">Age</th>
                 <th className="d-table-cell">Email</th>
                 <th className="d-table-cell">Gender</th>
@@ -42,8 +41,9 @@ class AllPeople extends Component {
             <tbody>
               {this.props.people.map((person, index) => (
                 <tr key={index} className="d-table-row">
-                  <td className="d-table-cell">{person.person.firstName}</td>
-                  <td className="d-table-cell">{person.person.lastName}</td>
+                  <td className="d-table-cell">
+                    {person.person.firstName} {person.person.lastName}
+                  </td>
                   <td className="d-table-cell">{person.person.age}</td>
                   <td className="d-table-cell">{person.person.email}</td>
                   <td className="d-table-cell">{person.person.gender}</td>

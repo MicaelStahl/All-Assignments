@@ -85,9 +85,12 @@ namespace All_Assignments.Repositories.Assignment_10
 
             CityWithCountryVM cityVM = new CityWithCountryVM
             {
-                CountryId = city.Country?.Id ?? null,
-                CountryName = city.Country?.Name ?? null
+                CountryId = city.Country?.Id,
+                CountryName = city.Country?.Name,
+                People = city.People ?? null
             };
+
+            city.People = null;
             city.Country = null;
             cityVM.City = city;
 
@@ -114,7 +117,20 @@ namespace All_Assignments.Repositories.Assignment_10
             return city;
         }
 
-        public async Task<List<CityWithCountryVM>> AllCities()
+        public async Task<List<City>> AllCities()
+        {
+            var cities = await _db.Cities
+                .ToListAsync();
+
+            if (cities == null || cities.Count == 0)
+            {
+                return null;
+            }
+
+            return cities;
+        }
+
+        public async Task<List<CityWithCountryVM>> AllCitiesWithCountry()
         {
             var cities = await _db.Cities
                 .Include(x=>x.People)
@@ -134,9 +150,11 @@ namespace All_Assignments.Repositories.Assignment_10
                 CityWithCountryVM city = new CityWithCountryVM()
                 {
                     CountryId = item.Country?.Id,
-                    CountryName = item.Country?.Name
+                    CountryName = item.Country?.Name,
+                    People = item.People ?? null
                 };
 
+                item.People = null;
                 item.Country = null;
                 city.City = item;
 

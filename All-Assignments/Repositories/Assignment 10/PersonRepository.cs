@@ -89,7 +89,7 @@ namespace All_Assignments.Repositories.Assignment_10
             PersonWithCityVM personVM = new PersonWithCityVM
             {
                 CityName = person.City?.Name,
-                cityId = person.City?.Id
+                CityId = person.City?.Id
             };
             person.City = null;
             personVM.Person = person;
@@ -120,7 +120,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 PersonWithCityVM personVM = new PersonWithCityVM
                 {
                     CityName = item.City?.Name ?? "Homeless",
-                    cityId = item.City?.Id ?? null
+                    CityId = item.City?.Id ?? null
                 };
                 item.City = null;
                 personVM.Person = item;

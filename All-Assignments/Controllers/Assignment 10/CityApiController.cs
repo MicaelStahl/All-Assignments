@@ -30,10 +30,24 @@ namespace All_Assignments.Controllers
 
             if (cities == null)
             {
+                return NoContent();
+            }
+
+            return Ok(cities);
+        }
+
+        [HttpGet("cities")]
+        public async Task<IActionResult> GetAllCities()
+        {
+            var cities = await _service.AllCitiesWithCountry();
+
+            if (cities == null)
+            {
                 return Content("There are no cities available in the database. Please add some.");
             }
 
             return Ok(cities);
+
         }
 
         [HttpGet("{id}")]
@@ -80,7 +94,7 @@ namespace All_Assignments.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newCity = await _service.Edit(city);
+            var newCity = await _service.Edit(city.City, city.CountryId);
 
             if (newCity == null)
             {
@@ -90,7 +104,7 @@ namespace All_Assignments.Controllers
             return Ok(newCity);
         }
 
-        [HttpPut("{add-people}")]
+        [HttpPut("/add-people")]
         public async Task<IActionResult> AddPeople(Guid cityId, List<Person> people)
         {
             if (cityId == null || string.IsNullOrWhiteSpace(cityId.ToString()) || people == null || people.Count == 0)
