@@ -187,6 +187,13 @@ export function EditCityAsync(city) {
   };
 }
 
+export function EditCityPrepAsync(id) {
+  return dispatch => {
+    dispatch(GetCountriesAsync());
+    dispatch(FindCityAsync(id));
+  };
+}
+
 function AddPersonToCity(cityId, people) {
   return {
     type: ADD_PERSON_TO_CITY,

@@ -93,6 +93,8 @@ class Create extends Component {
                 name="population"
                 className="form-inline"
                 type="number"
+                min="1"
+                maxLength="9"
                 value={this.state.population}
                 onChange={this.handlePopChange}
                 placeholder="Population"
