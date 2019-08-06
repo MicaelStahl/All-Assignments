@@ -98,7 +98,7 @@ namespace All_Assignments.Repositories.Assignment_10
         }
 
         /// <summary>
-        /// This one is not used as of right now. (2019-08-05)
+        /// Not using this as of (2019-08-06)
         /// </summary>
         public async Task<City> FindPeopleInCityAndCountry(Guid id)
         {
@@ -107,7 +107,10 @@ namespace All_Assignments.Repositories.Assignment_10
                 return null;
             }
 
-            var city = await _db.Cities.Include(x => x.People).Include(x => x.Country).SingleOrDefaultAsync(x => x.Id == id);
+            var city = await _db.Cities
+                .Include(x => x.People)
+                .Include(x => x.Country)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (city == null)
             {

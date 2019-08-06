@@ -43,7 +43,7 @@ namespace All_Assignments.Controllers
 
             if (cities == null)
             {
-                return Content("There are no cities available in the database. Please add some.");
+                return NoContent();
             }
 
             return Ok(cities);
@@ -62,11 +62,29 @@ namespace All_Assignments.Controllers
 
             if (city == null)
             {
-                return NotFound("The requested city was not found. Please try again.");
+                return NoContent();
             }
 
             return Ok(city);
         }
+
+        //[HttpGet("city/{id}")]
+        //public async Task<IActionResult> GetCity(Guid id)
+        //{
+        //    if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    var city = await _service.FindPeopleInCityAndCountry(id);
+
+        //    if (city == null)
+        //    {
+        //        return NoContent();
+        //    }
+
+        //    return Ok(city);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> Create(CityWithCountryIdVM city)
@@ -122,7 +140,7 @@ namespace All_Assignments.Controllers
             return Ok(city);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))

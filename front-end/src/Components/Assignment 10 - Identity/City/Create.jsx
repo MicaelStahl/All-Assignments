@@ -9,15 +9,17 @@ class Create extends Component {
   state = {
     countryId: "",
     error: "",
-    population: 0
+    population: ""
   };
 
-  handleChange = event => {
+  handleCityChange = event => {
     this.setState({ countryId: event.target.value });
   };
 
   handlePopChange = event => {
     const { value } = event.target;
+
+    value.replace(",", ".");
 
     this.setState({ population: value });
   };
@@ -35,6 +37,8 @@ class Create extends Component {
       return;
     }
 
+    // Doing this to replicate the ViewModel existing in the back-end, to reassure
+    // The connection between front- and back-end
     const submittedCity = {
       City: city,
       CountryId:
@@ -91,6 +95,7 @@ class Create extends Component {
                 type="number"
                 value={this.state.population}
                 onChange={this.handlePopChange}
+                placeholder="Population"
                 required
               />
             </div>
@@ -100,7 +105,7 @@ class Create extends Component {
                 className="form-inline"
                 name="countryId"
                 value={this.state.countryId}
-                onChange={this.handleChange}>
+                onChange={this.handleCityChange}>
                 <option value={null}>None</option>
                 {options}
               </select>
