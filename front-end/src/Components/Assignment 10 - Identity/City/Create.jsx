@@ -18,6 +18,11 @@ class Create extends Component {
 
   handlePopChange = event => {
     const { value } = event.target;
+    const test = "Hello";
+
+    test.match("^d+(.d+)*$");
+    if (value.length === 3 && !test) {
+    }
 
     value.replace(",", ".");
 
@@ -27,20 +32,33 @@ class Create extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    const city = {
-      Name: event.target.name.value,
-      Population: event.target.population.value
-    };
+    console.log("[nameLength]", event.target.name.value.length);
+    console.log("[populationLength]", event.target.population.value.length);
 
-    if (city === undefined || city === null) {
-      this.setState({ error: "Something went wrong. Please try again." });
+    if (event.target.name.value.length >= 80) {
+      this.setState({
+        error:
+          event.target.name.value +
+          " can only have a maxlength of: 80 characters"
+      });
+      return;
+    } else if (event.target.population.value.length >= 9) {
+      this.setState({
+        error:
+          "The population of " +
+          event.target.name.value +
+          " cannot exceed 9 character-length."
+      });
       return;
     }
 
     // Doing this to replicate the ViewModel existing in the back-end, to reassure
     // The connection between front- and back-end
     const submittedCity = {
-      City: city,
+      City: {
+        Name: event.target.name.value,
+        Population: event.target.population.value
+      },
       CountryId:
         event.target.countryId.value === "None"
           ? null
@@ -74,6 +92,9 @@ class Create extends Component {
             className="btn btn-primary btn-sm mb-3">
             Return
           </button>
+          {this.state.error === "" ? null : (
+            <p className=" font-weight-bold text-danger">{this.state.error}</p>
+          )}
           <form className="form col-6" onSubmit={this.handleSubmit}>
             <p>Required fields are marked with *</p>
             <div className="form-group">
@@ -93,7 +114,6 @@ class Create extends Component {
                 name="population"
                 className="form-inline"
                 type="number"
-                min="1"
                 maxLength="9"
                 value={this.state.population}
                 onChange={this.handlePopChange}
@@ -117,7 +137,7 @@ class Create extends Component {
               <input
                 type="submit"
                 value="Submit"
-                className="btn btn-success btn-sm"
+                className="btn btn-success btn-sm form-inline"
               />
             </div>
           </form>

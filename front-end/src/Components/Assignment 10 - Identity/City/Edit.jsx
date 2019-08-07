@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+
 import Loading from "../../UI/Loading";
 import Title from "../../UI/Title";
+import * as actionTypes from "../../Actions/Assignment 10/actions/cityActions";
 
 class Edit extends Component {
   state = {
-    name: "",
-    population: "",
-    country: "",
+    name: null,
+    population: null,
     countryId: "",
     error: ""
   };
@@ -15,22 +16,47 @@ class Edit extends Component {
   handleChange = event => {
     const { name, value } = event.target;
 
-    this.setState({ [name]: value });
+    this.setState({ [name]: value, error: "" });
   };
 
   handleCountryChange = event => {
     const { value } = event.target;
 
-    this.setState({ countryId: value });
+    this.setState({ countryId: value, error: "" });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+
+    const { id, name, population, countryId } = event.target;
+
+    const cityVM = {
+      City: {
+        Id: id.value,
+        Name: name.value,
+        Population: population.value.replace(",", ".")
+      },
+      CountryId: countryId.value === "None" ? null : countryId.value
+    };
+
+    if (cityVM === undefined || cityVM === null) {
+      this.setState({
+        error:
+          "Something went wrong when submitting the changes. Please try again."
+      });
+    } else {
+      this.props.onEditSubmit(cityVM);
+
+      setTimeout(this.props.history.push("/identity/city"), 200);
+    }
   };
 
   render() {
     if (!this.props.isLoading) {
       const { city } = this.props;
-      console.log(city);
       const userChoice =
         city.countryId !== null ? (
-          <option value={city.countryName}>{city.countryName}</option>
+          <option value={city.countryId}>{city.countryName}</option>
         ) : null;
 
       const options = city.countries.map(country =>
@@ -44,17 +70,26 @@ class Edit extends Component {
       return (
         <React.Fragment>
           <Title Title={"Editing " + city.city.name} />
-          <form>
+          <button
+            className="btn btn-primary btn-sm mb-3"
+            onClick={() => this.props.history.push("/identity/city")}>
+            Return
+          </button>
+          {this.state.error === "" ? null : (
+            <p className="font-weight-bold text-danger">{this.state.error}</p>
+          )}
+          <form onSubmit={this.handleSubmit} className="form">
+            <input type="hidden" name="id" value={city.city.id} readOnly />
             <div className="form-group">
               <label className="col-form-label">Name</label>
               <input
                 className="form-inline"
                 type="text"
-                name="firstName"
+                name="name"
                 placeholder="Name"
                 maxLength="80"
                 value={
-                  this.state.name === "" ? city.city.name : this.state.name
+                  this.state.name === null ? city.city.name : this.state.name
                 }
                 onChange={this.handleChange}
                 required
@@ -66,10 +101,9 @@ class Edit extends Component {
                 className="form-inline"
                 type="number"
                 name="population"
-                min="1"
                 maxLength="9"
                 value={
-                  this.state.population === ""
+                  this.state.population === null
                     ? city.city.population
                     : this.state.population
                 }
@@ -78,7 +112,7 @@ class Edit extends Component {
               />
             </div>
             <div className="form-group">
-              <label>Country</label>
+              <label className="col-form-label">Country</label>
               <select
                 className="form-inline"
                 name="countryId"
@@ -92,6 +126,13 @@ class Edit extends Component {
                 <option value={null}>None</option>
                 {options}
               </select>
+            </div>
+            <div className="form-group">
+              <input
+                type="submit"
+                value="Submit"
+                className="btn btn-success btn-sm"
+              />
             </div>
           </form>
         </React.Fragment>
@@ -110,4 +151,13 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Edit);
+const mapDispatchToProps = dispatch => {
+  return {
+    onEditSubmit: city => dispatch(actionTypes.EditCityAsync(city))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Edit);

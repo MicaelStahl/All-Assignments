@@ -51,18 +51,7 @@ class Create extends Component {
 
     this.props.onCreated(person, cityId);
 
-    if (this.props.status === 200) {
-      this.setState({ userMessage: "Person was successfully created!" });
-
-      event.target.firstName.value = "";
-      event.target.lastName.value = "";
-      event.target.age.value = "";
-      event.target.email.value = "";
-      event.target.phoneNumber.value = "";
-      setTimeout(this.props.history.push("/identity/person"), 200);
-    } else {
-      this.props.history.push("/Error404");
-    }
+    setTimeout(this.props.history.push("/identity/person"), 200);
   };
 
   render() {

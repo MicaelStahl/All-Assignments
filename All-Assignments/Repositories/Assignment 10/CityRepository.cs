@@ -97,10 +97,7 @@ namespace All_Assignments.Repositories.Assignment_10
             return cityVM;
         }
 
-        /// <summary>
-        /// Not using this as of (2019-08-06)
-        /// </summary>
-        public async Task<City> FindPeopleInCityAndCountry(Guid id)
+        public async Task<CityEditVM> FindCityForEdit(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
@@ -108,7 +105,7 @@ namespace All_Assignments.Repositories.Assignment_10
             }
 
             var city = await _db.Cities
-                .Include(x => x.People)
+                //.Include(x => x.People) <= Exclude this one for now. Might add it in later.
                 .Include(x => x.Country)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
@@ -117,7 +114,18 @@ namespace All_Assignments.Repositories.Assignment_10
                 return null;
             }
 
-            return city;
+            CityEditVM cityVM = new CityEditVM
+            {
+                Countries = await _db.Countries?.ToListAsync() ?? null,
+                CountryName = city.Country?.Name ?? "Stateless",
+                CountryId = city.Country?.Id ?? null
+            };
+
+            city.Country = null;
+            city.People = null;
+            cityVM.City = city;
+
+            return cityVM;
         }
 
         public async Task<List<City>> AllCities()

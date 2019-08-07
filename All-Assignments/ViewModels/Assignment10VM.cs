@@ -39,4 +39,17 @@ namespace All_Assignments.ViewModels
 
         public Guid? CountryId { get; set; }
     }
+
+    public class CityEditVM
+    {
+        public City City { get; set; }
+
+        public Guid? CountryId { get; set; }
+
+        public string CountryName { get; set; }
+
+        //public List<Person> People { get; set; }
+
+        public List<Country> Countries { get; set; }
+    }
 }

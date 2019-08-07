@@ -65,7 +65,7 @@ function GetCountries(countries) {
 
 export function GetCountriesAsync() {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    // dispatch(ItemsAreLoading(true));
     axios
       .get("http://localhost:50691/api/countryApi/simple", {
         "Content-Type": "application/json",
@@ -74,8 +74,8 @@ export function GetCountriesAsync() {
       .then(response => {
         if (response.status === 200) {
           dispatch(GetCountries(response.data));
-          dispatch(ItemsAreLoading(false));
         }
+        // dispatch(ItemsAreLoading(false));
       })
       .catch(err => {
         console.error(err);
@@ -98,7 +98,6 @@ export function CreateCityAsync(city) {
       .then(response => {
         if (response.status === 200) {
           dispatch(CreateCity(response.data));
-          localStorage.setItem("oneCity", response.data);
         } else {
           console.error("Something went wrong");
           // ToDo
@@ -121,7 +120,6 @@ function FindCity(city) {
 export function FindCityAsync(id) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    // setTimeout(() => {
     axios
       .get(apiUrl + id, {
         "Content-Type": "application/json",
@@ -129,6 +127,7 @@ export function FindCityAsync(id) {
       })
       .then(response => {
         if (response.status === 200) {
+          localStorage.setItem("oneCity", response.data);
           dispatch(FindCity(response.data));
         }
         dispatch(ItemsAreLoading(false));
@@ -137,15 +136,14 @@ export function FindCityAsync(id) {
         console.error(err);
         // ToDo
       });
-    // }, 100);
   };
 }
 
-export function FindCityWithStuffAsync(id) {
+export function FindCityForEditAsync(id) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
     axios
-      .get(apiUrl + id, {
+      .get(apiUrl + "city/" + id, {
         "Content-Type": "application/json",
         cancelToken: source.token
       })
@@ -172,8 +170,9 @@ function EditCity(city) {
 export function EditCityAsync(city) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
+    console.log(city);
     axios
-      .put(apiUrl + city.city.Id, city, { cancelToken: source.token })
+      .put(apiUrl + city.City.Id, city, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(EditCity(city));
@@ -190,7 +189,7 @@ export function EditCityAsync(city) {
 export function EditCityPrepAsync(id) {
   return dispatch => {
     dispatch(GetCountriesAsync());
-    dispatch(FindCityAsync(id));
+    dispatch(FindCityForEditAsync(id));
   };
 }
 

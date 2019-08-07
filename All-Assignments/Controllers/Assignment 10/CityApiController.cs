@@ -68,23 +68,23 @@ namespace All_Assignments.Controllers
             return Ok(city);
         }
 
-        //[HttpGet("city/{id}")]
-        //public async Task<IActionResult> GetCity(Guid id)
-        //{
-        //    if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpGet("city/{id}")]
+        public async Task<IActionResult> GetCityForEdit(Guid id)
+        {
+            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
+            {
+                return BadRequest();
+            }
 
-        //    var city = await _service.FindPeopleInCityAndCountry(id);
+            var city = await _service.FindCityForEdit(id);
 
-        //    if (city == null)
-        //    {
-        //        return NoContent();
-        //    }
+            if (city == null)
+            {
+                return NoContent();
+            }
 
-        //    return Ok(city);
-        //}
+            return Ok(city);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(CityWithCountryIdVM city)
@@ -104,7 +104,7 @@ namespace All_Assignments.Controllers
             return Ok(newCity);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Edit(CityWithCountryIdVM city)
         {
             if (!ModelState.IsValid)

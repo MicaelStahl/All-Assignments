@@ -83,9 +83,9 @@ const mapDispatchToProps = dispatch => {
   return {
     onSiteLoad: () => dispatch(actionTypes.AllCitiesAsync()),
     onCreateLoad: () => dispatch(actionTypes.GetCountriesAsync()),
-    onDetailsLoad: id => dispatch(actionTypes.FindCityWithStuffAsync(id)),
+    onDetailsLoad: id => dispatch(actionTypes.FindCityAsync(id)),
     onEditLoad: id => dispatch(actionTypes.EditCityPrepAsync(id)),
-    onDeleteLoad: id => dispatch(actionTypes.FindCityWithStuffAsync(id))
+    onDeleteLoad: id => dispatch(actionTypes.FindCityAsync(id))
   };
 };
 

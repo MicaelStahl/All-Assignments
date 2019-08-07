@@ -7,12 +7,12 @@ import Loading from "../../UI/Loading";
 
 class Edit extends Component {
   state = {
-    firstName: "",
-    lastName: "",
-    age: "",
-    email: "",
-    gender: "",
-    phoneNumber: "",
+    firstName: null,
+    lastName: null,
+    age: null,
+    email: null,
+    gender: null,
+    phoneNumber: null,
     city: "",
     cityId: "",
     error: ""
@@ -125,7 +125,7 @@ class Edit extends Component {
                   type="text"
                   name="firstName"
                   value={
-                    this.state.firstName === ""
+                    this.state.firstName === null
                       ? this.props.person.person.firstName
                       : this.state.firstName
                   }
@@ -142,7 +142,7 @@ class Edit extends Component {
                   type="text"
                   name="lastName"
                   value={
-                    this.state.lastName === ""
+                    this.state.lastName === null
                       ? this.props.person.person.lastName
                       : this.state.lastName
                   }
@@ -162,7 +162,7 @@ class Edit extends Component {
                   max="110"
                   step="1"
                   value={
-                    this.state.age === ""
+                    this.state.age === null
                       ? this.props.person.person.age
                       : this.state.age
                   }
@@ -179,7 +179,7 @@ class Edit extends Component {
                   name="email"
                   type="email"
                   value={
-                    this.state.email === ""
+                    this.state.email === null
                       ? this.props.person.person.email
                       : this.state.email
                   }
@@ -194,7 +194,7 @@ class Edit extends Component {
                 <label className="col-form-label">Gender*</label>
                 <select
                   value={
-                    this.state.gender === ""
+                    this.state.gender === null
                       ? this.props.person.person.gender
                       : this.state.gender
                   }
@@ -215,7 +215,7 @@ class Edit extends Component {
                   type="text"
                   maxLength="12"
                   value={
-                    this.state.phoneNumber === ""
+                    this.state.phoneNumber === null
                       ? this.props.person.person.phoneNumber
                       : this.state.phoneNumber
                   }

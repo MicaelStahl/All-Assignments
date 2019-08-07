@@ -14,7 +14,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Read
         Task<CityWithCountryVM> FindCity(Guid id);
-        Task<City> FindPeopleInCityAndCountry(Guid id);
+        Task<CityEditVM> FindCityForEdit(Guid id);
         Task<List<CityWithCountryVM>> AllCitiesWithCountry();
         Task<List<City>> AllCities();
 

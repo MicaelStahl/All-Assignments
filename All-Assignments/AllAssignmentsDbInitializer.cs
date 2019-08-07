@@ -89,9 +89,9 @@ namespace All_Assignments
             {
                 var countries = new Country[]
                 {
-                    new Country() { Name = "Sweden", Population = "10,301,210" },
-                    new Country() { Name = "Denmark", Population = "5,512,563" },
-                    new Country() { Name = "Norway", Population = "5,123,643" }
+                    new Country() { Name = "Sweden", Population = "10.301.210" },
+                    new Country() { Name = "Denmark", Population = "5.512.563" },
+                    new Country() { Name = "Norway", Population = "5.123.643" }
                 };
 
                 context.Countries.AddRange(countries);
@@ -102,17 +102,17 @@ namespace All_Assignments
                 {
                     var cities = new City[]
                     {
-                        new City() { Name = "Swedish City 1", Population = "1,123,675", Country = countries[0] },
-                        new City() { Name = "Swedish City 2", Population = "654,363", Country = countries[0] },
-                        new City() { Name = "Swedish City 3", Population = "364,921", Country = countries[0] },
+                        new City() { Name = "Swedish City 1", Population = "1.123.675", Country = countries[0] },
+                        new City() { Name = "Swedish City 2", Population = "654.363", Country = countries[0] },
+                        new City() { Name = "Swedish City 3", Population = "364.921", Country = countries[0] },
 
-                        new City() { Name = "Danish City 1", Population = "715,741", Country = countries[1] },
-                        new City() { Name = "Danish City 2", Population = "235,631", Country = countries[1] },
-                        new City() { Name = "Danish City 3", Population = "134,673", Country = countries[1] },
+                        new City() { Name = "Danish City 1", Population = "715.741", Country = countries[1] },
+                        new City() { Name = "Danish City 2", Population = "235.631", Country = countries[1] },
+                        new City() { Name = "Danish City 3", Population = "134.673", Country = countries[1] },
 
-                        new City() { Name = "Norwegian City 1", Population = "543,421", Country = countries[2] },
-                        new City() { Name = "Norwegian City 2", Population = "361,752", Country = countries[2] },
-                        new City() { Name = "Norwegian City 3", Population = "134,673", Country = countries[2] },
+                        new City() { Name = "Norwegian City 1", Population = "543.421", Country = countries[2] },
+                        new City() { Name = "Norwegian City 2", Population = "361.752", Country = countries[2] },
+                        new City() { Name = "Norwegian City 3", Population = "134.673", Country = countries[2] },
                     };
 
                     context.Cities.AddRange(cities);
