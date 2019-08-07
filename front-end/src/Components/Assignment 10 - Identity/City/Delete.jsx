@@ -14,7 +14,6 @@ const Delete = props => {
   };
 
   if (!props.isLoading) {
-    console.log("[City]", props.city);
     return (
       <React.Fragment>
         <Title Title={"Delete " + props.city.city.name + "?"} />

@@ -244,7 +244,10 @@ namespace All_Assignments.Repositories.Assignment_10
                 return false;
             }
 
-            var city = await _db.Cities.SingleOrDefaultAsync(x => x.Id == id);
+            var city = await _db.Cities
+                .Include(x=>x.Country)
+                .Include(x=>x.People)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (city == null)
             {

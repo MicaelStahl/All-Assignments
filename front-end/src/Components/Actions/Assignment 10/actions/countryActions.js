@@ -1,3 +1,5 @@
+import axios from "axios";
+
 // ----- Country ----- \\
 
 export const ALL_COUNTRIES = "ALL_COUNTRIES";
@@ -6,18 +8,47 @@ export const FIND_COUNTRY = "FIND_COUNTRY";
 export const EDIT_COUNTRY = "EDIT_COUNTRY";
 export const ADD_CITY_TO_COUNTRY = "ADD_CITY_TO_COUNTRY";
 export const DELETE_COUNTRY = "DELETE_COUNTRY";
+export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
 
-function AllCountries() {
+const apiUrl = "http://localhost:50691/api/countryApi/";
+
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+
+function ItemsAreLoading(isLoading = false) {
   return {
-    type: ALL_COUNTRIES
+    type: ITEMS_ARE_LOADING,
+    isLoading
+  };
+}
+
+function AllCountries(countries) {
+  return {
+    type: ALL_COUNTRIES,
+    countries
   };
 }
 
 export function AllCountriesAsync() {
   return dispatch => {
+    dispatch(ItemsAreLoading(true));
     setTimeout(() => {
-      dispatch(AllCountries());
-    }, 1000);
+      axios
+        .get(apiUrl, {
+          "Content-Type": "application/json",
+          cancelToken: source.token
+        })
+        .then(response => {
+          if (response.status === 200) {
+            dispatch(AllCountries(response.data));
+          }
+          dispatch(ItemsAreLoading(false));
+        })
+        .catch(err => {
+          console.error(err);
+          // ToDo
+        });
+    }, 200);
   };
 }
 
@@ -30,9 +61,19 @@ function CreateCountry(country) {
 
 export function CreateCountryAsync(country) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(CreateCountry(country));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    axios
+      .post(apiUrl, country, { cancelToken: source.token })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(CreateCountry(country));
+        }
+        dispatch(ItemsAreLoading(false));
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -45,9 +86,22 @@ function FindCountry(id) {
 
 export function FindCountryAsync(id) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(FindCountry(id));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    axios
+      .get(apiUrl + id, {
+        "Content-Type": "application/json",
+        cancelToken: source.token
+      })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(FindCountry(id));
+        }
+        dispatch(ItemsAreLoading(false));
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -60,9 +114,17 @@ function EditCountry(country) {
 
 export function EditCountryAsync(country) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(EditCountry(country));
-    }, 1000);
+    axios
+      .put(apiUrl + country.id, country, { cancelToken: source.token })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(EditCountry(country));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }
 
@@ -74,6 +136,7 @@ function AddCityToCountry(countryId, cities) {
   };
 }
 
+// Fix later
 export function AddCityToCountryAsync(countryId, cities) {
   return dispatch => {
     setTimeout(() => {
@@ -91,8 +154,18 @@ function DeleteCountry(id) {
 
 export function DeleteCountryAsync(id) {
   return dispatch => {
-    setTimeout(() => {
-      dispatch(DeleteCountry(id));
-    }, 1000);
+    dispatch(ItemsAreLoading(true));
+    axios
+      .delete(apiUrl + id, { cancelToken: source.token })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(DeleteCountry(id));
+        }
+        dispatch(ItemsAreLoading(false));
+      })
+      .catch(err => {
+        console.error(err);
+        // ToDo
+      });
   };
 }

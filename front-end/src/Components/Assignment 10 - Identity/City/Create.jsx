@@ -18,46 +18,32 @@ class Create extends Component {
 
   handlePopChange = event => {
     const { value } = event.target;
-    const test = "Hello";
 
-    test.match("^d+(.d+)*$");
-    if (value.length === 3 && !test) {
-    }
+    const correctFormat = value.match(/(^[0-9 ]+$)/g);
 
-    value.replace(",", ".");
-
-    this.setState({ population: value });
+    this.setState({
+      population: correctFormat === null ? this.state.population : correctFormat
+    });
   };
 
   handleSubmit = event => {
     event.preventDefault();
 
-    console.log("[nameLength]", event.target.name.value.length);
-    console.log("[populationLength]", event.target.population.value.length);
+    let population = event.target.population.value;
 
-    if (event.target.name.value.length >= 80) {
-      this.setState({
-        error:
-          event.target.name.value +
-          " can only have a maxlength of: 80 characters"
-      });
-      return;
-    } else if (event.target.population.value.length >= 9) {
-      this.setState({
-        error:
-          "The population of " +
-          event.target.name.value +
-          " cannot exceed 9 character-length."
-      });
-      return;
-    }
+    // const regex = new RegExp("^[0-9]{1,3}()s?([0-9]{3}s?)+$");
+    const regex = new RegExp(/([0-9]{1,3}s?)+/g);
+
+    // /([0-9]{1,3}\s?)+/g
+
+    population = population.replace(regex, population);
 
     // Doing this to replicate the ViewModel existing in the back-end, to reassure
     // The connection between front- and back-end
     const submittedCity = {
       City: {
         Name: event.target.name.value,
-        Population: event.target.population.value
+        Population: population
       },
       CountryId:
         event.target.countryId.value === "None"
@@ -70,9 +56,9 @@ class Create extends Component {
     } else {
       console.log("[submittedCity]", submittedCity);
 
-      this.props.onCreateSubmit(submittedCity);
+      // this.props.onCreateSubmit(submittedCity);
 
-      setTimeout(this.props.history.push("/identity/city"), 200);
+      // setTimeout(this.props.history.push("/identity/city"), 200);
     }
   };
 
@@ -113,8 +99,8 @@ class Create extends Component {
               <input
                 name="population"
                 className="form-inline"
-                type="number"
-                maxLength="9"
+                type="text"
+                maxLength="12"
                 value={this.state.population}
                 onChange={this.handlePopChange}
                 placeholder="Population"

@@ -43,7 +43,6 @@ export function AllCitiesAsync() {
           cancelToken: source.token
         })
         .then(response => {
-          console.log("[Response]", response.data);
           if (response.status === 200) {
             dispatch(AllCities(response.data, response.status));
             dispatch(ItemsAreLoading(false));
@@ -127,7 +126,6 @@ export function FindCityAsync(id) {
       })
       .then(response => {
         if (response.status === 200) {
-          localStorage.setItem("oneCity", response.data);
           dispatch(FindCity(response.data));
         }
         dispatch(ItemsAreLoading(false));
@@ -136,6 +134,14 @@ export function FindCityAsync(id) {
         console.error(err);
         // ToDo
       });
+  };
+}
+
+export function FindCityNoApiAsync(city) {
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    dispatch(FindCity(city));
+    dispatch(ItemsAreLoading(false));
   };
 }
 
@@ -170,7 +176,6 @@ function EditCity(city) {
 export function EditCityAsync(city) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    console.log(city);
     axios
       .put(apiUrl + city.City.Id, city, { cancelToken: source.token })
       .then(response => {
@@ -232,15 +237,14 @@ function DeleteCity(id) {
 
 export function DeleteCityAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    // dispatch(ItemsAreLoading(true));
     axios
       .delete(apiUrl + id, { cancelToken: source.token })
       .then(response => {
-        console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(DeleteCity(id));
         }
-        dispatch(ItemsAreLoading(false));
+        // dispatch(ItemsAreLoading(false));
       })
       .catch(err => {
         console.error(err);
