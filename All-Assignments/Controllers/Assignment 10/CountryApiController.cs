@@ -69,24 +69,6 @@ namespace All_Assignments.Controllers
             return Ok(country);
         }
 
-        [HttpGet("deldet/{id}")]
-        public async Task<IActionResult> GetCountryWithCities(Guid? id)
-        {
-            if (id.ToString() == null)
-            {
-                return BadRequest();
-            }
-
-            var country = await _service.FindCountryWithCities((Guid)id);
-
-            if (country == null)
-            {
-                return NoContent();
-            }
-
-            return Ok(country);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create(Country country)
         {
@@ -105,7 +87,7 @@ namespace All_Assignments.Controllers
             return Ok(newCountry);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Edit(Country country)
         {
             if (!ModelState.IsValid)
@@ -123,7 +105,7 @@ namespace All_Assignments.Controllers
             return Ok(newCountry);
         }
 
-        [HttpPut("{add-city}")]
+        [HttpPut("add-city/{id}")]
         public async Task<IActionResult> AddCity(Guid countryId, List<City> cities)
         {
             if (countryId == null || string.IsNullOrWhiteSpace(countryId.ToString()) || cities == null || cities.Count == 0)
@@ -141,7 +123,7 @@ namespace All_Assignments.Controllers
             return Ok(country);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))

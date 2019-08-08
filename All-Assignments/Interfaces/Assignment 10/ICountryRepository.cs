@@ -13,8 +13,7 @@ namespace All_Assignments.Interfaces.Assignment_10
         Task<Country> Create(Country country);
 
         // Read
-        Task<Country> FindCountry(Guid id);
-        Task<CountryWithCitiesVM> FindCountryWithCities(Guid id);
+        Task<CountryWithCitiesVM> FindCountry(Guid id);
         Task<List<Country>> AllCountries();
 
         // Update

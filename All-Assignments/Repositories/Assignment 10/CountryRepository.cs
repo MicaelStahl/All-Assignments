@@ -50,24 +50,7 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Read
-        public async Task<Country> FindCountry(Guid id)
-        {
-            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
-            {
-                return null;
-            }
-
-            var country = await _db.Countries.SingleOrDefaultAsync(x => x.Id == id);
-
-            if (country == null)
-            {
-                return null;
-            }
-
-            return country;
-        }
-
-        public async Task<CountryWithCitiesVM> FindCountryWithCities(Guid id)
+        public async Task<CountryWithCitiesVM> FindCountry(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
@@ -76,7 +59,6 @@ namespace All_Assignments.Repositories.Assignment_10
 
             var country = await _db.Countries
                 .Include(x => x.Cities)
-                .ThenInclude(x => x.People)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (country == null)
