@@ -69,6 +69,24 @@ namespace All_Assignments.Controllers
             return Ok(country);
         }
 
+        [HttpGet("deldet/{id}")]
+        public async Task<IActionResult> GetCountryWithCities(Guid? id)
+        {
+            if (id.ToString() == null)
+            {
+                return BadRequest();
+            }
+
+            var country = await _service.FindCountryWithCities((Guid)id);
+
+            if (country == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(country);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(Country country)
         {

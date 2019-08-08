@@ -8,6 +8,7 @@ const initialState = {
 };
 
 let country = [];
+let countries = [];
 let index = 0;
 
 const reducer = (state = initialState, action) => {
@@ -22,7 +23,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.CREATE_COUNTRY:
       country = action.country;
 
-      const { countries } = state;
+      countries = state.countries;
 
       countries.push(country);
 

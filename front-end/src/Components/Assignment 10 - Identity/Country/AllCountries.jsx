@@ -11,11 +11,6 @@ class AllCountries extends Component {
 
   componentWillMount() {
     this.props.onSiteLoad();
-    let test = "This.is,a.message";
-
-    test = test.replace(".", " ");
-    test = test.replace(",", " ");
-    console.log(test);
   }
 
   render() {
@@ -46,17 +41,19 @@ class AllCountries extends Component {
                   <td>
                     <Link
                       className="btn btn-warning btn-sm"
-                      to={"/identity/country/edit" + country.id}>
+                      to={"/identity/country/edit/" + country.id}>
                       Edit
                     </Link>
                     <Link
+                      onClick={() => this.props.onDetailsLoad(country.id)}
                       className="btn btn-primary btn-sm ml-1"
-                      to={"/identity/country/details" + country.id}>
+                      to={"/identity/country/details/" + country.id}>
                       Details
                     </Link>
                     <Link
+                      onClick={() => this.props.onDeleteLoad(country.id)}
                       className="btn btn-danger btn-sm ml-1"
-                      to={"/identity/country/delete" + country.id}>
+                      to={"/identity/country/delete/" + country.id}>
                       Delete
                     </Link>
                   </td>
@@ -81,7 +78,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSiteLoad: () => dispatch(actionTypes.AllCountriesAsync())
+    onSiteLoad: () => dispatch(actionTypes.AllCountriesAsync()),
+    onDetailsLoad: id => dispatch(actionTypes.FindCountryAsync(id)),
+    onDeleteLoad: id => dispatch(actionTypes.FindCountryAsync(id))
     // ToDo
   };
 };

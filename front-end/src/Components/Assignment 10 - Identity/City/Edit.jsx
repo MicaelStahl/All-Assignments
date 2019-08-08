@@ -13,6 +13,10 @@ class Edit extends Component {
     error: ""
   };
 
+  numberWithSpaces = str => {
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
   handleChange = event => {
     const { name, value } = event.target;
 
@@ -28,13 +32,27 @@ class Edit extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    const { id, name, population, countryId } = event.target;
+    const { id, name, countryId } = event.target;
+    let population = event.target.population.value;
+
+    if (population.includes(".") || population.includes(",")) {
+      population = population.replace(".", "").replace(",", "");
+    }
+
+    if (Number(population) < 10) {
+      this.setState({
+        error: "The city cannot bestow of less than 10 citizens."
+      });
+      return;
+    }
+
+    population = this.numberWithSpaces(population);
 
     const cityVM = {
       City: {
         Id: id.value,
         Name: name.value,
-        Population: population.value.replace(",", ".")
+        Population: population
       },
       CountryId: countryId.value === "None" ? null : countryId.value
     };

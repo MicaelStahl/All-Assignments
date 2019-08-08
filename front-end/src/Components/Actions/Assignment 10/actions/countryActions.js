@@ -61,14 +61,14 @@ function CreateCountry(country) {
 
 export function CreateCountryAsync(country) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    // dispatch(ItemsAreLoading(true));
     axios
       .post(apiUrl, country, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(CreateCountry(country));
         }
-        dispatch(ItemsAreLoading(false));
+        // dispatch(ItemsAreLoading(false));
       })
       .catch(err => {
         console.error(err);
@@ -77,10 +77,10 @@ export function CreateCountryAsync(country) {
   };
 }
 
-function FindCountry(id) {
+function FindCountry(country) {
   return {
     type: FIND_COUNTRY,
-    id: id
+    country
   };
 }
 
@@ -94,7 +94,7 @@ export function FindCountryAsync(id) {
       })
       .then(response => {
         if (response.status === 200) {
-          dispatch(FindCountry(id));
+          dispatch(FindCountry(response.data));
         }
         dispatch(ItemsAreLoading(false));
       })

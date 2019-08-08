@@ -52,4 +52,11 @@ namespace All_Assignments.ViewModels
 
         public List<Country> Countries { get; set; }
     }
+
+    public class CountryWithCitiesVM
+    {
+        public Country Country { get; set; }
+
+        public List<City> Cities { get; set; }
+    }
 }

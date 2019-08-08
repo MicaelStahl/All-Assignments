@@ -1,6 +1,7 @@
 ﻿using All_Assignments.Database;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ namespace All_Assignments.Repositories.Assignment_10
             return country;
         }
 
-        public async Task<Country> FindCountryWithCitiesAndPeople(Guid id)
+        public async Task<CountryWithCitiesVM> FindCountryWithCities(Guid id)
         {
             if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
             {
@@ -83,7 +84,14 @@ namespace All_Assignments.Repositories.Assignment_10
                 return null;
             }
 
-            return country;
+            CountryWithCitiesVM countryVM = new CountryWithCitiesVM
+            {
+                Cities = country?.Cities ?? null,
+            };
+            country.Cities = null;
+            countryVM.Country = country;
+
+            return countryVM;
         }
 
         public async Task<List<Country>> AllCountries()

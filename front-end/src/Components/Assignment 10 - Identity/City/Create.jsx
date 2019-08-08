@@ -9,20 +9,41 @@ class Create extends Component {
   state = {
     countryId: "",
     error: "",
+    name: "",
     population: ""
   };
 
-  handleCityChange = event => {
-    this.setState({ countryId: event.target.value });
+  numberWithSpaces = str => {
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
-  handlePopChange = event => {
-    const { value } = event.target;
+  handleCityChange = event => {
+    this.setState({ countryId: event.target.value, error: "" });
+  };
 
-    const correctFormat = value.match(/(^[0-9 ]+$)/g);
+  handleChange = event => {
+    const { name, value } = event.target;
+    let correctFormat = null;
 
+    if (name === "name") {
+      correctFormat = value.match(/^([a-ö ]+\s)*[a-öA-Ö ]+$/g);
+    } else if (name === "population") {
+      correctFormat = value.match(/(^[0-9 ]+$)/g);
+    }
+
+    if (correctFormat === null) {
+      if (value.length === 0) {
+        this.setState({ [name]: value, error: "" });
+      } else {
+        this.setState({
+          error: "Invalid character entered."
+        });
+      }
+      return;
+    }
     this.setState({
-      population: correctFormat === null ? this.state.population : correctFormat
+      [name]: correctFormat === null ? "" : correctFormat,
+      error: ""
     });
   };
 
@@ -31,12 +52,21 @@ class Create extends Component {
 
     let population = event.target.population.value;
 
+    if (Number(population) < 10) {
+      this.setState({
+        error: "The population needs to bestow of at least 10 citizens."
+      });
+      return;
+    }
+
     // const regex = new RegExp("^[0-9]{1,3}()s?([0-9]{3}s?)+$");
-    const regex = new RegExp(/([0-9]{1,3}s?)+/g);
+    // const regex = new RegExp("([0-9]{1,3}s?)+");
 
     // /([0-9]{1,3}\s?)+/g
 
-    population = population.replace(regex, population);
+    // population = population.replace(regex, " ");
+
+    population = this.numberWithSpaces(population);
 
     // Doing this to replicate the ViewModel existing in the back-end, to reassure
     // The connection between front- and back-end
@@ -56,9 +86,9 @@ class Create extends Component {
     } else {
       console.log("[submittedCity]", submittedCity);
 
-      // this.props.onCreateSubmit(submittedCity);
+      this.props.onCreateSubmit(submittedCity);
 
-      // setTimeout(this.props.history.push("/identity/city"), 200);
+      setTimeout(this.props.history.push("/identity/city"), 100);
     }
   };
 
@@ -91,6 +121,8 @@ class Create extends Component {
                 name="name"
                 placeholder="Name"
                 maxLength="80"
+                value={this.state.name}
+                onChange={this.handleChange}
                 required
               />
             </div>
@@ -100,9 +132,10 @@ class Create extends Component {
                 name="population"
                 className="form-inline"
                 type="text"
-                maxLength="12"
+                min="10"
+                maxLength="10"
                 value={this.state.population}
-                onChange={this.handlePopChange}
+                onChange={this.handleChange}
                 placeholder="Population"
                 required
               />

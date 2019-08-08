@@ -1,4 +1,5 @@
 ﻿using All_Assignments.Models.Assignment10Models;
+using All_Assignments.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Read
         Task<Country> FindCountry(Guid id);
-        Task<Country> FindCountryWithCitiesAndPeople(Guid id);
+        Task<CountryWithCitiesVM> FindCountryWithCities(Guid id);
         Task<List<Country>> AllCountries();
 
         // Update
