@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
@@ -15,7 +16,8 @@ class Edit extends Component {
     phoneNumber: null,
     city: "",
     cityId: "",
-    error: ""
+    error: "",
+    redirect: false
   };
 
   handleChange = event => {
@@ -70,15 +72,16 @@ class Edit extends Component {
     } else {
       this.props.onEditAccept(personEdit);
 
-      setTimeout(() => {
-        this.props.history.push("/identity/person/details/" + person.Id);
-      }, 100);
+      this.setState({ redirect: true });
     }
 
     // ToDo
   };
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect push to="/identity/persons" />;
+    }
     if (!this.props.isLoading) {
       const userChoice =
         this.props.person.cityId !== null ? (

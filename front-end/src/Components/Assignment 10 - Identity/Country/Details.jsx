@@ -11,7 +11,8 @@ class Details extends Component {
     redirect: false
   };
 
-  componentWillMount() {
+  // A test I wanted to do to see what the effects would be.
+  componentDidMount() {
     let id = localStorage.getItem("oneCountryId");
     console.log(id);
     if (id === undefined || id === null) {
@@ -23,7 +24,7 @@ class Details extends Component {
 
   render() {
     if (this.state.redirect) {
-      return <Redirect to="/identity/country" />;
+      return <Redirect push to="/identity/country" />;
     }
     if (!this.props.isLoading) {
       return (

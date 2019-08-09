@@ -8,18 +8,26 @@ import GuessingGame from "../Assignment 7 - Guessing Game/GuessingGame";
 import IdentityIndex from "../Assignment 10 - Identity/IdentityIndex";
 import Person from "../Assignment 10 - Identity/Person/Person";
 import City from "../Assignment 10 - Identity/City/City";
+
 import Country from "../Assignment 10 - Identity/Country/Country";
 
 const Main = () => {
   return (
     <Switch>
       <Route exact path="/calculator" component={Calculator} />
+
       <Route exact path="/webpage" component={HTML} />
+
       <Route exact path="/guessing-game" component={GuessingGame} />
+
       <Route exact path="/identity" component={IdentityIndex} />
+
       <Route exact path="/identity/person" component={Person} />
+
       <Route exact path="/identity/city" component={City} />
+
       <Route exact path="/identity/country" component={Country} />
+
       <Route exact path="/" component={Home} />
     </Switch>
   );

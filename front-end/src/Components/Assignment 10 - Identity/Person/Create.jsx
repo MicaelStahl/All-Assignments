@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
@@ -7,7 +8,8 @@ import * as actionTypes from "../../Actions/Assignment 10/actions/personActions"
 class Create extends Component {
   state = {
     cityId: "",
-    error: ""
+    error: "",
+    redirect: false
   };
 
   handleChange = event => {
@@ -51,10 +53,13 @@ class Create extends Component {
 
     this.props.onCreated(person, cityId);
 
-    setTimeout(this.props.history.push("/identity/person"), 200);
+    setTimeout(this.setState({ redirect: true }), 200);
   };
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect push="/identity/person" />;
+    }
     const options = this.props.cities.map((city, index) => (
       <option key={index} value={city.id}>
         {city.name}

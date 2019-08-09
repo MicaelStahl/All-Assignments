@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/countryActions";
@@ -8,7 +9,8 @@ class Create extends Component {
   state = {
     error: "",
     name: "",
-    population: ""
+    population: "",
+    redirect: false
   };
 
   // This function retrieves a string and returns a thousand separator handled string.
@@ -76,10 +78,13 @@ class Create extends Component {
 
     this.props.onCreateSubmit(country);
 
-    setTimeout(this.props.history.push("/identity/country"), 100);
+    this.setState({ redirect: true });
   };
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect push to="/identity/country" />;
+    }
     return (
       <React.Fragment>
         <Title Title="Create new country" />

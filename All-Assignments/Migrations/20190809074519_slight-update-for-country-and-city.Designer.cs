@@ -4,14 +4,16 @@ using All_Assignments.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace All_Assignments.Migrations
 {
     [DbContext(typeof(AllAssignmentsDbContext))]
-    partial class AllAssignmentsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190809074519_slight-update-for-country-and-city")]
+    partial class slightupdateforcountryandcity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +54,7 @@ namespace All_Assignments.Migrations
 
                     b.Property<string>("Population")
                         .IsRequired()
-                        .HasMaxLength(14);
+                        .HasMaxLength(12);
 
                     b.HasKey("Id");
 

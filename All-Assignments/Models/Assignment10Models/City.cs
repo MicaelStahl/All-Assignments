@@ -16,7 +16,7 @@ namespace All_Assignments.Models.Assignment10Models
         public string Name { get; set; }
 
         [Required]
-        [StringLength(10)]
+        [StringLength(12)]
         public string Population { get; set; }
 
         public List<Person> People { get; set; }

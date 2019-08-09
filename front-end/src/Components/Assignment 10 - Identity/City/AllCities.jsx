@@ -9,7 +9,7 @@ import Loading from "../../UI/Loading";
 class AllCities extends Component {
   state = {};
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onSiteLoad();
   }
 

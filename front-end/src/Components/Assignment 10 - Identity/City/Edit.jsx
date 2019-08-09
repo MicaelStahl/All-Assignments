@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import Loading from "../../UI/Loading";
 import Title from "../../UI/Title";
@@ -10,7 +11,8 @@ class Edit extends Component {
     name: null,
     population: null,
     countryId: "",
-    error: ""
+    error: "",
+    redirect: false
   };
 
   numberWithSpaces = str => {
@@ -65,11 +67,14 @@ class Edit extends Component {
     } else {
       this.props.onEditSubmit(cityVM);
 
-      setTimeout(this.props.history.push("/identity/city"), 200);
+      setTimeout(this.setState({ redirect: true }), 200);
     }
   };
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect push to="/identity/city" />;
+    }
     if (!this.props.isLoading) {
       const { city } = this.props;
       const userChoice =

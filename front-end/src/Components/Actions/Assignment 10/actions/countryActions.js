@@ -61,14 +61,12 @@ function CreateCountry(country) {
 
 export function CreateCountryAsync(country) {
   return dispatch => {
-    // dispatch(ItemsAreLoading(true));
     axios
       .post(apiUrl, country, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(CreateCountry(country));
         }
-        // dispatch(ItemsAreLoading(false));
       })
       .catch(err => {
         console.error(err);
@@ -102,6 +100,14 @@ export function FindCountryAsync(id) {
         console.error(err);
         // ToDo
       });
+  };
+}
+
+export function FindCountryForEditAsync(country) {
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    dispatch(FindCountry(country));
+    dispatch(ItemsAreLoading(false));
   };
 }
 

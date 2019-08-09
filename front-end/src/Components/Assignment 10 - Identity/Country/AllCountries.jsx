@@ -9,13 +9,13 @@ import * as actionTypes from "../../Actions/Assignment 10/actions/countryActions
 class AllCountries extends Component {
   state = {};
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onSiteLoad();
   }
 
   onLinkClicked = id => {
     localStorage.setItem("oneCountryId", id);
-    this.props.onDetailsLoad(id);
+    this.props.onGetOneCountryLoad(id);
   };
 
   render() {
@@ -45,7 +45,7 @@ class AllCountries extends Component {
                   <td>{country.population.replace(/[.]/g, " ")}</td>
                   <td>
                     <Link
-                      onClick={() => this.props.onEditLoad(country.id)}
+                      onClick={() => this.props.onEditLoad(country)}
                       className="btn btn-warning btn-sm"
                       to={"/identity/country/edit/" + country.id}>
                       Edit
@@ -57,7 +57,7 @@ class AllCountries extends Component {
                       Details
                     </Link>
                     <Link
-                      onClick={() => this.props.onDeleteLoad(country.id)}
+                      onClick={() => this.onLinkClicked(country.id)}
                       className="btn btn-danger btn-sm ml-1"
                       to={"/identity/country/delete/" + country.id}>
                       Delete
@@ -85,8 +85,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSiteLoad: () => dispatch(actionTypes.AllCountriesAsync()),
-    onDetailsLoad: id => dispatch(actionTypes.FindCountryAsync(id))
-    // onEditLoad: id => dispatch(actionTypes.FindCountryAsync(id)),
+    onGetOneCountryLoad: id => dispatch(actionTypes.FindCountryAsync(id)),
+    onEditLoad: country =>
+      dispatch(actionTypes.FindCountryForEditAsync(country))
     // onDeleteLoad: id => dispatch(actionTypes.FindCountryAsync(id))
     // ToDo
   };

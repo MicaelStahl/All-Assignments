@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import Loading from "../../UI/Loading";
@@ -10,7 +11,8 @@ class Create extends Component {
     countryId: "",
     error: "",
     name: "",
-    population: ""
+    population: "",
+    redirect: false
   };
 
   numberWithSpaces = str => {
@@ -88,11 +90,14 @@ class Create extends Component {
 
       this.props.onCreateSubmit(submittedCity);
 
-      setTimeout(this.props.history.push("/identity/city"), 100);
+      setTimeout(this.setState({ redirect: true }), 100);
     }
   };
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect push to="/identity/city" />;
+    }
     if (!this.props.isLoading) {
       const options = this.props.countries.map(country => (
         <option key={country.id} value={country.id}>
