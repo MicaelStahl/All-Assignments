@@ -34,7 +34,10 @@ namespace All_Assignments
             services.AddDbContext<AllAssignmentsDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<AppUser10, IdentityRole>().AddEntityFrameworkStores<AllAssignmentsDbContext>();
+            services.AddIdentity<AppUser10, IdentityRole>().AddEntityFrameworkStores<AllAssignmentsDbContext>()
+                .AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Authentication")
+                .AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Verification")
+                .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(options =>
             {   // Default password settings.

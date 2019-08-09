@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace All_Assignments.Controllers
 {
@@ -55,7 +57,9 @@ namespace All_Assignments.Controllers
                 return Content("The requested Username is already in use. Please try something else.", contentType: user.UserName);
             }
 
-            user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
+            user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
+
+            await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", user.UserToken);
 
             var result = await _userManager.CreateAsync(user);
 
@@ -234,6 +238,7 @@ namespace All_Assignments.Controllers
             }
 
             var user = await _userManager.FindByNameAsync(user10.UserName);
+            IdentityUserToken<string> app = new IdentityUserToken<string>();
 
             if (user == null)
             {
