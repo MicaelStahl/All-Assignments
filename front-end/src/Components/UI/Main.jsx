@@ -11,9 +11,13 @@ import City from "../Assignment 10 - Identity/City/City";
 
 import Country from "../Assignment 10 - Identity/Country/Country";
 
+import LoginScreen from "../Assignment 10 - Identity/User/LoginScreen";
+
 const Main = () => {
   return (
     <Switch>
+      <Route exact path="/login" component={LoginScreen} />
+
       <Route exact path="/calculator" component={Calculator} />
 
       <Route exact path="/webpage" component={HTML} />

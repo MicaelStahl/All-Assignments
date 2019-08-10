@@ -1,21 +1,22 @@
 import React, { Component } from "react";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink, Link, withRouter } from "react-router-dom";
 
 class Navbar extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      authenticated: false
+    };
   }
-
   // Fix these links later.
   render() {
     return (
       <header>
         <nav className="border-radius5 container navbar navbar-expand-sm navbar-expand-sm navbar-light bg-dark border-bottom box-shadow mb-3">
           <div className="container">
-            <a id="HomeScreen" className="navbar-brand text-light" href="#">
+            <Link id="HomeScreen" to="/" className="nav-link text-light">
               Start
-            </a>
+            </Link>
             <button
               className="navbar-toggler"
               type="button"
@@ -44,11 +45,11 @@ class Navbar extends Component {
                   </React.Fragment>
                 ) : (
                   <li className="nav-item">
-                    <button
+                    <NavLink
                       className="nav-link text-light btn btn-dark"
-                      onClick={this.login}>
+                      to="/login">
                       Login
-                    </button>
+                    </NavLink>
                   </li>
                   // <NavLink className="nav-link text-light" to="/login">
                   //   Login
@@ -128,9 +129,7 @@ class Navbar extends Component {
                       </div>
                     </li>
                   </ul>
-                ) : (
-                  console.log(this.props.location)
-                )}
+                ) : null}
               </ul>
             </div>
           </div>
