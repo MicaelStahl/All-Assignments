@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, withRouter } from "react-router-dom";
+import { Route, withRouter } from "react-router-dom";
 
 import Home from "../../Home";
 import Calculator from "../Assignment 1 - Calculator/Calculator";
@@ -11,12 +11,15 @@ import City from "../Assignment 10 - Identity/City/City";
 
 import Country from "../Assignment 10 - Identity/Country/Country";
 
+import Register from "../Assignment 10 - Identity/User/Register";
 import LoginScreen from "../Assignment 10 - Identity/User/LoginScreen";
 
 const Main = () => {
   return (
-    <Switch>
+    <React.Fragment>
       <Route exact path="/login" component={LoginScreen} />
+
+      <Route exact path="/register" component={Register} />
 
       <Route exact path="/calculator" component={Calculator} />
 
@@ -33,7 +36,7 @@ const Main = () => {
       <Route exact path="/identity/country" component={Country} />
 
       <Route exact path="/" component={Home} />
-    </Switch>
+    </React.Fragment>
   );
 };
 
