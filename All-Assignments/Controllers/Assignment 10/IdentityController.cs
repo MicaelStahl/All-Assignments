@@ -43,6 +43,9 @@ namespace All_Assignments.Controllers
 
         #region (C)REATE
 
+        /// <summary>
+        /// Is this one necessary considering I already have a Register method?
+        /// </summary>
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser(AppUser10 user)
@@ -59,6 +62,7 @@ namespace All_Assignments.Controllers
 
             user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
 
+            // testing.
             await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", user.UserToken);
 
             var result = await _userManager.CreateAsync(user);
@@ -75,7 +79,7 @@ namespace All_Assignments.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(AppUser10 user)
+        public async Task<IActionResult> Register(RegisterUser10 user)
         {
             if (!ModelState.IsValid)
             {
@@ -87,9 +91,14 @@ namespace All_Assignments.Controllers
                 return Content("The requested Username is already in use. Please try something else.", contentType: user.UserName);
             }
 
-            user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
+            if (user.Password != user.ComparePassword)
+            {
+                return Content("The passwords does not match. Please try again.");
+            }
 
-            var result = await _userManager.CreateAsync(user);
+            //user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
+
+            var result = await _userManager.CreateAsync(user, user.Password);
 
             if (result.Succeeded)
             {
@@ -417,7 +426,7 @@ namespace All_Assignments.Controllers
         #endregion
 
         // (D)ELETE
-        
+
         #region (D)ELETE
 
         [HttpDelete]

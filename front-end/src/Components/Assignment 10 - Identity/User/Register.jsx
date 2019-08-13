@@ -10,6 +10,7 @@ class Register extends Component {
     firstName: "",
     lastName: "",
     age: "",
+    email: "",
     password: "",
     confirmPassword: "",
     error: ""
@@ -30,6 +31,19 @@ class Register extends Component {
     return str.match("^(?=.*?[A-Ö])(?=.*?[a-ö]).{2,20}$");
   };
 
+  validateEmailInput = str => {
+    // This regex validates the Email-address given
+    // examples of valid Email-addresses:
+    // x.x@x.xx & x.x@x.xxxx
+    // test.test@testing.test
+    // testing.test@t.com
+    // Not valid Email-addresses:
+    // .x@test.com
+    // x.@test.com
+    // x@.test.com
+    return str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/);
+  };
+
   validatePasswordInput = str => {
     // This regex checks so that the password contains the following;
     // At least one uppercase letter A-Ö
@@ -46,9 +60,104 @@ class Register extends Component {
 
   handleChange = event => {
     // ToDo
+    const { name, value } = event.target;
+    let correctFormat = null;
+
+    // Could probably make these into a giant x === null ? null : null statement
+
+    if (name === "userName") {
+      correctFormat = value.match(/^[a-öA-Ö0-9]*$/);
+      if (correctFormat === null) {
+        this.setState({
+          error: "Invalid username input. \nOnly letters and numbers allowed."
+        });
+        return;
+      }
+      // So I don't have to write a copypaste for lastName, I decided to do like this.
+    } else if (name === "firstName" || name === "lastName") {
+      correctFormat = value.match(/^[a-öA-Ö]*$/);
+      if (correctFormat === null) {
+        this.setState({
+          error: `Invalid ${name.toLowerCase()} input. \nOnly letters allowed.`
+        });
+        return;
+      }
+    } else if (name === "age") {
+      correctFormat = value.match("^[0-9]+$");
+      if (correctFormat === null) {
+        this.setState({ error: "Invalid age input. \nOnly numbers allowed." });
+        return;
+      }
+    } else if (name === "email") {
+      correctFormat = value.match(/^([a-ö-A-Ö0-9$@._-])*$/);
+      if (correctFormat === null) {
+        this.setState({
+          error:
+            "Invalid email input. \nValid inputs are: \n" +
+            "All letters and numbers\n" +
+            "( . _ - @ )"
+        });
+        return;
+      }
+    }
+
+    this.setState({ [name]: value, error: "" });
   };
 
   handleSubmit = event => {
+    // ToDo
+    event.preventDefault();
+    const {
+      userName,
+      firstName,
+      lastName,
+      age,
+      email,
+      password,
+      confirmPassword
+    } = event.target;
+
+    if (this.validateUserNameInput(userName.value) === undefined) {
+      this.setState({ error: "Invalid username" });
+      return;
+    } else if (
+      this.validateFirstAndLastNameInput(firstName.value) === undefined
+    ) {
+      this.setState({ error: "Invalid firstname" });
+      return;
+    } else if (
+      this.validateFirstAndLastNameInput(lastName.value) === undefined
+    ) {
+      this.setState({ error: "Invalid lastname" });
+      return;
+    } else if (this.validatePasswordInput(password.value) === undefined) {
+      this.setState({ error: "Invalida password" });
+      return;
+    } else if (password.value !== confirmPassword.value) {
+      this.setState({ error: "The passwords does not match." });
+      return;
+    } else if (this.validateEmailInput(email.value) === undefined) {
+      this.setState({ error: "Invalid email" });
+      return;
+    } else if (Number(age.value) > 110 || Number(age.value) < 18) {
+      this.setState({
+        error: "Invalid age given. Must be between 18 to 110 years old."
+      });
+      return;
+    }
+
+    const user = {
+      UserName: userName.value,
+      FirstName: firstName.value,
+      LastName: lastName.value,
+      Age: age.value,
+      Email: email.value,
+      Password: password.value,
+      ConfirmPassword: confirmPassword.value
+    };
+
+    console.log("[User]", user);
+
     // ToDo
   };
 
@@ -57,14 +166,25 @@ class Register extends Component {
   };
 
   render() {
+    console.log(this.props.history);
     if (this.state.redirect === true) {
-      return <Redirect push to="/identity" />;
+      return (
+        <Redirect
+          push
+          to={
+            this.props.history.goBack() === undefined
+              ? "/"
+              : this.props.history.goBack()
+          }
+        />
+      );
     }
     const {
       userName,
       firstName,
       lastName,
       age,
+      email,
       password,
       confirmPassword,
       error
@@ -96,6 +216,8 @@ class Register extends Component {
                   type="text"
                   name="userName"
                   value={userName}
+                  minLength="4"
+                  maxLength="20"
                   onChange={this.handleChange}
                   className="form-inline"
                   required
@@ -108,6 +230,8 @@ class Register extends Component {
                 <input
                   type="text"
                   name="firstName"
+                  minLength="2"
+                  maxLength="20"
                   value={firstName}
                   onChange={this.handleChange}
                   className="form-inline"
@@ -121,6 +245,8 @@ class Register extends Component {
                 <input
                   type="text"
                   name="lastName"
+                  minLength="2"
+                  maxLength="20"
                   value={lastName}
                   onChange={this.handleChange}
                   className="form-inline"
@@ -134,7 +260,22 @@ class Register extends Component {
                 <input
                   type="text"
                   name="age"
+                  min="18"
+                  max="110"
                   value={age}
+                  onChange={this.handleChange}
+                  className="form-inline"
+                  required
+                />
+              </label>
+            </div>
+            <div className="form-group">
+              <label className="col-form-label">
+                Email
+                <input
+                  type="text"
+                  name="email"
+                  value={email}
                   onChange={this.handleChange}
                   className="form-inline"
                   required
@@ -147,6 +288,8 @@ class Register extends Component {
                 <input
                   type="password"
                   name="password"
+                  minLength="8"
+                  maxLength="20"
                   value={password}
                   onChange={this.handleChange}
                   className="form-inline"
@@ -160,6 +303,8 @@ class Register extends Component {
                 <input
                   type="password"
                   name="confirmPassword"
+                  minLength="8"
+                  maxLength="20"
                   value={confirmPassword}
                   onChange={this.handleChange}
                   className="form-inline"

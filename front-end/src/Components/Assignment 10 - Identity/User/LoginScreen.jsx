@@ -41,7 +41,7 @@ class LoginScreen extends Component {
 
     if (name === "userName") {
       // Checks so the given value is either a letter or a number.
-      correctFormat = value.match(/^[a-öA-Ö]*$/);
+      correctFormat = value.match(/^[a-öA-Ö0-9]*$/);
       if (correctFormat === null) {
         this.setState({
           error: `Incorrect character input.  \nOnly letters and numbers allowed as username.`
