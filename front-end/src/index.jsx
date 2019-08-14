@@ -13,10 +13,18 @@ import "./Components/css/site.css";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import StateLoader from "./StateLoader";
 
-const initialState = window.initialReduxState;
+// const initialState = window.initialReduxState;
 
-const store = configureStore(initialState);
+const stateLoader = new StateLoader();
+
+const store = configureStore(stateLoader.loadState());
+
+store.subscribe(() => {
+  // ToDo
+  stateLoader.SaveState(store.getState());
+});
 
 ReactDOM.render(
   <Provider store={store}>

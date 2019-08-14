@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using All_Assignments.Database;
 using All_Assignments.Interfaces;
 using All_Assignments.Interfaces.Assignment_10;
+using All_Assignments.Models.Token;
 using All_Assignments.Repositories.Assignment_10;
 using All_Assignments.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace All_Assignments
 {
@@ -92,6 +96,35 @@ namespace All_Assignments
                     });
             });
 
+            #region Jwt Creation by https://bit.ly/31FTeUp
+
+            // configure strongly typed settings objects
+            var tokenManagement = Configuration.GetSection("TokenManagement");
+            services.Configure<TokenManagement>(tokenManagement);
+
+            // configure jwt authentication
+            var tokenSettings = tokenManagement.Get<TokenManagement>();
+            var key = Encoding.ASCII.GetBytes(tokenSettings.Secret);
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                    };
+                });
+
+            #endregion
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -117,6 +150,8 @@ namespace All_Assignments
             app.UseSession();
 
             app.UseCors();
+
+            app.UseAuthentication();
 
             app.UseMvcWithDefaultRoute();
         }

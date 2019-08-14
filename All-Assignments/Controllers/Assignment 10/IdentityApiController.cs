@@ -12,12 +12,9 @@ using Microsoft.Extensions.Options;
 
 namespace All_Assignments.Controllers
 {
-    /// <summary>
-    /// Edit this controller later to not send down more userdata than necessary.
-    /// </summary>
+    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Authorize]
     [Route("api/[controller]")]
-    //[Route("[controller]")]
     [ApiController]
     public class IdentityApiController : Controller
     {
@@ -32,6 +29,16 @@ namespace All_Assignments.Controllers
             _roleManager = roleManager;
             _signInManager = signInManager;
         }
+
+        //  Create a Repository for this controller tomorrow!
+        //  Create a Repository for this controller tomorrow!
+        //  Create a Repository for this controller tomorrow! https://bit.ly/31FTeUp <= Link to the guide.
+        //  Create a Repository for this controller tomorrow!
+        //  Create a Repository for this controller tomorrow!
+        //  Create a Repository for this controller tomorrow! 
+        //  Create a Repository for this controller tomorrow!
+        //  Create a Repository for this controller tomorrow!
+        //  Create a Repository for this controller tomorrow!
 
         /// <summary>
         /// Will this even be used?
@@ -254,7 +261,7 @@ namespace All_Assignments.Controllers
             }
 
             var user = await _userManager.FindByNameAsync(user10.UserName);
-            
+
             // Testing purposes.
             IdentityUserToken<string> app = new IdentityUserToken<string>();
 
@@ -282,34 +289,39 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpPost("signout")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignOut(string userName, string userToken)
+        /// <summary>
+        /// Implement userToken at a later stage.
+        /// </summary>
+        [HttpGet("signout")]
+        [AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> SignOut(string userName, string userToken)
+        public async Task<IActionResult> SignOut()
         {
-            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(userToken))
-            {
-                return BadRequest();
-            }
+            //    if (string.IsNullOrWhiteSpace(userName))
+            //    {
+            //        return BadRequest();
+            //    }
 
-            var user = await _userManager.FindByNameAsync(userName);
+            //    var user = await _userManager.FindByNameAsync(userName);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+            //    if (user == null)
+            //    {
+            //        return NotFound();
+            //    }
 
-            var result = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", userToken);
+            //    //var result = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", userToken);
 
-            if (result == true)
-            {
-                await _signInManager.SignOutAsync();
+            //    if (result == true)
+            //    {
+            await _signInManager.SignOutAsync();
 
-                return Content("User was successfully signed out");
-            }
-            else
-            {
-                return Content("Cannot verify if user exists. Please try again.");
-            }
+            return Content("User was successfully signed out");
+            //    }
+            //    else
+            //    {
+            //        return Content("Cannot verify if user exists. Please try again.");
+            //    }
         }
 
         #endregion

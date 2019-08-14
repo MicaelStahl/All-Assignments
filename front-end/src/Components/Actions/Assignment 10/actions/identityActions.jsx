@@ -7,7 +7,6 @@ export const LOADING = "LOADING";
 export const ERROR = "ERROR";
 
 const apiUrl = "http://localhost:50691/api/identityApi/";
-const api = "http://localhost:50691/identityApi/";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
@@ -92,6 +91,45 @@ export function SignInAsync(user10) {
         }
         console.error("Error:", err);
         // ToDo
+      });
+  };
+}
+
+function SignOut(success) {
+  return {
+    type: SIGN_OUT,
+    success
+  };
+}
+
+// Later on this will required userToken and userId.
+export function SignOutAsync() {
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+    axios
+      .get(apiUrl + "signout", {
+        cancelToken: source.token,
+        validateStatus: function(status) {
+          return status < 500; // Reject only if the status code is greater than or equal to 500
+          // A 500+ error indicates that something went wrong server-side.
+        }
+        // Add Authorization here later.
+      })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(SignOut(response.data));
+        } else {
+          dispatch(
+            ErrorHandling(
+              (response.data === undefined) | null
+                ? "Something went wrong."
+                : response.data
+            )
+          );
+        }
+      })
+      .catch(err => {
+        console.error(err);
       });
   };
 }

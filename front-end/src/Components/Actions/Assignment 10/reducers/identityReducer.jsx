@@ -1,5 +1,4 @@
 import * as actionTypes from "../actions/identityActions";
-import { stat } from "fs";
 
 const initialState = {
   users: [],
@@ -43,7 +42,7 @@ export function reducer(state = initialState, action) {
         userToken: "",
         role: "",
         isAuthenticated: false,
-        success: "User was successfully signed out.",
+        success: "",
         error: ""
       };
 

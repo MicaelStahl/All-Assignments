@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { NavLink, Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+
+import * as actionTypes from "../Actions/Assignment 10/actions/identityActions";
 
 class Navbar extends Component {
   constructor(props) {
@@ -8,6 +11,10 @@ class Navbar extends Component {
       authenticated: false
     };
   }
+
+  handleSignOut = () => {
+    this.props.onSignOut();
+  };
   // Fix these links later.
   render() {
     return (
@@ -28,7 +35,7 @@ class Navbar extends Component {
             </button>
             <div className="navbar-collapse justify-content-between collapse d-sm-inline-flex flex-sm-row-reverse">
               <ul className="navbar-nav ml-auto">
-                {this.state.authenticated ? (
+                {this.props.isAuthenticated ? (
                   <React.Fragment>
                     <li className="nav-item">
                       <NavLink className="nav-link text-light" to="/profile">
@@ -36,11 +43,12 @@ class Navbar extends Component {
                       </NavLink>
                     </li>
                     <li className="nav-item">
-                      <a
+                      <Link
+                        to="/"
                         className="nav-link text-light btn btn-dark"
-                        onClick={this.logout}>
-                        Logout
-                      </a>
+                        onClick={() => this.handleSignOut()}>
+                        Sign Out
+                      </Link>
                     </li>
                   </React.Fragment>
                 ) : (
@@ -51,9 +59,6 @@ class Navbar extends Component {
                       Sign In
                     </NavLink>
                   </li>
-                  // <NavLink className="nav-link text-light" to="/login">
-                  //   Login
-                  // </NavLink>
                 )}
               </ul>
               <ul className="navbar-nav mr-auto">
@@ -139,4 +144,19 @@ class Navbar extends Component {
   }
 }
 
-export default withRouter(Navbar);
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.identity.isAuthenticated
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onSignOut: () => dispatch(actionTypes.SignOutAsync())
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Navbar));
