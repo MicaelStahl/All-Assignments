@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Title from "../../UI/Title";
+import * as actionTypes from "../../Actions/Assignment 10/actions/identityActions";
 
 class Register extends Component {
   state = {
@@ -41,7 +43,7 @@ class Register extends Component {
     // .x@test.com
     // x.@test.com
     // x@.test.com
-    return str.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/);
+    return str.match("^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,4})+$");
   };
 
   validatePasswordInput = str => {
@@ -153,10 +155,16 @@ class Register extends Component {
       Age: age.value,
       Email: email.value,
       Password: password.value,
-      ConfirmPassword: confirmPassword.value
+      ComparePassword: confirmPassword.value
     };
 
     console.log("[User]", user);
+
+    this.props.onRegistrationSubmit(user);
+
+    // Temporary setTimeout to make sure everything works properly.
+    // Currently inactive due to me testing Registration.
+    // setTimeout(this.setState({ redirect: true }), 100);
 
     // ToDo
   };
@@ -166,7 +174,6 @@ class Register extends Component {
   };
 
   render() {
-    console.log(this.props.history);
     if (this.state.redirect === true) {
       return (
         <Redirect
@@ -200,6 +207,18 @@ class Register extends Component {
         <div className="mt-3 col-3 AlignCenter border box-shadow shadow">
           <h3 className="text-center">Register user</h3>
           <form className="form" onSubmit={this.handleSubmit}>
+            {this.props.error === "" ? null : (
+              <p className="text-danger font-weight-bold text-center">
+                {this.props.error}
+              </p>
+            )}
+
+            {this.props.success === "" ? null : (
+              <p className="text-success font-weight-bold text-center">
+                {this.props.success}
+              </p>
+            )}
+
             {error === "" ? null : (
               <ul className="list-unstyled">
                 {error.split("\n").map((err, index) => (
@@ -209,6 +228,7 @@ class Register extends Component {
                 ))}
               </ul>
             )}
+
             <div className="form-group">
               <label className="col-form-label">
                 Username
@@ -321,10 +341,28 @@ class Register extends Component {
             </div>
           </form>
         </div>
-        <hr /> {/* Half-assed solution, but works for now. */}
+        <hr />
+        {/* ^ Half-assed solution, but works for now. 
+        Referring to the fact that there was no space between the form and the bottom-layer */}
       </React.Fragment>
     );
   }
 }
 
-export default Register;
+const mapStateToProps = state => {
+  return {
+    error: state.identity.error,
+    success: state.identity.success
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onRegistrationSubmit: user => dispatch(actionTypes.RegisterAsync(user))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Register);

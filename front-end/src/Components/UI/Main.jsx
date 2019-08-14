@@ -12,12 +12,12 @@ import City from "../Assignment 10 - Identity/City/City";
 import Country from "../Assignment 10 - Identity/Country/Country";
 
 import Register from "../Assignment 10 - Identity/User/Register";
-import LoginScreen from "../Assignment 10 - Identity/User/LoginScreen";
+import SignIn from "../Assignment 10 - Identity/User/SignIn";
 
 const Main = () => {
   return (
     <React.Fragment>
-      <Route exact path="/login" component={LoginScreen} />
+      <Route exact path="/signin" component={SignIn} />
 
       <Route exact path="/register" component={Register} />
 

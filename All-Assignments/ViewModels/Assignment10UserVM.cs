@@ -55,9 +55,6 @@ namespace All_Assignments.ViewModels
         [DataType(DataType.Password)]
         [StringLength(20, MinimumLength = 8, ErrorMessage = "The password has to be between 8 to 20 characters long.")]
         public string Password { get; set; }
-
-        [Compare("Password")]
-        public string ComparePassword { get; set; }
     }
 
     public class ChangePassword10

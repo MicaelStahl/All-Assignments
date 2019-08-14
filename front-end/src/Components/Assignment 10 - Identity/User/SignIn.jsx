@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Title from "../../UI/Title";
+import * as actionTypes from "../../Actions/Assignment 10/actions/identityActions";
 
 class LoginScreen extends Component {
   state = {
@@ -98,6 +100,16 @@ class LoginScreen extends Component {
       return;
     }
 
+    const user10 = {
+      UserName: userName,
+      Password: password
+    };
+
+    this.props.onSigninSubmit(user10);
+
+    // Temporary setTimeout to make sure everything works.
+    setTimeout(this.setState({ redirect: true }), 100);
+
     // ToDo
   };
 
@@ -105,10 +117,20 @@ class LoginScreen extends Component {
     const { userName, password, error } = this.state;
     return (
       <React.Fragment>
-        <Title Title="Loginscreen" />
+        <Title Title="Sign In" />
         <div className="mt-5 mb-5 col-3 AlignCenter border box-shadow shadow">
           <h3 className="text-center">Login</h3>
           <form className="form" onSubmit={this.handleSubmit}>
+            {this.props.error === "" ? null : (
+              <p className="text-danger font-weight-bold">{this.props.error}</p>
+            )}
+
+            {this.props.success === "" ? null : (
+              <p className="text-success font-weight-bold">
+                {this.props.success}
+              </p>
+            )}
+
             {error === "" ? null : (
               <ul className="list-unstyled">
                 {error.split("\n").map((err, index) => (
@@ -118,6 +140,7 @@ class LoginScreen extends Component {
                 ))}
               </ul>
             )}
+
             <div className="form-group">
               <label>Username</label>
               <input
@@ -159,4 +182,20 @@ class LoginScreen extends Component {
   }
 }
 
-export default LoginScreen;
+const mapStateToProps = state => {
+  return {
+    error: state.identity.error,
+    success: state.identity.success
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onSigninSubmit: user10 => dispatch(actionTypes.SignInAsync(user10))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginScreen);

@@ -47,8 +47,8 @@ class Navbar extends Component {
                   <li className="nav-item">
                     <NavLink
                       className="nav-link text-light btn btn-dark"
-                      to="/login">
-                      Login
+                      to="/signin">
+                      Sign In
                     </NavLink>
                   </li>
                   // <NavLink className="nav-link text-light" to="/login">

@@ -16,13 +16,16 @@ namespace All_Assignments.Controllers
     /// Edit this controller later to not send down more userdata than necessary.
     /// </summary>
     [Authorize]
-    public class IdentityController : Controller
+    [Route("api/[controller]")]
+    //[Route("[controller]")]
+    [ApiController]
+    public class IdentityApiController : Controller
     {
         public readonly UserManager<AppUser10> _userManager;
         public readonly RoleManager<IdentityRole> _roleManager;
         public readonly SignInManager<AppUser10> _signInManager;
 
-        public IdentityController(UserManager<AppUser10> userManager,
+        public IdentityApiController(UserManager<AppUser10> userManager,
             RoleManager<IdentityRole> roleManager, SignInManager<AppUser10> signInManager)
         {
             _userManager = userManager;
@@ -77,7 +80,7 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterUser10 user)
         {
@@ -88,29 +91,32 @@ namespace All_Assignments.Controllers
 
             if (_userManager.FindByNameAsync(user.UserName).Result != null)
             {
-                return Content("The requested Username is already in use. Please try something else.", contentType: user.UserName);
+                return BadRequest("The requested Username is already in use. Please try something else.");
             }
 
             if (user.Password != user.ComparePassword)
             {
-                return Content("The passwords does not match. Please try again.");
+                return BadRequest("The passwords does not match. Please try again.");
             }
 
-            //user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
+            // Potentially create a method that will handle all validations for username, firstname etc.?
+
+            user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
 
             var result = await _userManager.CreateAsync(user, user.Password);
 
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(SignIn), "Assignment10Identity", new { user10 = user });
+                //return Content("User was successfully created.");
+                return Ok("User was successfully created.");
             }
             else
             {
-                return Content("Something went wrong. Please try again");
+                return NoContent();
             }
         }
 
-        [HttpGet]
+        [HttpGet("create-role")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRole(string role)
         {
@@ -237,7 +243,8 @@ namespace All_Assignments.Controllers
         // SignIn / SignOut
         #region SignIn / SignOut
 
-        [HttpPost]
+        //[HttpPost]
+        [HttpPost("signin")]
         [AllowAnonymous]
         public async Task<IActionResult> SignIn(LoginUser10 user10)
         {
@@ -247,33 +254,35 @@ namespace All_Assignments.Controllers
             }
 
             var user = await _userManager.FindByNameAsync(user10.UserName);
+            
+            // Testing purposes.
             IdentityUserToken<string> app = new IdentityUserToken<string>();
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound("Username does not exist.");
             }
 
-            var verify = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken);
+            //var verify = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken);
 
-            if (verify == false)
-            {
-                return Content("Something went wrong.");
-            }
+            //if (verify == false)
+            //{
+            //    return Content("Something went wrong.");
+            //}
 
             var result = await _signInManager.PasswordSignInAsync(user, user10.Password, true, false);
 
             if (result.Succeeded)
             {
-                return Accepted(user);
+                return Ok(user);
             }
             else
             {
-                return Content("Something went wrong.");
+                return BadRequest("Could not sign in user.");
             }
         }
 
-        [HttpPost]
+        [HttpPost("signout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignOut(string userName, string userToken)
         {
@@ -309,7 +318,7 @@ namespace All_Assignments.Controllers
 
         #region (U)PDATE
 
-        [HttpPut]
+        [HttpPut("edit-user")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, NormalUser")]
         public async Task<IActionResult> EditUser(AppUser10 user10)
@@ -352,7 +361,7 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpPatch]
+        [HttpPatch("edit-password")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPassword(ChangePassword10 change)
         {
@@ -392,7 +401,7 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("edit-role")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditRole(IdentityRole role10)
@@ -429,7 +438,7 @@ namespace All_Assignments.Controllers
 
         #region (D)ELETE
 
-        [HttpDelete]
+        [HttpDelete("delete-user")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string userId, string userToken)
         {
@@ -471,7 +480,7 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("delete-role")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRole(string role)
