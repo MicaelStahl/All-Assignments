@@ -42,6 +42,9 @@ namespace All_Assignments
                 .AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Authentication")
                 .AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Verification")
                 .AddDefaultTokenProviders();
+            //.AddTokenProvider<IUserTwoFactorTokenProvider<AppUser10>>("DataProtectorTokenProvider");
+
+            //"No IUserTwoFactorTokenProvider<TUser> named 'DataProtectorTokenProvider' is registered."
 
             services.Configure<IdentityOptions>(options =>
             {   // Default password settings.
@@ -125,6 +128,16 @@ namespace All_Assignments
             //    });
 
             #endregion
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

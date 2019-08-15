@@ -11,6 +11,12 @@ const apiUrl = "http://localhost:50691/api/identityApi/";
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
 
+function CreateCancelToken() {
+  const cancelToken = axios.CancelToken;
+  const Source = cancelToken.source();
+  return Source.token;
+}
+
 function ItemsAreLoading(isLoading = false) {
   return {
     type: LOADING,
@@ -28,6 +34,7 @@ function Register(user) {
 export function RegisterAsync(user) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
+    const cancelToken = CreateCancelToken();
     axios
       .post(apiUrl + "register", user, {
         cancelToken: source.token,
@@ -67,17 +74,26 @@ function SignIn(user) {
 export function SignInAsync(user10) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
+    console.log(localStorage.getItem("token"));
+    const cancelToken = CreateCancelToken();
     axios
       .post(apiUrl + "signin", user10, {
         cancelToken: source.token,
         validateStatus: function(status) {
           return status < 500; // Reject only if the status code is greater than or equal to 500
           // A 500+ error indicates that something went wrong server-side.
+        },
+        auth: {
+          username: user10.userName,
+          password: user10.password
         }
       })
       .then(response => {
         console.log(response);
         if (response.status === 200 && response.data.userToken !== null) {
+          localStorage.setItem("token", response.data.userToken);
+          localStorage.setItem("userId", response.data.userId);
+
           dispatch(SignIn(response.data));
         } else if (response.status === 404 || response.status === 400) {
           dispatch(ErrorHandling(response.data));
@@ -95,7 +111,7 @@ export function SignInAsync(user10) {
   };
 }
 
-function SignOut(success) {
+function SignOut(success = "") {
   return {
     type: SIGN_OUT,
     success
@@ -106,9 +122,30 @@ function SignOut(success) {
 export function SignOutAsync() {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
+    const cancelToken = CreateCancelToken();
+    axios.interceptors.request.use(
+      config => {
+        const token = localStorage.getItem("token");
+
+        console.log("[Token]", token);
+        console.log(CreateCancelToken());
+        if (token !== undefined || token !== null) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+    const userVM = {
+      UserId: localStorage.getItem("userId"),
+      UserToken: localStorage.getItem("token"),
+      ErrorMessage: null
+    };
     axios
-      .get(apiUrl + "signout", {
-        cancelToken: source.token,
+      .post(apiUrl + "signout", userVM, {
+        cancelToken: CreateCancelToken(),
         validateStatus: function(status) {
           return status < 500; // Reject only if the status code is greater than or equal to 500
           // A 500+ error indicates that something went wrong server-side.
@@ -117,6 +154,8 @@ export function SignOutAsync() {
       })
       .then(response => {
         if (response.status === 200) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
           dispatch(SignOut(response.data));
         } else {
           dispatch(

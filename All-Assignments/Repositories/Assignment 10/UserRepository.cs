@@ -18,9 +18,9 @@ namespace All_Assignments.Repositories.Assignment_10
 {
     public class UserRepository : IUserRepository
     {
-        private readonly DataProtectorTokenProvider<AppUser10> provider;
-        private readonly IDataProtectionProvider _protection;
-        private readonly IOptions<DataProtectionTokenProviderOptions> _options;
+        //private readonly DataProtectorTokenProvider<AppUser10> provider;
+        //private readonly IDataProtectionProvider _protection;
+        //private readonly IOptions<DataProtectionTokenProviderOptions> _options;
 
         private readonly UserManager<AppUser10> _userManager;
         private readonly SignInManager<AppUser10> _signInManager;
@@ -32,14 +32,15 @@ namespace All_Assignments.Repositories.Assignment_10
         //IOptions<TokenManagement> tokenManagement,
         //_tokenManagement = tokenManagement.Value;
 
-        public UserRepository(IOptions<DataProtectionTokenProviderOptions> options,
-                              IDataProtectionProvider protection,
+        public UserRepository(
+                              // IOptions<DataProtectionTokenProviderOptions> options,
+                              // IDataProtectionProvider protection,
                               SignInManager<AppUser10> signInManager,
                               UserManager<AppUser10> userManager)
         {
-            _protection = protection;
-            _options = options;
-            provider = new DataProtectorTokenProvider<AppUser10>(_protection, _options);
+            //_protection = protection;
+            //_options = options;
+            //provider = new DataProtectorTokenProvider<AppUser10>(_protection, _options);
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -193,9 +194,16 @@ namespace All_Assignments.Repositories.Assignment_10
                 if (result.Succeeded)
                 {
                     //returnedUser.UserToken = TokenCreation(user);
+                    // "No IUserTwoFactorTokenProvider<TUser> named 'DataProtectorTokenProvider' is registered."
+
+                    //"CfDJ8FTAQOjt/fJNkxXzKP6xPJCmW5G+qLPlt0AkCYzQETOMZ7Ev/WTs/lIa2xIDNvqe+DmM2o/RrQ088WxwvXKO9LWN2X3 
+                    // cfICgoTSAOmD /z3/2m6rVvZ6RjWxCI41rqqn5Qt+Xz37RXBFjQz1wU6wUFSyixNb9ejfxKDhVAcsbAthrA9D7xdX2D/
+                    // JQatrclIlSb7fUqPVW +5Yy/XpYloaX/NF3I0Fl+Y0/x+yAls9y6I1iBGLhWhkXN8kdjwTuzII6TQ=="
+                    TokenOptions newProvider = new TokenOptions();
 
                     returnedUser.UserId = user.Id;
-                    returnedUser.UserToken = await provider.GenerateAsync("authentication-frontend", _userManager, user);
+                    returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-frontend");
+                    //returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Authentication", "authentication-frontend");
 
                     return returnedUser;
                 }
@@ -216,7 +224,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
         }
 
-        public async Task LogOutUser()
+        public async Task LogOutUser(string userId, string userToken)
         {
             await _signInManager.SignOutAsync();
         }

@@ -124,13 +124,11 @@ class LoginScreen extends Component {
             {this.props.error === "" ? null : (
               <p className="text-danger font-weight-bold">{this.props.error}</p>
             )}
-
             {this.props.success === "" ? null : (
               <p className="text-success font-weight-bold">
                 {this.props.success}
               </p>
             )}
-
             {error === "" ? null : (
               <ul className="list-unstyled">
                 {error.split("\n").map((err, index) => (
@@ -140,7 +138,6 @@ class LoginScreen extends Component {
                 ))}
               </ul>
             )}
-
             <div className="form-group">
               <label>Username</label>
               <input

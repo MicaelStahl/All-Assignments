@@ -265,14 +265,14 @@ namespace All_Assignments.Controllers
         /// <summary>
         /// Implement userToken at a later stage.
         /// </summary>
-        [HttpGet("signout")]
-        [AllowAnonymous]
+        [HttpPost("signout")]
+        //[AllowAnonymous]
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> SignOut(string userName, string userToken)
-        public async Task<IActionResult> SignOut()
+        public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
 
-            await _service.LogOutUser();
+            await _service.LogOutUser(userVM.UserId, userVM.UserToken);
 
             return Content("User was successfully logged out");
             ////    if (string.IsNullOrWhiteSpace(userName))

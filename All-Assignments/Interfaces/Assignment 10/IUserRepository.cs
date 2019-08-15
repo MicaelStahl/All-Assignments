@@ -24,7 +24,7 @@ namespace All_Assignments.Interfaces.Assignment_10
         /// <summary>
         /// Change values on this one later to create a more verified LogOut.
         /// </summary>
-        Task LogOutUser();
+        Task LogOutUser(string userId, string userToken);
         Task<List<UserDetailsVM>> AllUsers();
         #endregion
 
