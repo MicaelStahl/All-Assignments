@@ -77,7 +77,7 @@ export function SignInAsync(user10) {
       })
       .then(response => {
         console.log(response);
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.userToken !== null) {
           dispatch(SignIn(response.data));
         } else if (response.status === 404 || response.status === 400) {
           dispatch(ErrorHandling(response.data));

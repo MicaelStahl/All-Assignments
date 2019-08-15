@@ -69,6 +69,7 @@ namespace All_Assignments
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -98,30 +99,30 @@ namespace All_Assignments
 
             #region Jwt Creation by https://bit.ly/31FTeUp
 
-            // configure strongly typed settings objects
-            var tokenManagement = Configuration.GetSection("TokenManagement");
-            services.Configure<TokenManagement>(tokenManagement);
+            //// configure strongly typed settings objects
+            //var tokenManagement = Configuration.GetSection("TokenManagement");
+            //services.Configure<TokenManagement>(tokenManagement);
 
-            // configure jwt authentication
-            var tokenSettings = tokenManagement.Get<TokenManagement>();
-            var key = Encoding.ASCII.GetBytes(tokenSettings.Secret);
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    };
-                });
+            //// configure jwt authentication
+            //var tokenSettings = tokenManagement.Get<TokenManagement>();
+            //var key = Encoding.ASCII.GetBytes(tokenSettings.Secret);
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.RequireHttpsMetadata = false;
+            //        options.SaveToken = true;
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuerSigningKey = true,
+            //            IssuerSigningKey = new SymmetricSecurityKey(key),
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //        };
+            //    });
 
             #endregion
 

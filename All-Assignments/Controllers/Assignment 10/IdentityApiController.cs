@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -22,12 +23,16 @@ namespace All_Assignments.Controllers
         public readonly RoleManager<IdentityRole> _roleManager;
         public readonly SignInManager<AppUser10> _signInManager;
 
+        private readonly IUserRepository _service;
+
         public IdentityApiController(UserManager<AppUser10> userManager,
-            RoleManager<IdentityRole> roleManager, SignInManager<AppUser10> signInManager)
+            RoleManager<IdentityRole> roleManager, SignInManager<AppUser10> signInManager,
+            IUserRepository service)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _service = service;
         }
 
         //  Create a Repository for this controller tomorrow!
@@ -96,30 +101,15 @@ namespace All_Assignments.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_userManager.FindByNameAsync(user.UserName).Result != null)
+            var createdUser = await _service.Create(user);
+
+            if (createdUser.ErrorMessage == null)
             {
-                return BadRequest("The requested Username is already in use. Please try something else.");
-            }
-
-            if (user.Password != user.ComparePassword)
-            {
-                return BadRequest("The passwords does not match. Please try again.");
-            }
-
-            // Potentially create a method that will handle all validations for username, firstname etc.?
-
-            user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
-
-            var result = await _userManager.CreateAsync(user, user.Password);
-
-            if (result.Succeeded)
-            {
-                //return Content("User was successfully created.");
-                return Ok("User was successfully created.");
+                return Ok("User was successfully created! \nYou can now sign in.");
             }
             else
             {
-                return NoContent();
+                return BadRequest(createdUser.ErrorMessage);
             }
         }
 
@@ -260,32 +250,15 @@ namespace All_Assignments.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await _userManager.FindByNameAsync(user10.UserName);
+            var result = await _service.LogInUser(user10);
 
-            // Testing purposes.
-            IdentityUserToken<string> app = new IdentityUserToken<string>();
-
-            if (user == null)
+            if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
             {
-                return NotFound("Username does not exist.");
-            }
-
-            //var verify = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken);
-
-            //if (verify == false)
-            //{
-            //    return Content("Something went wrong.");
-            //}
-
-            var result = await _signInManager.PasswordSignInAsync(user, user10.Password, true, false);
-
-            if (result.Succeeded)
-            {
-                return Ok(user);
+                return BadRequest(result.ErrorMessage);
             }
             else
             {
-                return BadRequest("Could not sign in user.");
+                return Ok(result);
             }
         }
 
@@ -298,30 +271,34 @@ namespace All_Assignments.Controllers
         //public async Task<IActionResult> SignOut(string userName, string userToken)
         public async Task<IActionResult> SignOut()
         {
-            //    if (string.IsNullOrWhiteSpace(userName))
-            //    {
-            //        return BadRequest();
-            //    }
 
-            //    var user = await _userManager.FindByNameAsync(userName);
+            await _service.LogOutUser();
 
-            //    if (user == null)
-            //    {
-            //        return NotFound();
-            //    }
+            return Content("User was successfully logged out");
+            ////    if (string.IsNullOrWhiteSpace(userName))
+            ////    {
+            ////        return BadRequest();
+            ////    }
 
-            //    //var result = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", userToken);
+            ////    var user = await _userManager.FindByNameAsync(userName);
 
-            //    if (result == true)
-            //    {
-            await _signInManager.SignOutAsync();
+            ////    if (user == null)
+            ////    {
+            ////        return NotFound();
+            ////    }
 
-            return Content("User was successfully signed out");
-            //    }
-            //    else
-            //    {
-            //        return Content("Cannot verify if user exists. Please try again.");
-            //    }
+            ////    //var result = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", userToken);
+
+            ////    if (result == true)
+            ////    {
+            //await _signInManager.SignOutAsync();
+
+            //return Content("User was successfully signed out");
+            ////    }
+            ////    else
+            ////    {
+            ////        return Content("Cannot verify if user exists. Please try again.");
+            ////    }
         }
 
         #endregion

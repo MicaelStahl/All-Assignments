@@ -57,6 +57,43 @@ namespace All_Assignments.ViewModels
         public string Password { get; set; }
     }
 
+    /// <summary>
+    /// A ViewModel that gets sent down and up with requests to verify the correct user is requesting information.
+    /// </summary>
+    public class ReturnedUserVM
+    {
+        public string UserId { get; set; }
+
+        public string UserToken { get; set; }
+
+        public string ErrorMessage { get; set; }
+    }
+
+    /// <summary>
+    /// A ViewModel that gets sent down to the front-end when the user wants to view his/her data.
+    /// </summary>
+    public class UserDetailsVM
+    {
+        public string UserId { get; set; }
+
+        public string UserName { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public int Age { get; set; }
+
+        public string Email { get; set; }
+
+        public string UserToken { get; set; }
+
+        /// <summary>
+        /// Only used when something went wrong in back-end. There to give the user some information.
+        /// </summary>
+        public string ErrorMessage { get; set; }
+    }
+
     public class ChangePassword10
     {
         public string UserId { get; set; }
