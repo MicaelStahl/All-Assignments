@@ -5,6 +5,7 @@ export const SIGN_IN = "SIGN_IN";
 export const SIGN_OUT = "SIGN_OUT";
 export const LOADING = "LOADING";
 export const ERROR = "ERROR";
+export const GET_USERS = "GET_USERS";
 
 const apiUrl = "http://localhost:50691/api/identityApi/";
 
@@ -14,10 +15,58 @@ function CreateCancelToken() {
   return Source.token;
 }
 
+function GetUser() {
+  return {
+    UserId: localStorage.getItem("userId"),
+    UserToken: localStorage.getItem("userToken"),
+    ErrorMessage: null
+  };
+}
+
 function ItemsAreLoading(isLoading = false) {
   return {
     type: LOADING,
     isLoading
+  };
+}
+
+function GetUsers(users) {
+  return {
+    type: GET_USERS,
+    users
+  };
+}
+
+export function GetUsersAsync() {
+  return dispatch => {
+    dispatch(ItemsAreLoading(true));
+
+    axios.interceptors.request.use(
+      config => {
+        const token = localStorage.getItem("backend-token");
+
+        if (token !== undefined || token !== null) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          config.headers["withCredentials"] = true;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    const userVM = GetUser();
+
+    axios.post(apiUrl + "users", userVM, {
+      cancelToken: CreateCancelToken(),
+
+      validateStatus: function(status) {
+        return status < 500; // Reject only if the status code is greater than or equal to 500
+        // A 500+ error indicates that something went wrong server-side.
+      }
+    });
   };
 }
 
@@ -125,7 +174,6 @@ export function SignOutAsync() {
           config.headers["Authorization"] = `Bearer ${token}`;
           config.headers["Access-Control-Allow-Origin"] = "*";
           config.headers["withCredentials"] = true;
-          // config.headers["Content-Type"] = "x-www-form-urlencoded";
         }
         return config;
       },
@@ -133,11 +181,9 @@ export function SignOutAsync() {
         return Promise.reject(error);
       }
     );
-    const userVM = {
-      UserId: localStorage.getItem("userId"),
-      UserToken: localStorage.getItem("userToken"),
-      ErrorMessage: null
-    };
+
+    const userVM = GetUser();
+
     axios
       .post(apiUrl + "signout", userVM, {
         cancelToken: CreateCancelToken(),

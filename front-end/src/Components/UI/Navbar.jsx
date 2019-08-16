@@ -35,10 +35,19 @@ class Navbar extends Component {
             </button>
             <div className="navbar-collapse justify-content-between collapse d-sm-inline-flex flex-sm-row-reverse">
               <ul className="navbar-nav ml-auto">
+                <li className="nav-item">
+                  <NavLink
+                    className="nav-link text-light btn btn-dark"
+                    to="/users">
+                    Users
+                  </NavLink>
+                </li>
                 {this.props.isAuthenticated ? (
                   <React.Fragment>
                     <li className="nav-item">
-                      <NavLink className="nav-link text-light" to="/profile">
+                      <NavLink
+                        className="nav-link text-light btn btn-dark"
+                        to="/profile">
                         Profile
                       </NavLink>
                     </li>

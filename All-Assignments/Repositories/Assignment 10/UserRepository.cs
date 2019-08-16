@@ -1,10 +1,7 @@
 ﻿using All_Assignments.Interfaces.Assignment_10;
-using All_Assignments.Models.Token;
 using All_Assignments.ViewModels;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -136,10 +133,26 @@ namespace All_Assignments.Repositories.Assignment_10
             }
         }
 
-        public async Task<List<UserDetailsVM>> AllUsers()
+        public async Task<List<UserDetailsVM>> AllUsers(string userId, string userToken)
         {
             try
             {
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception("The current user could not be verified. Please try again.");
+                }
+
+                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-frontend", userToken);
+
+                if (!result)
+                {
+                    throw new Exception("User could not be verified.");
+                }
+
+                // make a check if user is in correct roles. Or is that needed?
+
                 var users = await _userManager.Users.ToListAsync();
 
                 if (users == null)
@@ -151,7 +164,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 foreach (var item in users)
                 {
-                    UserDetailsVM user = new UserDetailsVM
+                    UserDetailsVM userVM = new UserDetailsVM
                     {
                         UserId = item.Id,
                         UserName = item.UserName,
@@ -161,7 +174,7 @@ namespace All_Assignments.Repositories.Assignment_10
                         Email = item.Email,
                         UserToken = item.UserToken,
                     };
-                    usersVM.Add(user);
+                    usersVM.Add(userVM);
                 }
                 return usersVM;
             }
@@ -197,15 +210,15 @@ namespace All_Assignments.Repositories.Assignment_10
 
                     // This is just a test.
 
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
-                    var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
+                    var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                     var tokenOptions = new JwtSecurityToken(
                         issuer: "http://localhost:3000",
                         audience: "http://localhost:3000",
                         claims: new List<Claim>(),
                         expires: DateTime.Now.AddMinutes(15),
-                        signingCredentials: signinCredentials
+                        signingCredentials: signingCredentials
                         );
 
                     returnedUser.TokenToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
@@ -233,7 +246,6 @@ namespace All_Assignments.Repositories.Assignment_10
 
         public async Task<LoggedOutUser> LogOutUser(string userId, string userToken)
         {
-
             LoggedOutUser userVM = new LoggedOutUser();
 
             try

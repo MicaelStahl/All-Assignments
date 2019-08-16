@@ -1,5 +1,6 @@
 import React from "react";
-import { Route, withRouter, Switch } from "react-router-dom";
+import { Route, withRouter, Switch, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Home from "../../Home";
 import Calculator from "../Assignment 1 - Calculator/Calculator";
@@ -14,14 +15,23 @@ import Country from "../Assignment 10 - Identity/Country/Country";
 
 import Register from "../Assignment 10 - Identity/User/Register";
 import SignIn from "../Assignment 10 - Identity/User/SignIn";
+import Users from "../Assignment 10 - Identity/User/Users";
 
-const Main = () => {
+const Main = props => {
   return (
     <React.Fragment>
       <Switch>
         <Route exact path="/signin" component={SignIn} />
 
         <Route exact path="/register" component={Register} />
+
+        <Route
+          exact
+          path="/users"
+          render={() =>
+            props.isAuthenticated === true ? Users : <Redirect to="/signin" />
+          }
+        />
 
         <Route exact path="/calculator" component={Calculator} />
 
@@ -45,4 +55,10 @@ const Main = () => {
   );
 };
 
-export default withRouter(Main);
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.identity.isAuthenticated
+  };
+};
+
+export default connect(mapStateToProps)(withRouter(Main));
