@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace All_Assignments.Controllers
 {
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
@@ -271,34 +272,16 @@ namespace All_Assignments.Controllers
         //public async Task<IActionResult> SignOut(string userName, string userToken)
         public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
+            var result = await _service.LogOutUser(userVM.UserId, userVM.UserToken);
 
-            await _service.LogOutUser(userVM.UserId, userVM.UserToken);
-
-            return Content("User was successfully logged out");
-            ////    if (string.IsNullOrWhiteSpace(userName))
-            ////    {
-            ////        return BadRequest();
-            ////    }
-
-            ////    var user = await _userManager.FindByNameAsync(userName);
-
-            ////    if (user == null)
-            ////    {
-            ////        return NotFound();
-            ////    }
-
-            ////    //var result = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", userToken);
-
-            ////    if (result == true)
-            ////    {
-            //await _signInManager.SignOutAsync();
-
-            //return Content("User was successfully signed out");
-            ////    }
-            ////    else
-            ////    {
-            ////        return Content("Cannot verify if user exists. Please try again.");
-            ////    }
+            if (result.Success != null)
+            {
+                return Ok(result.Success);
+            }
+            else
+            {
+                return BadRequest(result.Failed);
+            }
         }
 
         #endregion

@@ -69,6 +69,13 @@ namespace All_Assignments.ViewModels
         public string ErrorMessage { get; set; }
     }
 
+    public class LoggedOutUser
+    {
+        public string Success{ get; set; }
+
+        public string Failed { get; set; }
+    }
+
     /// <summary>
     /// A ViewModel that gets sent down to the front-end when the user wants to view his/her data.
     /// </summary>

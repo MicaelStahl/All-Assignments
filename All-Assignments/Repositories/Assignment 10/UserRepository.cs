@@ -213,7 +213,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 }
                 else
                 {
-                    throw new Exception("Could not log in user. Please try again.");
+                    throw new Exception("Username or password was incorrect.");
                 }
             }
             catch (Exception ex)
@@ -224,9 +224,46 @@ namespace All_Assignments.Repositories.Assignment_10
 
         }
 
-        public async Task LogOutUser(string userId, string userToken)
+        public async Task<LoggedOutUser> LogOutUser(string userId, string userToken)
         {
-            await _signInManager.SignOutAsync();
+
+            LoggedOutUser userVM = new LoggedOutUser();
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userToken))
+                {
+                    throw new Exception("Something went wrong. Please try again.");
+                }
+
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception("User could not be found. Please try again or contact administration if this problem persists.");
+                }
+
+                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-frontend", userToken);
+
+                if (result)
+                {
+                    await _signInManager.SignOutAsync();
+
+                    userVM.Success = "User was successfully signed out.";
+
+                    return userVM;
+                }
+                else
+                {
+                    throw new Exception("User could not be verified. Is it really you?");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                userVM.Failed = ex.Message;
+                return userVM;
+            }
         }
         #endregion
 

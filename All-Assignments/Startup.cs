@@ -10,6 +10,7 @@ using All_Assignments.Models.Token;
 using All_Assignments.Repositories.Assignment_10;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -89,16 +90,17 @@ namespace All_Assignments
                 options.Cookie.IsEssential = true;
             });
 
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                    {
-                        // A * simply indicates it's open for all. This is ONLY the solution for developer code.
-                        builder.WithOrigins("*")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddDefaultPolicy(builder =>
+            //        {
+            //            // A * simply indicates it's open for all. This is ONLY the solution for developer code.
+            //            builder.WithOrigins("*")
+            //                .AllowAnyHeader()
+            //                .AllowAnyMethod();
+            //        });
+            //});
+
 
             #region Jwt Creation by https://bit.ly/31FTeUp
 
@@ -129,15 +131,37 @@ namespace All_Assignments
 
             #endregion
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication(
+                //JwtBearerDefaults.AuthenticationScheme
+                options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+            }
+            )
                 .AddJwtBearer(options =>
-                {
+                { // "http://localhost:50691/" "http://localhost:44399/"
                     options.SaveToken = true;
+                    options.Audience = "http://localhost:3000/";
+                    options.Authority = "http://localhost:3000/";
+                    //// Only disabled in Development. \\
+                    options.RequireHttpsMetadata = false;
+                    //options.TokenValidationParameters = new TokenValidationParameters
+                    //{
+                    //    SaveSigninToken = true,
+                    //    //ValidateLifetime = true,
+                    //    //ValidateIssuer = false,
+                    //    //ValidateAudience = false
+                    //};
                 });
+
+            //services.AddAuthorization(options =>
+            //{
+            //    var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+            //        JwtBearerDefaults.AuthenticationScheme);
+            //    defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+            //   options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+            //});
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -157,15 +181,14 @@ namespace All_Assignments
             }
 
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
-            app.UseAuthentication();
+            app.UseCookiePolicy();
 
             app.UseSession();
 
-            app.UseCors();
-
             app.UseAuthentication();
+
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseMvcWithDefaultRoute();
         }

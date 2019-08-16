@@ -8,9 +8,6 @@ export const ERROR = "ERROR";
 
 const apiUrl = "http://localhost:50691/api/identityApi/";
 
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
-
 function CreateCancelToken() {
   const cancelToken = axios.CancelToken;
   const Source = cancelToken.source();
@@ -34,10 +31,9 @@ function Register(user) {
 export function RegisterAsync(user) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    const cancelToken = CreateCancelToken();
     axios
       .post(apiUrl + "register", user, {
-        cancelToken: source.token,
+        cancelToken: CreateCancelToken(),
         validateStatus: function(status) {
           return status < 500; // Reject only if the status code is greater than or equal to 500
           // A 500+ error indicates that something went wrong server-side.
@@ -75,10 +71,9 @@ export function SignInAsync(user10) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
     console.log(localStorage.getItem("token"));
-    const cancelToken = CreateCancelToken();
     axios
       .post(apiUrl + "signin", user10, {
-        cancelToken: source.token,
+        cancelToken: CreateCancelToken(),
         validateStatus: function(status) {
           return status < 500; // Reject only if the status code is greater than or equal to 500
           // A 500+ error indicates that something went wrong server-side.
@@ -122,15 +117,16 @@ function SignOut(success = "") {
 export function SignOutAsync() {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    const cancelToken = CreateCancelToken();
     axios.interceptors.request.use(
       config => {
         const token = localStorage.getItem("token");
 
         console.log("[Token]", token);
-        console.log(CreateCancelToken());
         if (token !== undefined || token !== null) {
           config.headers["Authorization"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          // config.headers["withCredentials"] = true;
+          // config.headers["Content-Type"] = "x-www-form-urlencoded";
         }
         return config;
       },
@@ -143,13 +139,19 @@ export function SignOutAsync() {
       UserToken: localStorage.getItem("token"),
       ErrorMessage: null
     };
+    // const token = localStorage.getItem("token");
+    // console.log("[Token]", token);
     axios
       .post(apiUrl + "signout", userVM, {
         cancelToken: CreateCancelToken(),
         validateStatus: function(status) {
-          return status < 500; // Reject only if the status code is greater than or equal to 500
+          return status <= 500; // Reject only if the status code is greater than or equal to 500
           // A 500+ error indicates that something went wrong server-side.
         }
+        // withCredentials: true
+        // "Content-Type": "x-www-form-urlencoded",
+        // Authorization: `Bearer ${token}`
+        // "Access-Control-Allow-Origin": "*"
         // Add Authorization here later.
       })
       .then(response => {
