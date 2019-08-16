@@ -66,6 +66,8 @@ namespace All_Assignments.ViewModels
 
         public string UserToken { get; set; }
 
+        public string TokenToken { get; set; }
+
         public string ErrorMessage { get; set; }
     }
 

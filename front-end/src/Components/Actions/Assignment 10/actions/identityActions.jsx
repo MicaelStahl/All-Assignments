@@ -70,7 +70,6 @@ function SignIn(user) {
 export function SignInAsync(user10) {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
-    console.log(localStorage.getItem("token"));
     axios
       .post(apiUrl + "signin", user10, {
         cancelToken: CreateCancelToken(),
@@ -86,7 +85,8 @@ export function SignInAsync(user10) {
       .then(response => {
         console.log(response);
         if (response.status === 200 && response.data.userToken !== null) {
-          localStorage.setItem("token", response.data.userToken);
+          localStorage.setItem("backend-token", response.data.tokenToken);
+          localStorage.setItem("userToken", response.data.userToken);
           localStorage.setItem("userId", response.data.userId);
 
           dispatch(SignIn(response.data));
@@ -113,19 +113,18 @@ function SignOut(success = "") {
   };
 }
 
-// Later on this will required userToken and userId.
+// Later on this will require userToken and userId.
 export function SignOutAsync() {
   return dispatch => {
     dispatch(ItemsAreLoading(true));
     axios.interceptors.request.use(
       config => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("backend-token");
 
-        console.log("[Token]", token);
         if (token !== undefined || token !== null) {
           config.headers["Authorization"] = `Bearer ${token}`;
           config.headers["Access-Control-Allow-Origin"] = "*";
-          // config.headers["withCredentials"] = true;
+          config.headers["withCredentials"] = true;
           // config.headers["Content-Type"] = "x-www-form-urlencoded";
         }
         return config;
@@ -136,11 +135,9 @@ export function SignOutAsync() {
     );
     const userVM = {
       UserId: localStorage.getItem("userId"),
-      UserToken: localStorage.getItem("token"),
+      UserToken: localStorage.getItem("userToken"),
       ErrorMessage: null
     };
-    // const token = localStorage.getItem("token");
-    // console.log("[Token]", token);
     axios
       .post(apiUrl + "signout", userVM, {
         cancelToken: CreateCancelToken(),
@@ -148,16 +145,16 @@ export function SignOutAsync() {
           return status <= 500; // Reject only if the status code is greater than or equal to 500
           // A 500+ error indicates that something went wrong server-side.
         }
-        // withCredentials: true
-        // "Content-Type": "x-www-form-urlencoded",
         // Authorization: `Bearer ${token}`
         // "Access-Control-Allow-Origin": "*"
-        // Add Authorization here later.
       })
       .then(response => {
         if (response.status === 200) {
           localStorage.removeItem("token");
           localStorage.removeItem("userId");
+          localStorage.removeItem("backend-token");
+          localStorage.removeItem("userToken");
+          console.log(localStorage.getItem("token"));
           dispatch(SignOut(response.data));
         } else {
           dispatch(

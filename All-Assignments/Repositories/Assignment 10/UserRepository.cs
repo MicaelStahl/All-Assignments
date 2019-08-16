@@ -193,17 +193,24 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 if (result.Succeeded)
                 {
-                    //returnedUser.UserToken = TokenCreation(user);
-                    // "No IUserTwoFactorTokenProvider<TUser> named 'DataProtectorTokenProvider' is registered."
-
-                    //"CfDJ8FTAQOjt/fJNkxXzKP6xPJCmW5G+qLPlt0AkCYzQETOMZ7Ev/WTs/lIa2xIDNvqe+DmM2o/RrQ088WxwvXKO9LWN2X3 
-                    // cfICgoTSAOmD /z3/2m6rVvZ6RjWxCI41rqqn5Qt+Xz37RXBFjQz1wU6wUFSyixNb9ejfxKDhVAcsbAthrA9D7xdX2D/
-                    // JQatrclIlSb7fUqPVW +5Yy/XpYloaX/NF3I0Fl+Y0/x+yAls9y6I1iBGLhWhkXN8kdjwTuzII6TQ=="
-                    TokenOptions newProvider = new TokenOptions();
-
                     returnedUser.UserId = user.Id;
+
+                    // This is just a test.
+
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
+                    var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+                    var tokenOptions = new JwtSecurityToken(
+                        issuer: "http://localhost:3000",
+                        audience: "http://localhost:3000",
+                        claims: new List<Claim>(),
+                        expires: DateTime.Now.AddMinutes(15),
+                        signingCredentials: signinCredentials
+                        );
+
+                    returnedUser.TokenToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
                     returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-frontend");
-                    //returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Authentication", "authentication-frontend");
 
                     return returnedUser;
                 }
@@ -270,11 +277,13 @@ namespace All_Assignments.Repositories.Assignment_10
         #region Update
         public async Task<AppUser10> Edit(AppUser10 user)
         {
+            var users = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
 
         public async Task<bool> ChangePassword(ChangePassword10 changePassword)
         {
+            var users = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
         #endregion
@@ -282,6 +291,7 @@ namespace All_Assignments.Repositories.Assignment_10
         #region Delete
         public async Task<bool> DeleteUser(string id)
         {
+            var users = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
         #endregion

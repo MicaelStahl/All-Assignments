@@ -39,13 +39,24 @@ namespace All_Assignments
             services.AddDbContext<AllAssignmentsDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<AppUser10, IdentityRole>().AddEntityFrameworkStores<AllAssignmentsDbContext>()
-                .AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Authentication")
-                .AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Verification")
+            services.AddIdentity<AppUser10, IdentityRole>()
+                .AddEntityFrameworkStores<AllAssignmentsDbContext>()
                 .AddDefaultTokenProviders();
-            //.AddTokenProvider<IUserTwoFactorTokenProvider<AppUser10>>("DataProtectorTokenProvider");
 
-            //"No IUserTwoFactorTokenProvider<TUser> named 'DataProtectorTokenProvider' is registered."
+            //.AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Authentication")
+            //.AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Verification")
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    // A * simply indicates it's open for all. This is ONLY the solution for developer code.
+                    builder.WithOrigins("*")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
 
             services.Configure<IdentityOptions>(options =>
             {   // Default password settings.
@@ -90,18 +101,6 @@ namespace All_Assignments
                 options.Cookie.IsEssential = true;
             });
 
-            //services.AddCors(options =>
-            //{
-            //    options.AddDefaultPolicy(builder =>
-            //        {
-            //            // A * simply indicates it's open for all. This is ONLY the solution for developer code.
-            //            builder.WithOrigins("*")
-            //                .AllowAnyHeader()
-            //                .AllowAnyMethod();
-            //        });
-            //});
-
-
             #region Jwt Creation by https://bit.ly/31FTeUp
 
             //// configure strongly typed settings objects
@@ -131,29 +130,47 @@ namespace All_Assignments
 
             #endregion
 
-            services.AddAuthentication(
-                //JwtBearerDefaults.AuthenticationScheme
-                options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }
-            )
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
-                { // "http://localhost:50691/" "http://localhost:44399/"
-                    options.SaveToken = true;
-                    options.Audience = "http://localhost:3000/";
-                    options.Authority = "http://localhost:3000/";
-                    //// Only disabled in Development. \\
-                    options.RequireHttpsMetadata = false;
-                    //options.TokenValidationParameters = new TokenValidationParameters
-                    //{
-                    //    SaveSigninToken = true,
-                    //    //ValidateLifetime = true,
-                    //    //ValidateIssuer = false,
-                    //    //ValidateAudience = false
-                    //};
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = "http://localhost:3000",
+                        ValidAudience = "http://localhost:3000",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"))
+                    };
                 });
+
+
+            //services.AddAuthentication(
+            //    //JwtBearerDefaults.AuthenticationScheme
+            //    options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}
+            //)
+            //    .AddJwtBearer(options =>
+            //    { // "http://localhost:50691" "http://localhost:44399"
+            //        options.SaveToken = true;
+            //        //options.Audience = "http://localhost:3000";
+            //        //options.Authority = "http://localhost:3000";
+            //        ////// Only disabled in Development. \\
+            //        //options.RequireHttpsMetadata = false;
+            //        //options.TokenValidationParameters = new TokenValidationParameters
+            //        //{
+            //        //    SaveSigninToken = true,
+            //        //    //ValidateLifetime = true,
+            //        //    //ValidateIssuer = false,
+            //        //    //ValidateAudience = false
+            //        //};
+            //    });
 
             //services.AddAuthorization(options =>
             //{
@@ -184,11 +201,15 @@ namespace All_Assignments
 
             app.UseCookiePolicy();
 
+            //app.UseHttpsRedirection();
+
             app.UseSession();
 
-            app.UseAuthentication();
+            app.UseCors();
 
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            //app.UseCors("AllowSpecificHosts");
+
+            app.UseAuthentication();
 
             app.UseMvcWithDefaultRoute();
         }

@@ -6,6 +6,7 @@ using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +15,8 @@ using Microsoft.Extensions.Options;
 
 namespace All_Assignments.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class IdentityApiController : Controller
@@ -267,9 +268,7 @@ namespace All_Assignments.Controllers
         /// Implement userToken at a later stage.
         /// </summary>
         [HttpPost("signout")]
-        //[AllowAnonymous]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> SignOut(string userName, string userToken)
+        [AllowAnonymous]
         public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
             var result = await _service.LogOutUser(userVM.UserId, userVM.UserToken);
