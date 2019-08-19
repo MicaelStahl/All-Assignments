@@ -87,7 +87,7 @@ const mapStateToProps = state => {
   return {
     people: state.person.allPeople,
     error: state.person.personError,
-    isLoading: state.person.isLoading,
+    isLoading: state.options.isLoading,
     status: state.person.status
   };
 };

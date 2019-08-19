@@ -105,7 +105,7 @@ const Details = props => {
 const mapStateToProps = state => {
   return {
     city: state.city.oneCity,
-    isLoading: state.city.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

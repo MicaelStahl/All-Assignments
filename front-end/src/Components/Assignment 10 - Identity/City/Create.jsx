@@ -176,7 +176,7 @@ class Create extends Component {
 const mapStateToProps = state => {
   return {
     countries: state.city.countries,
-    isLoading: state.city.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

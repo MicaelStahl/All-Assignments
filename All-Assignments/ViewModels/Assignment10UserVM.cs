@@ -71,7 +71,7 @@ namespace All_Assignments.ViewModels
         public string ErrorMessage { get; set; }
     }
 
-    public class LoggedOutUser
+    public class ResultVM
     {
         public string Success{ get; set; }
 

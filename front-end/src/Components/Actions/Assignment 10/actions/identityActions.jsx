@@ -1,9 +1,10 @@
 import axios from "axios";
 
+import * as actionOptions from "./optionsActions";
+
 export const REGISTER = "REGISTER";
 export const SIGN_IN = "SIGN_IN";
 export const SIGN_OUT = "SIGN_OUT";
-export const LOADING = "LOADING";
 export const ERROR = "ERROR";
 export const GET_USERS = "GET_USERS";
 
@@ -23,13 +24,6 @@ function GetUser() {
   };
 }
 
-function ItemsAreLoading(isLoading = false) {
-  return {
-    type: LOADING,
-    isLoading
-  };
-}
-
 function GetUsers(users) {
   return {
     type: GET_USERS,
@@ -39,7 +33,7 @@ function GetUsers(users) {
 
 export function GetUsersAsync() {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
 
     axios.interceptors.request.use(
       config => {
@@ -59,14 +53,31 @@ export function GetUsersAsync() {
 
     const userVM = GetUser();
 
-    axios.post(apiUrl + "users", userVM, {
-      cancelToken: CreateCancelToken(),
+    axios
+      .post(apiUrl + "users", userVM, {
+        cancelToken: CreateCancelToken(),
 
-      validateStatus: function(status) {
-        return status < 500; // Reject only if the status code is greater than or equal to 500
-        // A 500+ error indicates that something went wrong server-side.
-      }
-    });
+        validateStatus: function(status) {
+          return status < 500; // Reject only if the status code is greater than to 500
+          // A 500+ error indicates that something went wrong server-side.
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(GetUsers(response.data));
+        } else if (response.status === 401) {
+          dispatch(
+            ErrorHandling(
+              "User is not in a high enough role to request this information."
+            )
+          );
+        }
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(ErrorHandling(err));
+      });
   };
 }
 
@@ -79,7 +90,7 @@ function Register(user) {
 
 export function RegisterAsync(user) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .post(apiUrl + "register", user, {
         cancelToken: CreateCancelToken(),
@@ -100,7 +111,7 @@ export function RegisterAsync(user) {
           throw Error("Something went wrong.");
         }
 
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -118,7 +129,7 @@ function SignIn(user) {
 
 export function SignInAsync(user10) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .post(apiUrl + "signin", user10, {
         cancelToken: CreateCancelToken(),
@@ -142,7 +153,7 @@ export function SignInAsync(user10) {
         } else if (response.status === 404 || response.status === 400) {
           dispatch(ErrorHandling(response.data));
         }
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         // ToDo
@@ -165,7 +176,7 @@ function SignOut(success = "") {
 // Later on this will require userToken and userId.
 export function SignOutAsync() {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios.interceptors.request.use(
       config => {
         const token = localStorage.getItem("backend-token");

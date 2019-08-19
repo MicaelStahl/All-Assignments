@@ -5,7 +5,6 @@ const initialState = {
   cities: [],
   oneCity: [],
   error: "",
-  isLoading: false,
   status: "",
   createSuccess: ""
 };
@@ -142,14 +141,6 @@ const reducer = (state = initialState, action) => {
 
         cities: cities.filter(x => x.id !== action.id),
         error: ""
-      };
-
-    // --------------- IsLoading --------------- \\
-
-    case actionTypes.ITEMS_ARE_LOADING:
-      return {
-        ...state,
-        isLoading: action.isLoading
       };
 
     default:

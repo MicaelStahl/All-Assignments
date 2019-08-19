@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import * as actionOptions from "./optionsActions";
+
 // ----- City ----- \\
 
 export const ALL_CITIES = "ALL_CITIES";
@@ -9,7 +11,6 @@ export const FIND_CITY_WITH_STUFF = "FIND_CITY_WITH_STUFF";
 export const EDIT_CITY = "EDIT_CITY";
 export const ADD_PERSON_TO_CITY = "ADD_PERSON_TO_CITY";
 export const DELETE_CITY = "DELETE_CITY";
-export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
 export const GET_COUNTRIES_FOR_CREATE_N_EDIT =
   "GET_COUNTRIES_FOR_CREATE_N_EDIT";
 
@@ -17,13 +18,6 @@ const apiUrl = "http://localhost:50691/api/cityApi/";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
-
-function ItemsAreLoading(bool) {
-  return {
-    type: ITEMS_ARE_LOADING,
-    isLoading: bool
-  };
-}
 
 function AllCities(cities, status) {
   return {
@@ -35,7 +29,7 @@ function AllCities(cities, status) {
 
 export function AllCitiesAsync() {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     setTimeout(() => {
       axios
         .get(apiUrl + "cities", {
@@ -45,7 +39,7 @@ export function AllCitiesAsync() {
         .then(response => {
           if (response.status === 200) {
             dispatch(AllCities(response.data, response.status));
-            dispatch(ItemsAreLoading(false));
+            dispatch(actionOptions.ItemsAreLoadingAsync(false));
           }
         })
         .catch(err => {
@@ -64,7 +58,7 @@ function GetCountries(countries) {
 
 export function GetCountriesAsync() {
   return dispatch => {
-    // dispatch(ItemsAreLoading(true));
+    // dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get("http://localhost:50691/api/countryApi/simple", {
         "Content-Type": "application/json",
@@ -74,7 +68,7 @@ export function GetCountriesAsync() {
         if (response.status === 200) {
           dispatch(GetCountries(response.data));
         }
-        // dispatch(ItemsAreLoading(false));
+        // dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -118,7 +112,7 @@ function FindCity(city) {
 
 export function FindCityAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get(apiUrl + id, {
         "Content-Type": "application/json",
@@ -128,7 +122,7 @@ export function FindCityAsync(id) {
         if (response.status === 200) {
           dispatch(FindCity(response.data));
         }
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -139,15 +133,15 @@ export function FindCityAsync(id) {
 
 export function FindCityNoApiAsync(city) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     dispatch(FindCity(city));
-    dispatch(ItemsAreLoading(false));
+    dispatch(actionOptions.ItemsAreLoadingAsync(false));
   };
 }
 
 export function FindCityForEditAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get(apiUrl + "city/" + id, {
         "Content-Type": "application/json",
@@ -157,7 +151,7 @@ export function FindCityForEditAsync(id) {
         if (response.status === 200) {
           dispatch(FindCity(response.data));
         }
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -175,13 +169,13 @@ function EditCity(city) {
 
 export function EditCityAsync(city) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .put(apiUrl + city.City.Id, city, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(EditCity(city));
-          dispatch(ItemsAreLoading(false));
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         }
       })
       .catch(err => {
@@ -208,7 +202,7 @@ function AddPersonToCity(cityId, people) {
 
 export function AddPersonToCityAsync(cityId, people) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .put(
         apiUrl + "/add-people",
@@ -218,7 +212,7 @@ export function AddPersonToCityAsync(cityId, people) {
       .then(response => {
         if (response.status === 200) {
           dispatch(AddPersonToCity(cityId, people));
-          dispatch(ItemsAreLoading(false));
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         }
       })
       .catch(err => {
@@ -237,14 +231,14 @@ function DeleteCity(id) {
 
 export function DeleteCityAsync(id) {
   return dispatch => {
-    // dispatch(ItemsAreLoading(true));
+    // dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .delete(apiUrl + id, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(DeleteCity(id));
         }
-        // dispatch(ItemsAreLoading(false));
+        // dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);

@@ -103,7 +103,7 @@ class Delete extends Component {
 const mapStateToProps = state => {
   return {
     person: state.person.onePerson,
-    isLoading: state.person.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

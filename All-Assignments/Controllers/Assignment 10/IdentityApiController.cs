@@ -94,25 +94,6 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpGet("users")]
-        // Make this only for admin later.
-        public async Task<IActionResult> GetUsers(ReturnedUserVM userVM)
-        {
-            if (string.IsNullOrWhiteSpace(userVM.UserToken) || string.IsNullOrWhiteSpace(userVM.UserId))
-            {
-                return BadRequest("Something went wrong. Please try again.");
-            }
-
-            var users = await _service.AllUsers(userVM.UserId, userVM.UserToken);
-
-            if (users == null)
-            {
-                return BadRequest("No users found.");
-            }
-
-            return Ok(users);
-        }
-
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterUser10 user)
@@ -171,21 +152,28 @@ namespace All_Assignments.Controllers
 
         #region (R)EAD
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUsers()
+        [HttpPost("users")]
+        // Make this only for admin later.
+        public async Task<IActionResult> GetUsers(ReturnedUserVM userVM)
         {
-            var users = await _userManager.Users.ToListAsync();
+            if (string.IsNullOrWhiteSpace(userVM.UserToken) || string.IsNullOrWhiteSpace(userVM.UserId))
+            {
+                return BadRequest("Something went wrong. Please try again.");
+            }
 
-            if (users == null || users.Count == 0)
+            var users = await _service.AllUsers(userVM.UserId, userVM.UserToken);
+
+            if (users == null)
             {
-                return Content("There are no users available.");
+                return BadRequest("No users found.");
             }
-            else
-            {
-                return Accepted(users);
-            }
+
+            return Ok(users);
         }
+
+        /// <summary>
+        /// For admin only
+        /// </summary>
 
         [HttpPost]
         [ValidateAntiForgeryToken]

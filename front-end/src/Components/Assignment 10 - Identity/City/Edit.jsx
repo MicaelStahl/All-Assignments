@@ -170,7 +170,7 @@ const mapStateToProps = state => {
   return {
     city: state.city.oneCity,
     countries: state.city.cities,
-    isLoading: state.city.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

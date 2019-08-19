@@ -15,7 +15,7 @@ import Country from "../Assignment 10 - Identity/Country/Country";
 
 import Register from "../Assignment 10 - Identity/User/Register";
 import SignIn from "../Assignment 10 - Identity/User/SignIn";
-import Users from "../Assignment 10 - Identity/User/Users";
+import Users from "../Assignment 10 - Identity/User/Admin Only/Users";
 
 const Main = props => {
   return (
@@ -29,7 +29,11 @@ const Main = props => {
           exact
           path="/users"
           render={() =>
-            props.isAuthenticated === true ? Users : <Redirect to="/signin" />
+            props.isAuthenticated === true ? (
+              <Users />
+            ) : (
+              <Redirect to="/signin" />
+            )
           }
         />
 

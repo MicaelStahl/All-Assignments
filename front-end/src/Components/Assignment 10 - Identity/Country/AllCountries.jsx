@@ -78,7 +78,7 @@ class AllCountries extends Component {
 const mapStateToProps = state => {
   return {
     countries: state.country.countries,
-    isLoading: state.country.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

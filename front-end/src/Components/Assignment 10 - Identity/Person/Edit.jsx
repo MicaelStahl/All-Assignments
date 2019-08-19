@@ -260,7 +260,7 @@ class Edit extends Component {
 const mapStateToProps = state => {
   return {
     person: state.person.onePerson,
-    isLoading: state.person.isLoading,
+    isLoading: state.options.isLoading,
     cities: state.person.allCities
   };
 };

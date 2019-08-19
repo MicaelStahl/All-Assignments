@@ -3,8 +3,7 @@ import * as actionTypes from "../actions/countryActions";
 const initialState = {
   oneCountry: [],
   countries: [],
-  error: "",
-  isLoading: false
+  error: ""
 };
 
 let country = [];
@@ -78,12 +77,6 @@ const reducer = (state = initialState, action) => {
         ...state,
         countries: countries.filter(x => x.id !== action.id),
         error: ""
-      };
-
-    case actionTypes.ITEMS_ARE_LOADING:
-      return {
-        ...state,
-        isLoading: action.isLoading
       };
 
     default:

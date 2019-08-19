@@ -7,16 +7,13 @@ const initialState = {
   isAuthenticated: false,
   error: "",
   success: "",
-  role: "",
-  isLoading: false
+  role: ""
 };
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.SIGN_IN:
       // Remember to make use of localStorage!
-      // Think I need to use Json.Stringify to properly use localStorage.
-      // Like this =>  const test = JSON.stringify(localStorage.setItem("user", action.user));
       return {
         ...state,
         isAuthenticated: true,
@@ -46,10 +43,12 @@ export function reducer(state = initialState, action) {
         error: ""
       };
 
-    case actionTypes.LOADING:
+    case actionTypes.GET_USERS:
       return {
         ...state,
-        isLoading: action.isLoading
+        users: action.users,
+        error: "",
+        success: ""
       };
 
     case actionTypes.ERROR:

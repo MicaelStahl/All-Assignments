@@ -5,8 +5,7 @@ const initialState = {
   allPeople: [],
   allCities: [],
   personError: "",
-  status: "",
-  isLoading: Boolean
+  status: ""
 };
 
 let people = [];
@@ -144,12 +143,6 @@ const reducer = (state = initialState, action) => {
           status: action.status
         };
       }
-
-    case actionTypes.ITEMS_ARE_LOADING:
-      return {
-        ...state,
-        isLoading: action.isLoading
-      };
 
     default:
       break;

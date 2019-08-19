@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import * as actionOptions from "./optionsActions";
+
 // ----- Country ----- \\
 
 export const ALL_COUNTRIES = "ALL_COUNTRIES";
@@ -8,19 +10,11 @@ export const FIND_COUNTRY = "FIND_COUNTRY";
 export const EDIT_COUNTRY = "EDIT_COUNTRY";
 export const ADD_CITY_TO_COUNTRY = "ADD_CITY_TO_COUNTRY";
 export const DELETE_COUNTRY = "DELETE_COUNTRY";
-export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
 
 const apiUrl = "http://localhost:50691/api/countryApi/";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
-
-function ItemsAreLoading(isLoading = false) {
-  return {
-    type: ITEMS_ARE_LOADING,
-    isLoading
-  };
-}
 
 function AllCountries(countries) {
   return {
@@ -31,7 +25,7 @@ function AllCountries(countries) {
 
 export function AllCountriesAsync() {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     setTimeout(() => {
       axios
         .get(apiUrl, {
@@ -42,7 +36,7 @@ export function AllCountriesAsync() {
           if (response.status === 200) {
             dispatch(AllCountries(response.data));
           }
-          dispatch(ItemsAreLoading(false));
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         })
         .catch(err => {
           console.error(err);
@@ -84,7 +78,7 @@ function FindCountry(country) {
 
 export function FindCountryAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get(apiUrl + id, {
         "Content-Type": "application/json",
@@ -94,7 +88,7 @@ export function FindCountryAsync(id) {
         if (response.status === 200) {
           dispatch(FindCountry(response.data));
         }
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -105,9 +99,9 @@ export function FindCountryAsync(id) {
 
 export function FindCountryForEditAsync(country) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     dispatch(FindCountry(country));
-    dispatch(ItemsAreLoading(false));
+    dispatch(actionOptions.ItemsAreLoadingAsync(false));
   };
 }
 
@@ -160,14 +154,14 @@ function DeleteCountry(id) {
 
 export function DeleteCountryAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .delete(apiUrl + id, { cancelToken: source.token })
       .then(response => {
         if (response.status === 200) {
           dispatch(DeleteCountry(id));
         }
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);

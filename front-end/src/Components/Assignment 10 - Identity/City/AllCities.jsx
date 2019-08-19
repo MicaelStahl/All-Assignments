@@ -75,7 +75,7 @@ class AllCities extends Component {
 const mapStateToProps = state => {
   return {
     cities: state.city.cities,
-    isLoading: state.city.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

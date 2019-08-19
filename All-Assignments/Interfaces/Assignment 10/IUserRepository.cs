@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace All_Assignments.Interfaces.Assignment_10
 {
     /// <summary>
-    /// The Return variables are bound to change.
+    /// A interface for the regular user. Return values are bound to change in the future.
     /// </summary>
     public interface IUserRepository
     {
@@ -18,7 +18,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Read
         #region Read
-        Task<UserDetailsVM> FindUser(string id);
+        Task<UserDetailsVM> FindUser(string userId, string userToken);
         Task<ReturnedUserVM> LogInUser(LoginUser10 user10);
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Delete
         #region Delete
-        Task<bool> DeleteUser(string id);
+        Task<bool> DeleteUser(string userId, string userToken);
         #endregion
     }
 }

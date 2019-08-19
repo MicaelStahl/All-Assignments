@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
+import Loading from "../../UI/Loading";
 
 class Create extends Component {
   state = {
@@ -60,128 +61,133 @@ class Create extends Component {
     if (this.state.redirect) {
       return <Redirect push="/identity/person" />;
     }
-    const options = this.props.cities.map((city, index) => (
-      <option key={index} value={city.id}>
-        {city.name}
-      </option>
-    ));
-    return (
-      <React.Fragment>
-        <Title Title="Create new person" />
-        <button
-          className="btn btn-primary btn-sm mb-2"
-          onClick={() => this.props.history.push("/identity/person")}>
-          Return
-        </button>
+    if (!this.props.isLoading) {
+      const options = this.props.cities.map((city, index) => (
+        <option key={index} value={city.id}>
+          {city.name}
+        </option>
+      ));
+      return (
+        <React.Fragment>
+          <Title Title="Create new person" />
+          <button
+            className="btn btn-primary btn-sm mb-2"
+            onClick={() => this.props.history.push("/identity/person")}>
+            Return
+          </button>
 
-        {this.state.error === "" ? null : (
-          <div className="font-weight-bold text-danger text-center">
-            {this.state.error}
-          </div>
-        )}
+          {this.state.error === "" ? null : (
+            <div className="font-weight-bold text-danger text-center">
+              {this.state.error}
+            </div>
+          )}
 
-        <form className="form col-6" onSubmit={this.handleSubmit}>
-          <div className="float-left">
-            <p>Required fields are marked with *</p>
-            <div className="form-group col-4">
-              <label className="col-form-label">Firstname*</label>
-              <input
-                className="form-inline"
-                type="text"
-                name="firstName"
-                placeholder="Firstname"
-                required
-              />
+          <form className="form col-6" onSubmit={this.handleSubmit}>
+            <div className="float-left">
+              <p>Required fields are marked with *</p>
+              <div className="form-group col-4">
+                <label className="col-form-label">Firstname*</label>
+                <input
+                  className="form-inline"
+                  type="text"
+                  name="firstName"
+                  placeholder="Firstname"
+                  required
+                />
+              </div>
+
+              <div className="form-group col-4">
+                <label className="col-form-label">Lastname*</label>
+                <input
+                  className="form-inline"
+                  type="text"
+                  name="lastName"
+                  placeholder="Lastname"
+                  required
+                />
+              </div>
+
+              <div className="form-group col-4">
+                <label className="col-form-label">Age*</label>
+                <input
+                  className="form-inline"
+                  type="number"
+                  name="age"
+                  min="12"
+                  max="110"
+                  step="1"
+                  placeholder="Age"
+                  required
+                />
+              </div>
+
+              <div className="form-group col-5">
+                <label className="col-form-label">E-mail*</label>
+                <input
+                  className="form-inline"
+                  name="email"
+                  type="email"
+                  placeholder="example@example.com"
+                />
+              </div>
             </div>
 
-            <div className="form-group col-4">
-              <label className="col-form-label">Lastname*</label>
-              <input
-                className="form-inline"
-                type="text"
-                name="lastName"
-                placeholder="Lastname"
-                required
-              />
-            </div>
+            <div className=" float-right">
+              <div className="form-group">
+                <label className="col-form-label">Gender*</label>
+                <select name="gender" className="form-inline">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Apache">Apache</option>
+                </select>
+              </div>
 
-            <div className="form-group col-4">
-              <label className="col-form-label">Age*</label>
-              <input
-                className="form-inline"
-                type="number"
-                name="age"
-                min="12"
-                max="110"
-                step="1"
-                placeholder="Age"
-                required
-              />
-            </div>
+              <div className="form-group">
+                <label className="col-form-label">Phonenumber*</label>
+                <input
+                  className="form-inline"
+                  name="phoneNumber"
+                  type="text"
+                  maxLength="12"
+                  placeholder="Phonenumber"
+                />
+              </div>
 
-            <div className="form-group col-5">
-              <label className="col-form-label">E-mail*</label>
-              <input
-                className="form-inline"
-                name="email"
-                type="email"
-                placeholder="example@example.com"
-              />
-            </div>
-          </div>
+              <div className="form-group">
+                <label className="col-form-label">Available Cities</label>
+                <select
+                  value={this.state.cityId}
+                  onChange={this.handleChange}
+                  className="form-inline"
+                  name="city">
+                  <option value="Select one">Select one</option>
+                  <option value={null}>None</option>
+                  {options}
+                </select>
+              </div>
 
-          <div className=" float-right">
-            <div className="form-group">
-              <label className="col-form-label">Gender*</label>
-              <select name="gender" className="form-inline">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Apache">Apache</option>
-              </select>
+              <div className="form-group">
+                <input
+                  type="submit"
+                  value="Submit"
+                  className="btn btn-success btn-sm"
+                />
+              </div>
             </div>
-
-            <div className="form-group">
-              <label className="col-form-label">Phonenumber*</label>
-              <input
-                className="form-inline"
-                name="phoneNumber"
-                type="text"
-                maxLength="12"
-                placeholder="Phonenumber"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="col-form-label">Available Cities</label>
-              <select
-                value={this.state.cityId}
-                onChange={this.handleChange}
-                className="form-inline"
-                name="city">
-                <option value="Select one">Select one</option>
-                <option value={null}>None</option>
-                {options}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <input
-                type="submit"
-                value="Submit"
-                className="btn btn-success btn-sm"
-              />
-            </div>
-          </div>
-        </form>
-      </React.Fragment>
-    );
+          </form>
+        </React.Fragment>
+      );
+    } else {
+      return <Loading />;
+    }
   }
 }
 
 const mapStateToProps = state => {
   return {
     cities: state.person.allCities,
-    status: state.person.status
+    status: state.person.status,
+    isLoading: state.options.isLoading
   };
 };
 

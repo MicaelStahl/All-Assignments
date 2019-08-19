@@ -2,6 +2,8 @@
 
 import axios from "axios";
 
+import * as actionOptions from "./optionsActions";
+
 export const ALL_PEOPLE = "ALL_PEOPLE";
 export const CREATE_PERSON = "CREATE_PERSON";
 export const FIND_PERSON = "FIND_PERSON";
@@ -10,18 +12,8 @@ export const EDIT_PERSON = "EDIT_PERSON";
 export const DELETE_PERSON = "DELETE_PERSON";
 export const ERROR404MESSAGE = "ERROR404MESSAGE";
 export const GET_ALL_CITIES = "GET_ALL_CITIES";
-export const ITEMS_ARE_LOADING = "ITEMS_ARE_LOADING";
 
 const apiUrl = "http://localhost:50691/api/PersonApi/";
-
-//#region ItemsAreLoading
-export function ItemsAreLoading(bool) {
-  return {
-    type: ITEMS_ARE_LOADING,
-    isLoading: bool
-  };
-}
-//#endregion
 
 //#region Error404
 
@@ -47,7 +39,7 @@ function AllPeople(allPeople, status) {
 
 export function AllPeopleAsync() {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     setTimeout(() => {
       axios
         .get(apiUrl, { "Content-Type": "application/json" })
@@ -67,7 +59,7 @@ export function AllPeopleAsync() {
         .catch(err => {
           dispatch(Error404(err, 400));
         });
-      dispatch(ItemsAreLoading(false));
+      dispatch(actionOptions.ItemsAreLoadingAsync(false));
     }, 200);
   };
 }
@@ -86,7 +78,7 @@ function CreatePerson(person, status) {
 
 export function CreatePersonAsync(person, cityId) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .post(apiUrl, { person: person, cityId: cityId })
       .then(response => {
@@ -109,7 +101,7 @@ export function CreatePersonAsync(person, cityId) {
             )
           );
         }
-        dispatch(ItemsAreLoading(false));
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -131,14 +123,14 @@ function FindPerson(person, status) {
 
 export function FindPersonAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get(apiUrl + id, { "Content-Type": "application/json" })
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(FindPerson(response.data, response.status));
-          dispatch(ItemsAreLoading(false));
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         } else {
           dispatch(
             Error404(
@@ -175,7 +167,7 @@ function AllCities(cities, status) {
 
 export function AllCitiesAsync() {
   return dispatch => {
-    // dispatch(ItemsAreLoading(true));
+    // dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get("http://localhost:50691/api/cityApi/")
       .then(response => {
@@ -190,7 +182,7 @@ export function AllCitiesAsync() {
             )
           );
         }
-        // dispatch(ItemsAreLoading(false));
+        // dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -211,7 +203,7 @@ function EditPerson(person) {
 
 export function EditPersonAsync(person) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     console.log("[EditPersonAsync]", person);
     axios
       .put(apiUrl + person.Person.Id, person)
@@ -236,7 +228,7 @@ export function EditPersonAsync(person) {
         console.error(err);
         dispatch(Error404(err));
       });
-    dispatch(ItemsAreLoading(false));
+    dispatch(actionOptions.ItemsAreLoadingAsync(false));
   };
 }
 
@@ -253,14 +245,14 @@ function DeletePerson(id) {
 
 export function DeletePersonAsync(id) {
   return dispatch => {
-    dispatch(ItemsAreLoading(true));
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .delete(apiUrl + id)
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(DeletePerson(id));
-          dispatch(ItemsAreLoading(false));
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         } else {
           dispatch(
             Error404("Could not remove the requested person. Please try again.")

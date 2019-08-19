@@ -129,7 +129,7 @@ class Details extends Component {
 const mapStateToProps = state => {
   return {
     country: state.country.oneCountry,
-    isLoading: state.country.isLoading
+    isLoading: state.options.isLoading
   };
 };
 

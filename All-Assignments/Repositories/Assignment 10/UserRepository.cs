@@ -15,29 +15,11 @@ namespace All_Assignments.Repositories.Assignment_10
 {
     public class UserRepository : IUserRepository
     {
-        //private readonly DataProtectorTokenProvider<AppUser10> provider;
-        //private readonly IDataProtectionProvider _protection;
-        //private readonly IOptions<DataProtectionTokenProviderOptions> _options;
-
         private readonly UserManager<AppUser10> _userManager;
         private readonly SignInManager<AppUser10> _signInManager;
 
-        /// <summary>
-        /// For token generation on successful login.
-        /// </summary>
-        //private readonly TokenManagement _tokenManagement;
-        //IOptions<TokenManagement> tokenManagement,
-        //_tokenManagement = tokenManagement.Value;
-
-        public UserRepository(
-                              // IOptions<DataProtectionTokenProviderOptions> options,
-                              // IDataProtectionProvider protection,
-                              SignInManager<AppUser10> signInManager,
-                              UserManager<AppUser10> userManager)
+        public UserRepository(SignInManager<AppUser10> signInManager, UserManager<AppUser10> userManager)
         {
-            //_protection = protection;
-            //_options = options;
-            //provider = new DataProtectorTokenProvider<AppUser10>(_protection, _options);
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -64,7 +46,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 // Potentially create a method that will handle all validations for username, firstname etc.?
 
-                user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication");
+                user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication-backend");
 
                 var result = await _userManager.CreateAsync(user, user.Password);
 
@@ -94,22 +76,29 @@ namespace All_Assignments.Repositories.Assignment_10
         /// <summary>
         /// Used for, for example checking details on user or when you want to update the information.
         /// </summary>
-        public async Task<UserDetailsVM> FindUser(string id)
+        public async Task<UserDetailsVM> FindUser(string userId, string userToken)
         {
             UserDetailsVM userDetails = new UserDetailsVM();
 
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
+                if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userToken))
                 {
                     throw new Exception("Something went wrong. Please try again");
                 }
 
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _userManager.FindByIdAsync(userId);
 
                 if (user == null)
                 {
                     throw new Exception("The requested user could not be found.");
+                }
+
+                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-backend", userToken);
+
+                if (!result)
+                {
+                    throw new Exception("Cannot verify user.");
                 }
 
                 userDetails.UserId = user.Id;
@@ -301,7 +290,7 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Delete
-        public async Task<bool> DeleteUser(string id)
+        public async Task<bool> DeleteUser(string userId, string userToken)
         {
             var users = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
