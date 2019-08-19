@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import Title from "../../../UI/Title";
 import Loading from "../../../UI/Loading";
-import * as actionTypes from "../../../Actions/Assignment 10/actions/identityActions";
+import * as actionTypes from "../../../Actions/Assignment 10/actions/userActions";
 
 class Users extends Component {
   state = {};
@@ -79,14 +79,14 @@ class Users extends Component {
 
 const mapStateToProps = state => {
   return {
-    users: state.identity.users,
+    users: state.user.users,
     isLoading: state.options.isLoading
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSideLoad: () => dispatch(actionTypes.GetUsersAsync()),
+    onSideLoad: () => dispatch(actionTypes.AdminGetUsersAsync()),
     onAdminEditLoad: (userId, users) => dispatch()
   };
 };

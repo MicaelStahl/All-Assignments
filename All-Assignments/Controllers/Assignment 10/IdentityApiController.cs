@@ -37,20 +37,9 @@ namespace All_Assignments.Controllers
             _service = service;
         }
 
-        //  Create a Repository for this controller tomorrow!
-        //  Create a Repository for this controller tomorrow!
-        //  Create a Repository for this controller tomorrow! https://bit.ly/31FTeUp <= Link to the guide.
-        //  Create a Repository for this controller tomorrow!
-        //  Create a Repository for this controller tomorrow!
-        //  Create a Repository for this controller tomorrow! 
-        //  Create a Repository for this controller tomorrow!
-        //  Create a Repository for this controller tomorrow!
-        //  Create a Repository for this controller tomorrow!
-
         /// <summary>
         /// Will this even be used?
         /// </summary>
-        /// <returns></returns>
         public IActionResult Index()
         {
             return View();
@@ -271,11 +260,8 @@ namespace All_Assignments.Controllers
             }
         }
 
-        /// <summary>
-        /// Implement userToken at a later stage.
-        /// </summary>
         [HttpPost("signout")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
             var result = await _service.LogOutUser(userVM.UserId, userVM.UserToken);

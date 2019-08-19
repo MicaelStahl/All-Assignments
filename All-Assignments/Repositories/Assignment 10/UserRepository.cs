@@ -122,6 +122,9 @@ namespace All_Assignments.Repositories.Assignment_10
             }
         }
 
+        /// <summary>
+        /// Only for Admin.
+        /// </summary>
         public async Task<List<UserDetailsVM>> AllUsers(string userId, string userToken)
         {
             try
@@ -206,7 +209,7 @@ namespace All_Assignments.Repositories.Assignment_10
                         issuer: "http://localhost:3000",
                         audience: "http://localhost:3000",
                         claims: new List<Claim>(),
-                        expires: DateTime.Now.AddMinutes(15),
+                        expires: DateTime.Now.AddMinutes(60),
                         signingCredentials: signingCredentials
                         );
 
@@ -233,9 +236,9 @@ namespace All_Assignments.Repositories.Assignment_10
 
         }
 
-        public async Task<LoggedOutUser> LogOutUser(string userId, string userToken)
+        public async Task<ResultVM> LogOutUser(string userId, string userToken)
         {
-            LoggedOutUser userVM = new LoggedOutUser();
+            ResultVM userVM = new ResultVM();
 
             try
             {
@@ -295,6 +298,30 @@ namespace All_Assignments.Repositories.Assignment_10
             var users = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
+        #endregion
+
+        #region TokenGeneration
+        //private string VerificationToken()
+        //{
+        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
+        //    var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        //    var tokenOptions = new JwtSecurityToken(
+        //        issuer: "http://localhost:3000",
+        //        audience: "http://localhost:3000",
+        //        claims: new List<Claim>(),
+        //        expires: DateTime.Now.AddMinutes(15),
+        //        signingCredentials: signingCredentials
+        //        );
+
+        //    return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        //}
+
+        //// I shouldn't ever need this one either for the same reason as above.
+        //private async Task<string> UserToken(AppUser10 user)
+        //{
+        //    return await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
+        //}
         #endregion
 
         #region TokenCreation - Created in courtesy of https://bit.ly/31FTeUp

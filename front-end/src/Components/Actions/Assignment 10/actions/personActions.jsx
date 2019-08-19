@@ -42,7 +42,10 @@ export function AllPeopleAsync() {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     setTimeout(() => {
       axios
-        .get(apiUrl, { "Content-Type": "application/json" })
+        .get(apiUrl, {
+          "Content-Type": "application/json",
+          cancelToken: actionOptions.CreateCancelToken()
+        })
         .then(response => {
           console.log("[Response]", response);
           if (response.status === 200) {
@@ -80,7 +83,13 @@ export function CreatePersonAsync(person, cityId) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .post(apiUrl, { person: person, cityId: cityId })
+      .post(
+        apiUrl,
+        { person: person, cityId: cityId },
+        {
+          cancelToken: actionOptions.CreateCancelToken()
+        }
+      )
       .then(response => {
         if (response.status === 200) {
           dispatch(CreatePerson(response.data, response.status));
@@ -125,7 +134,10 @@ export function FindPersonAsync(id) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .get(apiUrl + id, { "Content-Type": "application/json" })
+      .get(apiUrl + id, {
+        "Content-Type": "application/json",
+        cancelToken: actionOptions.CreateCancelToken()
+      })
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {
@@ -169,7 +181,9 @@ export function AllCitiesAsync() {
   return dispatch => {
     // dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .get("http://localhost:50691/api/cityApi/")
+      .get("http://localhost:50691/api/cityApi/", {
+        cancelToken: actionOptions.CreateCancelToken()
+      })
       .then(response => {
         console.log("[Response]", response);
         if (response.data !== null) {
@@ -206,7 +220,9 @@ export function EditPersonAsync(person) {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     console.log("[EditPersonAsync]", person);
     axios
-      .put(apiUrl + person.Person.Id, person)
+      .put(apiUrl + person.Person.Id, person, {
+        cancelToken: actionOptions.CreateCancelToken()
+      })
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {
@@ -247,7 +263,7 @@ export function DeletePersonAsync(id) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .delete(apiUrl + id)
+      .delete(apiUrl + id, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {

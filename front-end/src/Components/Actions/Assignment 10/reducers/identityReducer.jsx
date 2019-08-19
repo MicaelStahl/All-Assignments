@@ -3,7 +3,6 @@ import * as actionTypes from "../actions/identityActions";
 const initialState = {
   users: [],
   roles: [],
-  userToken: "",
   isAuthenticated: false,
   error: "",
   success: "",
@@ -18,7 +17,6 @@ export function reducer(state = initialState, action) {
         ...state,
         isAuthenticated: true,
         role: action.roles,
-        userToken: action.userToken,
         success: "User was successfully signed in.",
         error: ""
       };
@@ -41,14 +39,6 @@ export function reducer(state = initialState, action) {
         isAuthenticated: false,
         success: "",
         error: ""
-      };
-
-    case actionTypes.GET_USERS:
-      return {
-        ...state,
-        users: action.users,
-        error: "",
-        success: ""
       };
 
     case actionTypes.ERROR:

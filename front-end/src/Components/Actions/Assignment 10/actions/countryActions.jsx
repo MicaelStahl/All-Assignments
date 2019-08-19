@@ -13,9 +13,6 @@ export const DELETE_COUNTRY = "DELETE_COUNTRY";
 
 const apiUrl = "http://localhost:50691/api/countryApi/";
 
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
-
 function AllCountries(countries) {
   return {
     type: ALL_COUNTRIES,
@@ -30,7 +27,7 @@ export function AllCountriesAsync() {
       axios
         .get(apiUrl, {
           "Content-Type": "application/json",
-          cancelToken: source.token
+          cancelToken: actionOptions.CreateCancelToken()
         })
         .then(response => {
           if (response.status === 200) {
@@ -56,7 +53,7 @@ function CreateCountry(country) {
 export function CreateCountryAsync(country) {
   return dispatch => {
     axios
-      .post(apiUrl, country, { cancelToken: source.token })
+      .post(apiUrl, country, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         if (response.status === 200) {
           dispatch(CreateCountry(country));
@@ -82,7 +79,7 @@ export function FindCountryAsync(id) {
     axios
       .get(apiUrl + id, {
         "Content-Type": "application/json",
-        cancelToken: source.token
+        cancelToken: actionOptions.CreateCancelToken()
       })
       .then(response => {
         if (response.status === 200) {
@@ -115,7 +112,9 @@ function EditCountry(country) {
 export function EditCountryAsync(country) {
   return dispatch => {
     axios
-      .put(apiUrl + country.id, country, { cancelToken: source.token })
+      .put(apiUrl + country.id, country, {
+        cancelToken: actionOptions.CreateCancelToken()
+      })
       .then(response => {
         if (response.status === 200) {
           dispatch(EditCountry(country));
@@ -156,7 +155,7 @@ export function DeleteCountryAsync(id) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .delete(apiUrl + id, { cancelToken: source.token })
+      .delete(apiUrl + id, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         if (response.status === 200) {
           dispatch(DeleteCountry(id));

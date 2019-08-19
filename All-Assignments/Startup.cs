@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using All_Assignments.Database;
 using All_Assignments.Interfaces;
 using All_Assignments.Interfaces.Assignment_10;
+using All_Assignments.Interfaces.Assignment_10.Admin;
 using All_Assignments.Models.Token;
 using All_Assignments.Repositories.Assignment_10;
+using All_Assignments.Repositories.Assignment_10.Admin;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -85,6 +87,7 @@ namespace All_Assignments
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

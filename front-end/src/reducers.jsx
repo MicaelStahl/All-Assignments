@@ -6,6 +6,7 @@ import cityReducer from "./Components/Actions/Assignment 10/reducers/cityReducer
 import countryReducer from "./Components/Actions/Assignment 10/reducers/countryReducer";
 import identityReducer from "./Components/Actions/Assignment 10/reducers/identityReducer";
 import optionsReducer from "./Components/Actions/Assignment 10/reducers/optionsReducer";
+import userReducer from "./Components/Actions/Assignment 10/reducers/userReducer";
 
 export default history =>
   combineReducers({
@@ -14,5 +15,6 @@ export default history =>
     city: cityReducer,
     country: countryReducer,
     identity: identityReducer,
-    options: optionsReducer
+    options: optionsReducer,
+    user: userReducer
   });

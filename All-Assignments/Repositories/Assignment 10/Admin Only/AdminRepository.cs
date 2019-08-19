@@ -119,6 +119,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     UserDetailsVM user = new UserDetailsVM
                     {
                         UserId = item.Id,
+                        UserName = item.UserName,
                         FirstName = item.FirstName,
                         LastName = item.LastName,
                         Age = item.Age,

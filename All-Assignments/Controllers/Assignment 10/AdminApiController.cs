@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.Interfaces.Assignment_10.Admin;
 using All_Assignments.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +12,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace All_Assignments.Controllers.Assignment_10
 {
+    /// <summary>
+    /// This api exists ONLY for the admin and is not accessible for anyone that does not have the Administrator role.
+    /// In the future at least...
+    /// </summary>
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ApiController]
     //[Authorize(Roles = "Administrator")]
     public class AdminApiController : Controller
     {
@@ -23,7 +29,7 @@ namespace All_Assignments.Controllers.Assignment_10
             _service = service;
         }
 
-        [HttpGet("get-user")]
+        [HttpGet("get-user/{id}")]
         public async Task<IActionResult> GetUser(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -53,11 +59,9 @@ namespace All_Assignments.Controllers.Assignment_10
                 var users = await _service.GetUsers();
 
                 // Doing this since in the repository I create 1 user if something goes wrong.
-                // So I verify that the user is the "error" user created, or a normal user.
+                // So I verify if the user is the "error" user created, or a normal user.
                 if (users.Count == 1)
                 { 
-                    // Should never throw an exception since there should only be one element in the list.
-                    // If it were to throw an exception however, then I'll quite being a programmer.
                     var user = users.Single();
 
                     if (user.ErrorMessage != null)
@@ -83,21 +87,97 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(RegisterUser10 user10)
+        public async Task<IActionResult> CreateUser(RegisterUser10 user10)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _service.Create(user10);
+            var result = await _service.Create(user10);
 
-            if (user.ErrorMessage == null)
+            if (result.Failed == null)
             {
-                return Ok(user);
+                return Ok(result.Success);
             }
 
-            return BadRequest(user.ErrorMessage);
+            return BadRequest(result.Failed);
+        }
+
+        [HttpPut("edit")]
+        public async Task<IActionResult> EditUser(UserDetailsVM userVM)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception("Please check all fields and then try again.");
+                }
+
+                var result = await _service.EditUser(userVM);
+
+                if (result.Failed == null)
+                {
+                    return Ok(result.Success);
+                }
+
+                throw new Exception(result.Failed);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("change-password")]
+        public async Task<IActionResult> ChangeUserPassword(ChangePassword10 changePassword)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception("Please check all fields and then try again.");
+                }
+
+                var result = await _service.ChangeUserPassword(changePassword);
+
+                if (result.Failed == null)
+                {
+                    return Ok(result.Success);
+                }
+
+                throw new Exception(result.Failed);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("delete-user")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userId))
+                {
+                    throw new Exception("Something went wrong. Please try again.");
+                }
+
+                var result = await _service.DeleteUser(userId);
+
+                if (result.Failed == null)
+                {
+                    return Ok(result.Success);
+                }
+
+                throw new Exception(result.Failed);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

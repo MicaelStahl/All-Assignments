@@ -16,9 +16,6 @@ export const GET_COUNTRIES_FOR_CREATE_N_EDIT =
 
 const apiUrl = "http://localhost:50691/api/cityApi/";
 
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
-
 function AllCities(cities, status) {
   return {
     type: ALL_CITIES,
@@ -34,7 +31,7 @@ export function AllCitiesAsync() {
       axios
         .get(apiUrl + "cities", {
           "Content-Type": "application/json",
-          cancelToken: source.token
+          cancelToken: actionOptions.CreateCancelToken()
         })
         .then(response => {
           if (response.status === 200) {
@@ -62,7 +59,7 @@ export function GetCountriesAsync() {
     axios
       .get("http://localhost:50691/api/countryApi/simple", {
         "Content-Type": "application/json",
-        cancelToken: source.token
+        cancelToken: actionOptions.CreateCancelToken()
       })
       .then(response => {
         if (response.status === 200) {
@@ -87,7 +84,7 @@ function CreateCity(city) {
 export function CreateCityAsync(city) {
   return dispatch => {
     axios
-      .post(apiUrl, city, { cancelToken: source.token })
+      .post(apiUrl, city, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         if (response.status === 200) {
           dispatch(CreateCity(response.data));
@@ -116,7 +113,7 @@ export function FindCityAsync(id) {
     axios
       .get(apiUrl + id, {
         "Content-Type": "application/json",
-        cancelToken: source.token
+        cancelToken: actionOptions.CreateCancelToken()
       })
       .then(response => {
         if (response.status === 200) {
@@ -145,7 +142,7 @@ export function FindCityForEditAsync(id) {
     axios
       .get(apiUrl + "city/" + id, {
         "Content-Type": "application/json",
-        cancelToken: source.token
+        cancelToken: actionOptions.CreateCancelToken()
       })
       .then(response => {
         if (response.status === 200) {
@@ -171,7 +168,9 @@ export function EditCityAsync(city) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .put(apiUrl + city.City.Id, city, { cancelToken: source.token })
+      .put(apiUrl + city.City.Id, city, {
+        cancelToken: actionOptions.CreateCancelToken()
+      })
       .then(response => {
         if (response.status === 200) {
           dispatch(EditCity(city));
@@ -207,7 +206,7 @@ export function AddPersonToCityAsync(cityId, people) {
       .put(
         apiUrl + "/add-people",
         { cityId: cityId, people: people },
-        { cancelToken: source.token }
+        { cancelToken: actionOptions.CreateCancelToken() }
       )
       .then(response => {
         if (response.status === 200) {
@@ -233,7 +232,7 @@ export function DeleteCityAsync(id) {
   return dispatch => {
     // dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
-      .delete(apiUrl + id, { cancelToken: source.token })
+      .delete(apiUrl + id, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         if (response.status === 200) {
           dispatch(DeleteCity(id));
