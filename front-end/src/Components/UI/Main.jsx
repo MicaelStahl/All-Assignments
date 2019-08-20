@@ -59,9 +59,9 @@ const Main = props => {
         />
         <Route exact path="/users/details/:id" component={Details} />
         {/* Change these later. */}
-        <Route exact path="/user/edit/:id" component={Details} />
-        <Route exact path="/user/edit-password/:id" component={Details} />
-        <Route exact path="/user/delete/:id" component={Details} />
+        <Route exact path="/users/edit/:id" component={Details} />
+        <Route exact path="/users/edit-password/:id" component={Details} />
+        <Route exact path="/users/delete/:id" component={Details} />
 
         <Route exact path="/identity" component={IdentityIndex} />
         <Route exact path="/identity/person" component={Person} />

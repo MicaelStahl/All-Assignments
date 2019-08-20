@@ -87,7 +87,7 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateUser(RegisterUser10 user10)
+        public async Task<IActionResult> CreateUser(RegisterAdminUser10 user10)
         {
             if (!ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace All_Assignments.Controllers.Assignment_10
             return BadRequest(result.Failed);
         }
 
-        [HttpPut("edit")]
+        [HttpPut("edit-user")]
         public async Task<IActionResult> EditUser(UserDetailsVM userVM)
         {
             try

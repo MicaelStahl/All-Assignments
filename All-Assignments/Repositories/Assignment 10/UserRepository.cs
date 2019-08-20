@@ -50,13 +50,21 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 var result = await _userManager.CreateAsync(user, user.Password);
 
-                var createdUser = await _userManager.FindByNameAsync(user.UserName);
-
-                userVM.UserId = createdUser.Id;
-                userVM.UserToken = createdUser.UserToken;
-
                 if (result.Succeeded)
                 {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "NormalUser");
+
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception("Something went wrong.");
+                    }
+
+                    var createdUser = await _userManager.FindByNameAsync(user.UserName);
+
+                    userVM.UserId = createdUser.Id;
+                    userVM.UserToken = createdUser.UserToken;
+
+
                     return userVM;
                 }
                 else
@@ -78,7 +86,7 @@ namespace All_Assignments.Repositories.Assignment_10
         /// </summary>
         public async Task<UserDetailsVM> FindUser(string userId, string userToken)
         {
-            
+
 
             try
             {

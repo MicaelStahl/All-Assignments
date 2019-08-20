@@ -197,6 +197,63 @@ export function AdminDeleteUserAsync(userId, users = []) {
   };
 }
 
+function AdminEditUser(users) {
+  return {
+    type: ADMIN_EDIT_USER,
+    users
+  };
+}
+
+export function AdminEditUserAsync(userVM, users = []) {
+  return dispatch => {
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
+
+    axios.interceptors.request.use(
+      config => {
+        const token = actionOptions.BackEndToken();
+
+        if (token !== undefined || token !== null) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          config.headers["withCredentials"] = true;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    axios
+      .put(adminUrl + "edit-user", userVM, {
+        cancelToken: actionOptions.CreateCancelToken(),
+        validateStatus: function(status) {
+          return status <= 500;
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          const index = users.findIndex(x => x.userId === userVM.userId);
+
+          if (index !== -1) {
+            users.splice(index, 1, userVM);
+            dispatch(AdminEditUser(users));
+          } else {
+            throw new Error("Something went wrong.");
+          }
+        } else if ((response.status === 400) | 404) {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
+        } else {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(actionOptions.ErrorMessageAsync(response.data));
+      });
+  };
+}
+
 //#endregion
 
 // ---------------------------------------- USERS ---------------------------------------- \\
