@@ -45,6 +45,11 @@ namespace All_Assignments.ViewModels
         public string ComparePassword { get; set; }
     }
 
+    public class RegisterAdminUser10 : RegisterUser10
+    {
+        public bool Admin { get; set; }
+    }
+
     public class LoginUser10
     {
         [Required]
@@ -95,7 +100,16 @@ namespace All_Assignments.ViewModels
 
         public string Email { get; set; }
 
+        /// <summary>
+        /// The token to verify the user. Supposed to refresh every time the user makes a call to the back-end.
+        /// </summary>
         public string UserToken { get; set; }
+
+
+        /// <summary>
+        /// The key between the connection between back-end and front-end. refreshes after every call to the backend.
+        /// </summary>
+        public string VerificationToken { get; set; }
 
         /// <summary>
         /// Only used when something went wrong in back-end. There to give the user some information.

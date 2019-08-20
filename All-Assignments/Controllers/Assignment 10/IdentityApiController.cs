@@ -164,31 +164,39 @@ namespace All_Assignments.Controllers
         /// For admin only
         /// </summary>
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FindUser(string userId)
+        [HttpPost("get-user")]
+        public async Task<IActionResult> GetUser(ReturnedUserVM userVM)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            try
             {
-                return BadRequest();
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception("Something went wrong. Please try again.");
+                }
+
+                var user = await _service.FindUser(userVM.UserId, userVM.UserToken);
+
+                if (user.ErrorMessage == null)
+                {
+                    return Ok(user);
+                }
+
+                if (user.ErrorMessage.Contains("found"))
+                {
+                    return NotFound(user.ErrorMessage);
+                }
+                else if (user.ErrorMessage.Contains("verify"))
+                {
+                    return Unauthorized(user.ErrorMessage);
+                }
+                else
+                {
+                    throw new Exception(user.ErrorMessage);
+                }
             }
-
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                return Content("Something went wrong, please try again");
-            }
-
-            var result = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user.UserToken);
-
-            if (result == true)
-            {
-                return Accepted(user);
-            }
-            else
-            {
-                return Content("Something went wrong.");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -261,7 +269,8 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPost("signout")]
-        //[AllowAnonymous]
+        // Remove AllowAnonymous at a later stage.
+        [AllowAnonymous]
         public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
             var result = await _service.LogOutUser(userVM.UserId, userVM.UserToken);
@@ -317,7 +326,7 @@ namespace All_Assignments.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(FindUser), "Assignment10Identity", new { userId = user.Id });
+                return RedirectToAction(nameof(GetUser), "Assignment10Identity", new { userId = user.Id });
             }
             else
             {

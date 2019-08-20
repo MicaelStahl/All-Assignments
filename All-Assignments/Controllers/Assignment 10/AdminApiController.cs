@@ -172,6 +172,11 @@ namespace All_Assignments.Controllers.Assignment_10
                     return Ok(result.Success);
                 }
 
+                if (result.Failed.Contains("found"))
+                {
+                    return NotFound(result.Failed);
+                }
+
                 throw new Exception(result.Failed);
             }
             catch (Exception ex)

@@ -17,14 +17,16 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
     public class AdminRepository : IAdminRepository
     {
         private readonly UserManager<AppUser10> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminRepository(UserManager<AppUser10> userManager)
+        public AdminRepository(UserManager<AppUser10> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         #region Create
-        public async Task<ResultVM> Create(RegisterUser10 user)
+        public async Task<ResultVM> Create(RegisterAdminUser10 user)
         {
             ResultVM resultVM = new ResultVM();
             try
@@ -43,6 +45,15 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
 
                 if (result.Succeeded)
                 {
+                    var roles = await _roleManager.Roles.ToListAsync();
+
+                    List<string> roleNames = new List<string>();
+
+                    roles.ForEach(x => roleNames.Add(x.Name));
+
+                    _ = user.Admin == true ? await _userManager.AddToRolesAsync(user, roleNames) 
+                        : await _userManager.AddToRoleAsync(user, "NormalUser");
+
                     resultVM.Success = "User was successfully created!";
 
                     return resultVM;

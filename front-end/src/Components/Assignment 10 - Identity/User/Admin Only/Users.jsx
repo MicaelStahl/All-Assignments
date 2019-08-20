@@ -50,6 +50,12 @@ class Users extends Component {
                       Edit
                     </Link>
                     <Link
+                      onClick={() =>
+                        this.props.onAdminDetailsLoad(
+                          user.userId,
+                          this.props.users
+                        )
+                      }
                       to={"/users/details/" + user.userId}
                       className="btn btn-primary btn-sm ml-1">
                       Details
@@ -60,6 +66,12 @@ class Users extends Component {
                       Change password
                     </Link>
                     <Link
+                      onClick={() =>
+                        this.props.onAdminDeleteLoad(
+                          user.userId,
+                          this.props.users
+                        )
+                      }
                       to={"/users/delete/" + user.userId}
                       className="btn btn-danger btn-sm ml-1">
                       Delete
@@ -87,7 +99,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSideLoad: () => dispatch(actionTypes.AdminGetUsersAsync()),
-    onAdminEditLoad: (userId, users) => dispatch()
+    onAdminDetailsLoad: (userId, users) =>
+      dispatch(actionTypes.UserDetailsAsync(userId, users)),
+    // onAdminEditLoad: (userId, users) => dispatch(),
+    onAdminDeleteLoad: (userId, users) =>
+      dispatch(actionTypes.AdminDeleteUserAsync(userId, users))
   };
 };
 

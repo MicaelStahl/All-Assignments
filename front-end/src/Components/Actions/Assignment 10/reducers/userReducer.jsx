@@ -20,6 +20,12 @@ export default function reducer(state = initialState, action) {
         users: action.users
       };
 
+    case actionTypes.USER_DETAILS:
+      return {
+        ...state,
+        user: action.user
+      };
+
     default:
       break;
   }

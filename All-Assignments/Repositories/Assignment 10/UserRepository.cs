@@ -78,7 +78,7 @@ namespace All_Assignments.Repositories.Assignment_10
         /// </summary>
         public async Task<UserDetailsVM> FindUser(string userId, string userToken)
         {
-            UserDetailsVM userDetails = new UserDetailsVM();
+            
 
             try
             {
@@ -100,23 +100,26 @@ namespace All_Assignments.Repositories.Assignment_10
                 {
                     throw new Exception("Cannot verify user.");
                 }
-
-                userDetails.UserId = user.Id;
-                userDetails.UserName = user.UserName;
-                userDetails.FirstName = user.FirstName;
-                userDetails.LastName = user.LastName;
-                userDetails.Age = user.Age;
-                userDetails.Email = user.Email;
-                userDetails.UserToken = user.UserToken;
-
-                //// Might use this later.
-                //userDetails.UserToken = TokenCreation(user);
+                UserDetailsVM userDetails = new UserDetailsVM
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Age = user.Age,
+                    Email = user.Email,
+                    VerificationToken = VerificationToken(),
+                    UserToken = await UserToken(user)
+                };
 
                 return userDetails;
             }
             catch (Exception ex)
             {
-                userDetails.ErrorMessage = ex.Message;
+                UserDetailsVM userDetails = new UserDetailsVM
+                {
+                    ErrorMessage = ex.Message
+                };
 
                 return userDetails;
             }
@@ -281,13 +284,13 @@ namespace All_Assignments.Repositories.Assignment_10
         #region Update
         public async Task<AppUser10> Edit(AppUser10 user)
         {
-            var users = await _userManager.Users.ToListAsync();
+            _ = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
 
         public async Task<bool> ChangePassword(ChangePassword10 changePassword)
         {
-            var users = await _userManager.Users.ToListAsync();
+            _ = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
         #endregion
@@ -295,35 +298,37 @@ namespace All_Assignments.Repositories.Assignment_10
         #region Delete
         public async Task<bool> DeleteUser(string userId, string userToken)
         {
-            var users = await _userManager.Users.ToListAsync();
+            _ = await _userManager.Users.ToListAsync();
             throw new NotImplementedException();
         }
         #endregion
 
         #region TokenGeneration
-        //private string VerificationToken()
-        //{
-        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
-        //    var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        private string VerificationToken()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
+            var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        //    var tokenOptions = new JwtSecurityToken(
-        //        issuer: "http://localhost:3000",
-        //        audience: "http://localhost:3000",
-        //        claims: new List<Claim>(),
-        //        expires: DateTime.Now.AddMinutes(15),
-        //        signingCredentials: signingCredentials
-        //        );
+            var tokenOptions = new JwtSecurityToken(
+                issuer: "http://localhost:3000",
+                audience: "http://localhost:3000",
+                claims: new List<Claim>(),
+                // Change this timer later to 15 min (Standard). It's 60 min atm for developing purposes.
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: signingCredentials
+                );
 
-        //    return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-        //}
+            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        }
 
-        //// I shouldn't ever need this one either for the same reason as above.
-        //private async Task<string> UserToken(AppUser10 user)
-        //{
-        //    return await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
-        //}
+        // I shouldn't ever need this one either for the same reason as above.
+        private async Task<string> UserToken(AppUser10 user)
+        {
+            return await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
+        }
         #endregion
 
+        // Not used.
         #region TokenCreation - Created in courtesy of https://bit.ly/31FTeUp
 
         /// <summary>

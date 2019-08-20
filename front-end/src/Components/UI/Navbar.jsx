@@ -77,11 +77,11 @@ class Navbar extends Component {
                   </NavLink>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
-                    className="DropdownList nav-link text-light dropdown-toggle"
+                  <button
+                    className="DropdownList btn btn-dark dropdown-toggle"
                     data-toggle="dropdown">
                     Assignments
-                  </a>
+                  </button>
                   <div className="dropdown-menu">
                     <NavLink
                       className="btn btn-secondary dropdown-item"
@@ -111,11 +111,11 @@ class Navbar extends Component {
                 {this.props.location.pathname.includes("/identity") === true ? (
                   <ul className="navbar-nav mr-auto">
                     <li className="nav-item dropdown">
-                      <a
-                        className="DropdownList nav-link text-light dropdown-toggle"
+                      <button
+                        className="DropdownList btn btn-dark dropdown-toggle"
                         data-toggle="dropdown">
                         Identity
-                      </a>
+                      </button>
                       <div className="dropdown-menu">
                         <NavLink
                           to="/identity"

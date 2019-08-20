@@ -9,6 +9,10 @@ export function CreateCancelToken() {
   return Source.token;
 }
 
+export function BackEndToken() {
+  return localStorage.getItem("backend-token");
+}
+
 export function GetUser() {
   return {
     UserId: localStorage.getItem("userId"),

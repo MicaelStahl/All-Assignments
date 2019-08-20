@@ -12,7 +12,7 @@ namespace All_Assignments.Interfaces.Assignment_10.Admin
     public interface IAdminRepository
     {
         #region Create
-        Task<ResultVM> Create(RegisterUser10 user);
+        Task<ResultVM> Create(RegisterAdminUser10 user);
         #endregion
 
         #region Find

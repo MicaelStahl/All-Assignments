@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
-import Title from "../../UI/Title";
-import * as actionTypes from "../../Actions/Assignment 10/actions/identityActions";
+import Title from "../../../UI/Title";
+import * as actionTypes from "../../../Actions/Assignment 10/actions/identityActions";
 
 class Register extends Component {
   state = {

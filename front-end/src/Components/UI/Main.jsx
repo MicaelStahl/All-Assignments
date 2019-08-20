@@ -13,18 +13,39 @@ import NoMatch from "./NoMatch";
 
 import Country from "../Assignment 10 - Identity/Country/Country";
 
-import Register from "../Assignment 10 - Identity/User/Register";
-import SignIn from "../Assignment 10 - Identity/User/SignIn";
+import Register from "../Assignment 10 - Identity/User/All Users/Register";
+import SignIn from "../Assignment 10 - Identity/User/All Users/SignIn";
 import Users from "../Assignment 10 - Identity/User/Admin Only/Users";
+import Details from "../Assignment 10 - Identity/User/All Users/Details";
 
 const Main = props => {
   return (
     <React.Fragment>
       <Switch>
+        {/* ---------- Assignment 1 ---------- */}
+        <Route exact path="/calculator" component={Calculator} />
+
+        {/* ---------- Assignment 2 ---------- */}
+
+        {/* ---------- Assignment 3 ---------- */}
+
+        {/* ---------- Assignment 4 ---------- */}
+
+        {/* ---------- Assignment 5 ---------- */}
+        <Route exact path="/webpage" component={HTML} />
+
+        {/* ---------- Assignment 6 ---------- */}
+
+        {/* ---------- Assignment 7 ---------- */}
+        <Route exact path="/guessing-game" component={GuessingGame} />
+
+        {/* ---------- Assignment 8 ---------- */}
+
+        {/* ---------- Assignment 9 ---------- */}
+
+        {/* ---------- Assignment 10 ---------- */}
         <Route exact path="/signin" component={SignIn} />
-
         <Route exact path="/register" component={Register} />
-
         <Route
           exact
           path="/users"
@@ -36,23 +57,21 @@ const Main = props => {
             )
           }
         />
-
-        <Route exact path="/calculator" component={Calculator} />
-
-        <Route exact path="/webpage" component={HTML} />
-
-        <Route exact path="/guessing-game" component={GuessingGame} />
+        <Route exact path="/users/details/:id" component={Details} />
+        {/* Change these later. */}
+        <Route exact path="/user/edit/:id" component={Details} />
+        <Route exact path="/user/edit-password/:id" component={Details} />
+        <Route exact path="/user/delete/:id" component={Details} />
 
         <Route exact path="/identity" component={IdentityIndex} />
-
         <Route exact path="/identity/person" component={Person} />
-
         <Route exact path="/identity/city" component={City} />
-
         <Route exact path="/identity/country" component={Country} />
 
-        <Route exact path="/" component={Home} />
+        {/* ---------- Assignment 11 ---------- */}
 
+        {/* ---------- Globals ---------- */}
+        <Route exact path="/" component={Home} />
         <Route component={NoMatch} />
       </Switch>
     </React.Fragment>
