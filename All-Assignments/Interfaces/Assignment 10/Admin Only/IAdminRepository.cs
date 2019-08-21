@@ -12,21 +12,23 @@ namespace All_Assignments.Interfaces.Assignment_10.Admin
     public interface IAdminRepository
     {
         #region Create
-        Task<ResultVM> Create(RegisterAdminUser10 user);
+        Task<AdminResultVM> Create(RegisterAdminUser10 user);
         #endregion
 
         #region Find
-        Task<UserDetailsVM> GetUser(string userId);
-        Task<List<UserDetailsVM>> GetUsers();
+        Task<AdminUserDetailsVM> GetUser(AdminVerificationForUserVM verificationVM);
+        Task<AdminUsersDetailsVM> GetUsers(AdminVerificationVM verificationVM);
         #endregion
 
         #region Update
-        Task<ResultVM> EditUser(UserDetailsVM user);
-        Task<ResultVM> ChangeUserPassword(ChangePassword10 changePassword);
+        Task<AdminResultVM> EditUser(UserDetailsVM user);
+        Task<AdminResultVM> ChangeUserPassword(AdminChangeUserPassword10 changePassword);
+
+        // ToDo: Add a method to change users roles here later.
         #endregion
 
         #region Delete
-        Task<ResultVM> DeleteUser(string userId);
+        Task<AdminResultVM> DeleteUser(AdminVerificationForUserVM verificationVM);
         #endregion
     }
 }

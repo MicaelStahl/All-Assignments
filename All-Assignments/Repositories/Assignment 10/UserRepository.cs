@@ -46,7 +46,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 // Potentially create a method that will handle all validations for username, firstname etc.?
 
-                user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication-backend");
+                user.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "Authentication-backend");
 
                 var result = await _userManager.CreateAsync(user, user.Password);
 
@@ -64,6 +64,8 @@ namespace All_Assignments.Repositories.Assignment_10
                     userVM.UserId = createdUser.Id;
                     userVM.UserToken = createdUser.UserToken;
 
+                    // Do I need this line?
+                    //userVM.Roles = await _userManager.GetRolesAsync(user);
 
                     return userVM;
                 }
@@ -86,8 +88,6 @@ namespace All_Assignments.Repositories.Assignment_10
         /// </summary>
         public async Task<UserDetailsVM> FindUser(string userId, string userToken)
         {
-
-
             try
             {
                 if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userToken))
@@ -211,22 +211,11 @@ namespace All_Assignments.Repositories.Assignment_10
                 {
                     returnedUser.UserId = user.Id;
 
-                    // This is just a test.
-
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
-                    var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                    var tokenOptions = new JwtSecurityToken(
-                        issuer: "http://localhost:3000",
-                        audience: "http://localhost:3000",
-                        claims: new List<Claim>(),
-                        expires: DateTime.Now.AddMinutes(60),
-                        signingCredentials: signingCredentials
-                        );
-
-                    returnedUser.TokenToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                    returnedUser.TokenToken = VerificationToken();
 
                     returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-frontend");
+
+                    returnedUser.Roles = await _userManager.GetRolesAsync(user);
 
                     return returnedUser;
                 }

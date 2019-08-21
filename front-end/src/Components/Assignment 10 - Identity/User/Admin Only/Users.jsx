@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 
 import Title from "../../../UI/Title";
 import Loading from "../../../UI/Loading";
-import * as actionTypes from "../../../Actions/Assignment 10/actions/userActions";
+import * as actionUser from "../../../Actions/Assignment 10/actions/userActions";
+import * as actionAdmin from "../../../Actions/Assignment 10/actions/adminActions";
 
 class Users extends Component {
   state = {};
@@ -91,19 +92,19 @@ class Users extends Component {
 
 const mapStateToProps = state => {
   return {
-    users: state.user.users,
+    users: state.admin.users,
     isLoading: state.options.isLoading
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSideLoad: () => dispatch(actionTypes.AdminGetUsersAsync()),
+    onSideLoad: () => dispatch(actionAdmin.AdminGetUsersAsync()),
     onAdminDetailsLoad: (userId, users) =>
-      dispatch(actionTypes.UserDetailsAsync(userId, users)),
+      dispatch(actionUser.UserDetailsAsync(userId, users)),
     // onAdminEditLoad: (userId, users) => dispatch(),
     onAdminDeleteLoad: (userId, users) =>
-      dispatch(actionTypes.AdminDeleteUserAsync(userId, users))
+      dispatch(actionAdmin.AdminDeleteUserAsync(userId, users))
   };
 };
 

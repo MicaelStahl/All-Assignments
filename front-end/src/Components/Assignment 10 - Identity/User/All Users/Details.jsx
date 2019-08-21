@@ -2,8 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-import * as actionOptions from "../../../Actions/Assignment 10/actions/optionsActions";
-import * as actionTypes from "../../../Actions/Assignment 10/actions/userActions";
+import * as actionUser from "../../../Actions/Assignment 10/actions/userActions";
+import * as actionAdmin from "../../../Actions/Assignment 10/actions/adminActions";
 import Title from "../../../UI/Title";
 import Loading from "../../../UI/Loading";
 
@@ -42,21 +42,61 @@ const Details = props => {
               <ins>Options:</ins>
             </label>
             <div>
-              <Link
-                to={"/users/edit/" + props.user.userId}
-                className="btn btn-info btn-sm">
-                Edit
-              </Link>
-              <Link
-                to={"/users/edit-password/" + props.user.userId}
-                className="btn btn-info btn-sm ml-1">
-                Edit-password
-              </Link>
-              <Link
-                to={"/users/delete/" + props.user.userId}
-                className="btn btn-info btn-sm ml-1">
-                Delete
-              </Link>
+              {props.roles.includes("Administrator") ? (
+                <React.Fragment>
+                  <Link
+                    onClick={() =>
+                      props.onAdminChoice(props.user.userId, props.users)
+                    }
+                    to={"/users/edit/" + props.user.userId}
+                    className="btn btn-info btn-sm">
+                    Edit
+                  </Link>
+                  <Link
+                    onClick={() =>
+                      props.onAdminChoice(props.user.userId, props.users)
+                    }
+                    to={"/users/edit-password/" + props.user.userId}
+                    className="btn btn-info btn-sm ml-1">
+                    Edit-password
+                  </Link>
+                  <Link
+                    onClick={() =>
+                      props.onAdminChoice(props.user.userId, props.users)
+                    }
+                    to={"/users/delete/" + props.user.userId}
+                    className="btn btn-info btn-sm ml-1">
+                    Delete
+                  </Link>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <Link
+                    onClick={() =>
+                      props.onUserChoice(props.user.userId, props.users)
+                    }
+                    to={"/users/edit/" + props.user.userId}
+                    className="btn btn-info btn-sm">
+                    Edit
+                  </Link>
+                  <Link
+                    onClick={() =>
+                      props.onUserChoice(props.user.userId, props.users)
+                    }
+                    to={"/users/edit-password/" + props.user.userId}
+                    className="btn btn-info btn-sm ml-1">
+                    Edit-password
+                  </Link>
+                  <Link
+                    onClick={() =>
+                      props.onUserChoice(props.user.userId, props.users)
+                    }
+                    to={"/users/delete/" + props.user.userId}
+                    className="btn btn-info btn-sm ml-1">
+                    Delete
+                  </Link>
+                </React.Fragment>
+              )}
             </div>
           </div>
         </div>
@@ -71,15 +111,26 @@ const mapStateToProps = state => {
   return {
     isLoading: state.options.isLoading,
     user: state.user.user,
-    users: state.user.users
+    users: state.admin.users,
+    roles: state.identity.roles
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onEditLoad: (user, users) => dispatch(),
-    onEditPasswordLoad: (user, users) => dispatch(),
-    onDeleteLoad: (user, users) => dispatch()
+    // Should be the only one needed for users.
+    onUserChoice: (userId, users) =>
+      dispatch(actionUser.UserDetailsAsync(userId, users)),
+    // onEditLoad: (userId, users) => dispatch(),
+    // onEditPasswordLoad: (userId, users) => dispatch(),
+    // onDeleteLoad: (userId, users) => dispatch(),
+
+    // Should be the only one needed for admin.
+    onAdminChoice: (userId, users) =>
+      dispatch(actionAdmin.AdminGetUserAsync(userId, users))
+    // onAdminEdit: (userId, users) => dispatch(actionAdmin.ADMIN_GET_USER(userId, users)),
+    // onAdminDelete: (userId, users) =>
+    //   dispatch(actionAdmin.AdminDeleteUserAsync(userId, users))
   };
 };
 

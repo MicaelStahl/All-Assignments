@@ -9,6 +9,18 @@ export function CreateCancelToken() {
   return Source.token;
 }
 
+export function SaveAdminToLocal(admin) {
+  localStorage.setItem("backend-token", admin.frontEndToken);
+  localStorage.setItem("userToken", admin.adminToken);
+  localStorage.setItem("userId", admin.adminId);
+}
+
+export function SaveUserToLocal(user) {
+  localStorage.setItem("backend-token", user.tokenToken);
+  localStorage.setItem("userToken", user.userToken);
+  localStorage.setItem("userId", user.userId);
+}
+
 export function BackEndToken() {
   return localStorage.getItem("backend-token");
 }

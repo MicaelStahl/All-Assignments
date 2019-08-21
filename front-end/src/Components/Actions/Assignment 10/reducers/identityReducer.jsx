@@ -4,47 +4,31 @@ const initialState = {
   users: [],
   roles: [],
   isAuthenticated: false,
-  error: "",
-  success: "",
-  role: ""
+  success: ""
 };
 
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.SIGN_IN:
-      // Remember to make use of localStorage!
       return {
         ...state,
         isAuthenticated: true,
-        role: action.roles,
-        success: "User was successfully signed in.",
-        error: ""
+        roles: action.roles,
+        success: "User was successfully signed in."
       };
 
     case actionTypes.REGISTER:
-      console.log("Do I happen??");
       return {
         ...state,
         users: state.users.push(action.user),
-        success: "User was successfully registered.",
-        error: ""
-        // Redirect user to Signin screen after registration. Maybe.
+        success: "User was successfully registered."
       };
 
     case actionTypes.SIGN_OUT:
       return {
         ...state,
         userToken: "",
-        role: "",
         isAuthenticated: false,
-        success: "",
-        error: ""
-      };
-
-    case actionTypes.ERROR:
-      return {
-        ...state,
-        error: action.error,
         success: ""
       };
 

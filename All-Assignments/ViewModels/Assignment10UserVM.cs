@@ -34,6 +34,9 @@ namespace All_Assignments.ViewModels
         public string UserToken { get; set; }
     }
 
+    /// <summary>
+    /// Inherits AppUser10, which is the baseline User for this application, but adds password and comparePassword as a register.
+    /// </summary>
     public class RegisterUser10 : AppUser10
     {
         [Required]
@@ -45,11 +48,9 @@ namespace All_Assignments.ViewModels
         public string ComparePassword { get; set; }
     }
 
-    public class RegisterAdminUser10 : RegisterUser10
-    {
-        public bool Admin { get; set; }
-    }
-
+    /// <summary>
+    /// The main ViewModel for Logging in for regular users.
+    /// </summary>
     public class LoginUser10
     {
         [Required]
@@ -73,20 +74,26 @@ namespace All_Assignments.ViewModels
 
         public string TokenToken { get; set; }
 
+        public IList<string> Roles { get; set; }
+
         public string ErrorMessage { get; set; }
     }
 
+    /// <summary>
+    /// A simple ViewModel used to tell the user if the action was successful, or if it somehow failed.
+    /// Provides just enough information to the user to understand the problem.
+    /// </summary>
     public class ResultVM
     {
-        public string Success{ get; set; }
+        public string Success { get; set; }
 
         public string Failed { get; set; }
     }
 
     /// <summary>
-    /// A ViewModel that gets sent down to the front-end when the user wants to view his/her data.
+    /// A ViewModel that contains the basic information about a user. Used for regular users and to inherit for admin.
     /// </summary>
-    public class UserDetailsVM
+    public class DetailsVM
     {
         public string UserId { get; set; }
 
@@ -100,16 +107,7 @@ namespace All_Assignments.ViewModels
 
         public string Email { get; set; }
 
-        /// <summary>
-        /// The token to verify the user. Supposed to refresh every time the user makes a call to the back-end.
-        /// </summary>
-        public string UserToken { get; set; }
-
-
-        /// <summary>
-        /// The key between the connection between back-end and front-end. refreshes after every call to the backend.
-        /// </summary>
-        public string VerificationToken { get; set; }
+        public IList<string> Roles { get; set; }
 
         /// <summary>
         /// Only used when something went wrong in back-end. There to give the user some information.
@@ -117,6 +115,27 @@ namespace All_Assignments.ViewModels
         public string ErrorMessage { get; set; }
     }
 
+    /// <summary>
+    /// A ViewModel that gets sent down to the front-end when the user wants to view his/her data.
+    /// Inherits the DetailsVM ViewModel which shows basic information of a user.
+    /// </summary>
+    public class UserDetailsVM : DetailsVM
+    {
+        /// <summary>
+        /// The token to verify the user. Supposed to refresh every time the user makes a call to the back-end.
+        /// </summary>
+        public string UserToken { get; set; }
+
+        /// <summary>
+        /// The key between the connection between back-end and front-end. refreshes after every call to the backend.
+        /// </summary>
+        public string VerificationToken { get; set; }
+
+    }
+
+    /// <summary>
+    /// The main ViewModel for users to change password.
+    /// </summary>
     public class ChangePassword10
     {
         public string UserId { get; set; }
@@ -137,4 +156,111 @@ namespace All_Assignments.ViewModels
         [Compare("NewPassword")]
         public string ComparePassword { get; set; }
     }
+
+    // ------------------------------ Admin ViewModels ------------------------------ \\
+
+    /// <summary>
+    /// ViewModel to get the specificed user with Admin verification.
+    /// </summary>
+    public class AdminUserDetailsVM :  IAdminVerification
+    {
+        public DetailsVM User { get; set; }
+
+        public string AdminId { get; set; }
+
+        public string AdminToken { get; set; }
+
+        public string FrontEndToken { get; set; }
+    }
+
+    /// <summary>
+    /// ViewModel to get a list of users with Admin verification.
+    /// </summary>
+    public class AdminUsersDetailsVM : IAdminVerification
+    {
+        public List<DetailsVM> Users { get; set; }
+
+        public string AdminId { get; set; }
+
+        public string AdminToken { get; set; }
+
+        public string FrontEndToken { get; set; }
+
+        public string ErrorMessage { get; set; }
+    }
+
+    /// <summary>
+    /// A ViewModel for admin to change passwords with administrator verification.
+    /// </summary>
+    public class AdminChangeUserPassword10 : ChangePassword10, IAdminVerification
+    {
+        public string AdminId { get; set; }
+
+        public string AdminToken { get; set; }
+
+        public string FrontEndToken { get; set; }
+    }
+
+    /// <summary>
+    /// A interface for the admin verification in the admin-repository.
+    /// </summary>
+    public interface IAdminVerification
+    {
+        [Required]
+        string AdminId { get; set; }
+
+        [Required]
+        string AdminToken { get; set; }
+
+        [Required]
+        string FrontEndToken { get; set; }
+    }
+
+    /// <summary>
+    /// This ViewModel indicates if the task was successful or failed with administrator verification.
+    /// </summary>
+    public class AdminResultVM : ResultVM, IAdminVerification
+    {
+        public string AdminId { get; set; }
+
+        public string AdminToken { get; set; }
+
+        public string FrontEndToken { get; set; }
+    }
+
+    /// <summary>
+    /// This ViewModel is used when admin wants all users. it verifies that the user is indeed the administrator.
+    /// </summary>
+    public class AdminVerificationVM : IAdminVerification
+    {
+        public string AdminId { get; set; }
+
+        public string AdminToken { get; set; }
+
+        public string FrontEndToken { get; set; }
+    }
+
+    /// <summary>
+    /// This ViewModel is used when admin wants to find a user. (This is for finding user or delete.)
+    /// </summary>
+    public class AdminVerificationForUserVM : AdminVerificationVM
+    {
+        public string UserId { get; set; }
+    }
+
+    /// <summary>
+    /// Just like the normal register it inherits (RegisterUser10), except with a Admin bool, 
+    /// which verifies if the user will be in Administrator role or not.
+    /// </summary>
+    public class RegisterAdminUser10 : RegisterUser10, IAdminVerification
+    {
+        public bool Admin { get; set; }
+
+        public string AdminId { get; set; }
+
+        public string AdminToken { get; set; }
+
+        public string FrontEndToken { get; set; }
+    }
+
 }

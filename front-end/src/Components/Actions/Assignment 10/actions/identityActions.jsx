@@ -5,7 +5,6 @@ import * as actionOptions from "./optionsActions";
 export const REGISTER = "REGISTER";
 export const SIGN_IN = "SIGN_IN";
 export const SIGN_OUT = "SIGN_OUT";
-export const ERROR = "ERROR";
 
 const apiUrl = "http://localhost:50691/api/identityApi/";
 
@@ -32,9 +31,13 @@ export function RegisterAsync(user) {
         if (response.status === 200) {
           dispatch(Register(user));
         } else if (response.status === 204) {
-          dispatch(ErrorHandling("Something went wrong. Please try again"));
+          dispatch(
+            actionOptions.ErrorMessageAsync(
+              "Something went wrong. Please try again"
+            )
+          );
         } else if (response.status === 400) {
-          dispatch(ErrorHandling(response.data));
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
         } else {
           throw Error("Something went wrong.");
         }
@@ -48,10 +51,10 @@ export function RegisterAsync(user) {
   };
 }
 
-function SignIn(user) {
+function SignIn(roles) {
   return {
     type: SIGN_IN,
-    user
+    roles
   };
 }
 
@@ -73,13 +76,24 @@ export function SignInAsync(user10) {
       .then(response => {
         console.log(response);
         if (response.status === 200 && response.data.userToken !== null) {
-          localStorage.setItem("backend-token", response.data.tokenToken);
-          localStorage.setItem("userToken", response.data.userToken);
-          localStorage.setItem("userId", response.data.userId);
-
-          dispatch(SignIn(response.data));
+          if (response.data.roles.includes("Administrator")) {
+            const admin = {
+              adminId: response.data.userId,
+              adminToken: response.data.userToken,
+              frontEndToken: response.data.tokenToken
+            };
+            dispatch(actionOptions.SaveAdminToLocal(admin));
+          } else {
+            const user = {
+              userId: response.data.userId,
+              userToken: response.data.userToken,
+              tokenToken: response.data.tokenToken
+            };
+            dispatch(actionOptions.SaveUserToLocal(user));
+          }
+          dispatch(SignIn(response.data.roles));
         } else if (response.status === 404 || response.status === 400) {
-          dispatch(ErrorHandling(response.data));
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
         }
         dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
@@ -139,7 +153,7 @@ export function SignOutAsync() {
           dispatch(SignOut(response.data));
         } else {
           dispatch(
-            ErrorHandling(
+            actionOptions.ErrorMessageAsync(
               (response.data === undefined) | null
                 ? "Something went wrong."
                 : response.data
@@ -150,12 +164,5 @@ export function SignOutAsync() {
       .catch(err => {
         console.error(err);
       });
-  };
-}
-
-function ErrorHandling(error = "Something went wrong.") {
-  return {
-    type: ERROR,
-    error
   };
 }

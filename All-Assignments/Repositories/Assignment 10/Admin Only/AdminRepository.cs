@@ -26,11 +26,25 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         }
 
         #region Create
-        public async Task<ResultVM> Create(RegisterAdminUser10 user)
+        public async Task<AdminResultVM> Create(RegisterAdminUser10 user)
         {
-            ResultVM resultVM = new ResultVM();
+            AdminResultVM resultVM = new AdminResultVM();
             try
             {
+                var admin = await _userManager.FindByIdAsync(user.AdminId);
+
+                if (admin == null)
+                {
+                    throw new Exception("Could not find the active user.");
+                }
+
+                var adminResult = await _userManager.VerifyUserTokenAsync(admin, "Default", "authentication-backend", user.AdminToken);
+
+                if (!adminResult)
+                {
+                    throw new Exception("Could not verify the active user.");
+                }
+
                 if (_userManager.FindByNameAsync(user.UserName).Result != null)
                 {
                     throw new Exception("This username is already in use.");
@@ -49,12 +63,18 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
 
                     List<string> roleNames = new List<string>();
 
+                    // This is here because I didn't know how else to only get the name of the roles to use in AddToRolesAsync.
                     roles.ForEach(x => roleNames.Add(x.Name));
 
-                    _ = user.Admin == true ? await _userManager.AddToRolesAsync(user, roleNames) 
+                    // This checks if the Admin boolean is true, if it is, it adds the user to all roles. otherwise only to NormalUser.
+                    _ = user.Admin == true ? await _userManager.AddToRolesAsync(user, roleNames)
                         : await _userManager.AddToRoleAsync(user, "NormalUser");
 
                     resultVM.Success = "User was successfully created!";
+
+                    resultVM.AdminId = admin.Id;
+                    resultVM.FrontEndToken = VerificationToken();
+                    resultVM.AdminToken = await UserToken(admin);
 
                     return resultVM;
                 }
@@ -74,37 +94,59 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         #endregion
 
         #region Read
-        public async Task<UserDetailsVM> GetUser(string userId)
+        public async Task<AdminUserDetailsVM> GetUser(AdminVerificationForUserVM verificationVM)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(userId))
+                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.UserId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken))
                 {
                     throw new Exception("Something went wrong.");
                 }
 
-                var user = await _userManager.FindByIdAsync(userId);
+                var admin = await _userManager.FindByIdAsync(verificationVM.AdminId);
+
+                if (admin == null)
+                {
+                    throw new Exception("Cannot verify user.");
+                }
+
+                var adminResult = await _userManager.VerifyUserTokenAsync(admin, "Default", "authentication-backend", verificationVM.AdminToken);
+
+                if (!adminResult)
+                {
+                    throw new Exception("Could not verify the administrator.");
+                }
+
+                var user = await _userManager.FindByIdAsync(verificationVM.UserId);
 
                 if (user == null)
                 {
                     throw new Exception("User could not be found.");
                 }
 
-                UserDetailsVM userVM = new UserDetailsVM
+                AdminUserDetailsVM userVM = new AdminUserDetailsVM
                 {
-                    UserId = user.Id,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Age = user.Age,
-                    Email = user.Email
+                    User =
+                    {
+                        UserId = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Age = user.Age,
+                        Email = user.Email,
+                        Roles = await _userManager.GetRolesAsync(user),
+                    },
+
+                    AdminId = admin.Id,
+                    FrontEndToken = VerificationToken(),
+                    AdminToken = await UserToken(admin)
                 };
 
                 return userVM;
             }
             catch (Exception ex)
             {
-                UserDetailsVM userVM = new UserDetailsVM
+                AdminUserDetailsVM userVM = new AdminUserDetailsVM
                 {
                     ErrorMessage = ex.Message
                 };
@@ -113,11 +155,29 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
         }
 
-        public async Task<List<UserDetailsVM>> GetUsers()
+        public async Task<AdminUsersDetailsVM> GetUsers(AdminVerificationVM verificationVM)
         {
-            List<UserDetailsVM> usersVM = new List<UserDetailsVM>();
             try
             {
+                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken))
+                {
+                    throw new Exception("Something went wrong.");
+                }
+
+                var admin = await _userManager.FindByIdAsync(verificationVM.AdminId);
+
+                if (admin == null)
+                {
+                    throw new Exception("Cannot verify user.");
+                }
+
+                var adminResult = await _userManager.VerifyUserTokenAsync(admin, "Default", "authentication-backend", verificationVM.AdminToken);
+
+                if (!adminResult)
+                {
+                    throw new Exception("Could not verify the administrator.");
+                }
+
                 var users = await _userManager.Users.ToListAsync();
 
                 if (users == null || users.Count == 0)
@@ -125,16 +185,24 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     throw new Exception("No users could be found.");
                 }
 
+                AdminUsersDetailsVM usersVM = new AdminUsersDetailsVM
+                {
+                    AdminId = admin.Id,
+                    FrontEndToken = VerificationToken(),
+                    AdminToken = await UserToken(admin),
+                };
+
                 foreach (var item in users)
                 {
-                    UserDetailsVM user = new UserDetailsVM
+                    DetailsVM user = new DetailsVM
                     {
                         UserId = item.Id,
                         UserName = item.UserName,
                         FirstName = item.FirstName,
                         LastName = item.LastName,
                         Age = item.Age,
-                        Email = item.Email
+                        Email = item.Email,
+                        Roles = await _userManager.GetRolesAsync(item)
                     };
 
                     if (user == null)
@@ -142,32 +210,27 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                         throw new Exception("One or more users were invalid.");
                     }
 
-                    usersVM.Add(user);
+                    usersVM.Users.Add(user);
                 }
                 return usersVM;
             }
             catch (Exception ex)
             {
-                UserDetailsVM user = new UserDetailsVM
+                AdminUsersDetailsVM user = new AdminUsersDetailsVM
                 {
                     ErrorMessage = ex.Message
                 };
 
-                // Clearing to only keep one user in here, which is a user with an errormessage.
-                usersVM.Clear();
-
-                usersVM.Add(user);
-
-                return usersVM;
+                return user;
 
             }
         }
         #endregion
 
         #region Update
-        public async Task<ResultVM> EditUser(UserDetailsVM user)
+        public async Task<AdminResultVM> EditUser(UserDetailsVM user)
         {
-            ResultVM resultVM = new ResultVM();
+            AdminResultVM resultVM = new AdminResultVM();
 
             try
             {
@@ -206,15 +269,36 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
         }
 
-        public async Task<ResultVM> ChangeUserPassword(ChangePassword10 changePassword)
+        public async Task<AdminResultVM> ChangeUserPassword(AdminChangeUserPassword10 changePassword)
         {
-            ResultVM resultVM = new ResultVM();
+            AdminResultVM resultVM = new AdminResultVM();
             try
             {
-                if (string.IsNullOrWhiteSpace(changePassword.OldPassword) || string.IsNullOrWhiteSpace(changePassword.NewPassword) ||
+                if (
+                    string.IsNullOrWhiteSpace(changePassword.OldPassword) || string.IsNullOrWhiteSpace(changePassword.NewPassword) ||
                     string.IsNullOrWhiteSpace(changePassword.ComparePassword))
                 {
                     throw new Exception("One or more fields were empty.");
+                }
+
+                if (string.IsNullOrWhiteSpace(changePassword.UserToken) || string.IsNullOrWhiteSpace(changePassword.UserId) ||
+                    string.IsNullOrWhiteSpace(changePassword.AdminId) || string.IsNullOrWhiteSpace(changePassword.AdminToken))
+                {
+                    throw new Exception("Something went wrong.");
+                }
+
+                var admin = await _userManager.FindByIdAsync(changePassword.AdminId);
+
+                if (admin == null)
+                {
+                    throw new Exception("Cannot find active user.");
+                }
+
+                var adminResult = await _userManager.VerifyUserTokenAsync(admin, "Default", "authentication-backend", changePassword.AdminToken);
+
+                if (!adminResult)
+                {
+                    throw new Exception("Cannot verify user.");
                 }
 
                 var user = await _userManager.FindByIdAsync(changePassword.UserId);
@@ -254,17 +338,31 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         #endregion
 
         #region Delete
-        public async Task<ResultVM> DeleteUser(string userId)
+        public async Task<AdminResultVM> DeleteUser(AdminVerificationForUserVM verificationVM)
         {
-            ResultVM resultVM = new ResultVM();
+            AdminResultVM resultVM = new AdminResultVM();
             try
             {
-                if (string.IsNullOrWhiteSpace(userId))
+                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.UserId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken))
                 {
                     throw new Exception("Something went wrong.");
                 }
 
-                var user = await _userManager.FindByIdAsync(userId);
+                var admin = await _userManager.FindByIdAsync(verificationVM.AdminId);
+
+                if (admin == null)
+                {
+                    throw new Exception("Cannot verify user.");
+                }
+
+                var adminResult = await _userManager.VerifyUserTokenAsync(admin, "Default", "authentication-backend", verificationVM.AdminToken);
+
+                if (!adminResult)
+                {
+                    throw new Exception("Could not verify the administrator.");
+                }
+
+                var user = await _userManager.FindByIdAsync(verificationVM.UserId);
 
                 if (user == null)
                 {
@@ -296,28 +394,28 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         #endregion
 
         #region TokenGeneration
-        //// I should never need these ones since everything is handled by one account - the administrator.
-        //private string VerificationToken()
-        //{
-        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
-        //    var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        private string VerificationToken()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
+            var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        //    var tokenOptions = new JwtSecurityToken(
-        //        issuer: "http://localhost:3000",
-        //        audience: "http://localhost:3000",
-        //        claims: new List<Claim>(),
-        //        expires: DateTime.Now.AddMinutes(15),
-        //        signingCredentials: signingCredentials
-        //        );
+            var tokenOptions = new JwtSecurityToken(
+                issuer: "http://localhost:3000",
+                audience: "http://localhost:3000",
+                claims: new List<Claim>(),
+                // Change this timer later to 15 min (Standard). It's 60 min atm for developing purposes.
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: signingCredentials
+                );
 
-        //    return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-        //}
+            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        }
 
-        //// I shouldn't ever need this one either for the same reason as above.
-        //private async Task<string> UserToken(AppUser10 user)
-        //{
-        //    return await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
-        //}
+        // I shouldn't ever need this one either for the same reason as above.
+        private async Task<string> UserToken(AppUser10 user)
+        {
+            return await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
+        }
         #endregion
     }
 }
