@@ -25,6 +25,14 @@ export function BackEndToken() {
   return localStorage.getItem("backend-token");
 }
 
+export function GetAdmin() {
+  return {
+    AdminId: localStorage.getItem("userId"),
+    AdminToken: localStorage.getItem("userToken")
+    // FrontEndToken: localStorage.getItem("backend-token")
+  };
+}
+
 export function GetUser() {
   return {
     UserId: localStorage.getItem("userId"),

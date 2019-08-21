@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace All_Assignments.ViewModels
 {
+    // ------------------------------ Users ViewModels ------------------------------ \\
+
     /// <summary>
     /// Naming it "AppUser10" to easier be able to distinguish it from other assignments.
     /// </summary>
@@ -171,6 +173,8 @@ namespace All_Assignments.ViewModels
         public string AdminToken { get; set; }
 
         public string FrontEndToken { get; set; }
+
+        public string ErrorMessage { get; set; }
     }
 
     /// <summary>

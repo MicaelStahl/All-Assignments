@@ -201,6 +201,70 @@ export function AdminEditUserAsync(userVM, users = []) {
 
 //#endregion
 
+//#region EditUserPassword
+function EditUserPassword(user) {
+  return {
+    type: ADMIN_EDIT_USER_PASSWORD,
+    user
+  };
+}
+
+export function EditUserPasswordAsync(user, users = []) {
+  return dispatch => {
+    // ToDo
+    axios.interceptors.request.use(
+      config => {
+        const token = actionOptions.BackEndToken();
+
+        if (token !== undefined || token !== null) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          config.headers["withCredentials"] = true;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+    const admin = actionOptions.GetAdmin();
+
+    const changePassword = {
+      AdminId: admin.AdminId,
+      AdminToken: admin.AdminToken,
+      UserId: user.userId,
+      UserToken: null, // Might need to change this value later.
+      NewPassword: user.newPassword,
+      OldPassword: user.oldPassword,
+      ComparePassword: user.comparePassword
+    };
+
+    axios
+      .patch(adminUrl + "edit-password", changePassword, {
+        cancelToken: actionOptions.CreateCancelToken(),
+        validateStatus: function(status) {
+          return status <= 500;
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          // This is just for verification that the user exists on the front-end.
+          // If the user doesn't, then redirect to call the backend for all users
+          // To update the Redux state.
+          const index = users.findIndex(x => x.userId === user.userId);
+
+          if (index === -1) {
+            dispatch(AdminGetUsersAsync());
+          } else {
+            users.splice(index, 1, response.data.user);
+          }
+        }
+      });
+  };
+}
+
+//#endregion
+
 //#region DeleteUser
 
 function AdminDeleteUser(users) {

@@ -228,30 +228,49 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         #endregion
 
         #region Update
-        public async Task<AdminResultVM> EditUser(UserDetailsVM user)
+        public async Task<AdminUserDetailsVM> EditUser(AdminUserDetailsVM user)
         {
-            AdminResultVM resultVM = new AdminResultVM();
-
             try
             {
-                var original = await _userManager.FindByIdAsync(user.UserId);
+                var admin = await _userManager.FindByIdAsync(user.AdminId);
+
+                if (admin == null)
+                {
+                    throw new Exception("Cannot find the active user.");
+                }
+
+                var adminResult = await _userManager.VerifyUserTokenAsync(admin, "Default", "authentication-backend", user.AdminToken);
+
+                if (!adminResult)
+                {
+                    throw new Exception("Cannot verify the active user.");
+                }
+
+                var original = await _userManager.FindByIdAsync(user.User.UserId);
 
                 if (original == null)
                 {
                     throw new Exception("User does not exist in database.");
                 }
 
-                original.UserName = user.UserName;
-                original.FirstName = user.FirstName;
-                original.LastName = user.LastName;
-                original.Age = user.Age;
-                original.Email = user.Email;
+                original.UserName = user.User.UserName;
+                original.FirstName = user.User.FirstName;
+                original.LastName = user.User.LastName;
+                original.Age = user.User.Age;
+                original.Email = user.User.Email;
+
 
                 var result = await _userManager.UpdateAsync(original);
 
                 if (result.Succeeded)
                 {
-                    resultVM.Success = "User was successfully edited!";
+                    AdminUserDetailsVM resultVM = new AdminUserDetailsVM
+                    {
+                        AdminId = admin.Id,
+                        User = user.User,
+                        FrontEndToken = VerificationToken(),
+                        AdminToken = await UserToken(admin)
+                    };
 
                     return resultVM;
                 }
@@ -263,7 +282,10 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
             catch (Exception ex)
             {
-                resultVM.Failed = ex.Message;
+                AdminUserDetailsVM resultVM = new AdminUserDetailsVM
+                {
+                    ErrorMessage = ex.Message
+                };
 
                 return resultVM;
             }

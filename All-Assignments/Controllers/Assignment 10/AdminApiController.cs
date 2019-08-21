@@ -30,15 +30,15 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpGet("get-user/{id}")]
-        public async Task<IActionResult> GetUser(AdminVerificationForUserVM verificationVM)
+        public async Task<IActionResult> GetUser(AdminVerificationForUserVM admin)
         {
-            if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken) ||
-                string.IsNullOrWhiteSpace(verificationVM.UserId))
+            if (string.IsNullOrWhiteSpace(admin.AdminId) || string.IsNullOrWhiteSpace(admin.AdminToken) ||
+                string.IsNullOrWhiteSpace(admin.UserId))
             {
                 return BadRequest("Something went wrong.");
             }
 
-            var user = await _service.GetUser(verificationVM);
+            var user = await _service.GetUser(admin);
 
             if (user.ErrorMessage == null)
             {
@@ -53,11 +53,11 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpGet("get-users")]
-        public async Task<IActionResult> GetUsers(AdminVerificationVM verificationVM)
+        public async Task<IActionResult> GetUsers(AdminVerificationVM admin)
         {
             try
             {
-                var users = await _service.GetUsers(verificationVM);
+                var users = await _service.GetUsers(admin);
 
                 // Doing this since in the repository I create 1 user if something goes wrong.
                 // So I verify if the user is the "error" user created, or a normal user.
@@ -81,14 +81,14 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateUser(RegisterAdminUser10 user10)
+        public async Task<IActionResult> CreateUser(RegisterAdminUser10 user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var result = await _service.Create(user10);
+            var result = await _service.Create(user);
 
             if (result.Failed == null)
             {
@@ -99,7 +99,7 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpPut("edit-user")]
-        public async Task<IActionResult> EditUser(UserDetailsVM userVM)
+        public async Task<IActionResult> EditUser(AdminUserDetailsVM userVM)
         {
             try
             {
@@ -110,12 +110,12 @@ namespace All_Assignments.Controllers.Assignment_10
 
                 var result = await _service.EditUser(userVM);
 
-                if (result.Failed == null)
+                if (result.ErrorMessage == null)
                 {
-                    return Ok(result.Success);
+                    return Ok(result);
                 }
 
-                throw new Exception(result.Failed);
+                throw new Exception(result.ErrorMessage);
 
             }
             catch (Exception ex)
