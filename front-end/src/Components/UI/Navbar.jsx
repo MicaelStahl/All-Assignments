@@ -35,15 +35,17 @@ class Navbar extends Component {
             </button>
             <div className="navbar-collapse justify-content-between collapse d-sm-inline-flex flex-sm-row-reverse">
               <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                  <NavLink
-                    className="nav-link text-light btn btn-dark"
-                    to="/users">
-                    Users
-                  </NavLink>
-                </li>
                 {this.props.isAuthenticated ? (
                   <React.Fragment>
+                    {this.props.roles.includes("Administrator") === true ? (
+                      <li className="nav-item">
+                        <NavLink
+                          className="nav-link text-light btn btn-dark"
+                          to="/users">
+                          Users
+                        </NavLink>
+                      </li>
+                    ) : null}
                     <li className="nav-item">
                       <NavLink
                         className="nav-link text-light btn btn-dark"
@@ -108,7 +110,8 @@ class Navbar extends Component {
                     </NavLink>
                   </div>
                 </li>
-                {this.props.location.pathname.includes("/identity") === true ? (
+                {this.props.location.pathname.includes("/identity") === true &&
+                this.props.isAuthenticated ? (
                   <ul className="navbar-nav mr-auto">
                     <li className="nav-item dropdown">
                       <button
@@ -128,18 +131,24 @@ class Navbar extends Component {
                           className="btn btn-secondary dropdown-item">
                           Person
                         </NavLink>
-                        <div className="dropdown-divider" />
-                        <NavLink
-                          to="/identity/city"
-                          className="btn btn-secondary dropdown-item">
-                          City
-                        </NavLink>
-                        <div className="dropdown-divider" />
-                        <NavLink
-                          to="/identity/country"
-                          className="btn btn-secondary dropdown-item">
-                          Country
-                        </NavLink>
+                        {this.props.roles.includes(
+                          "Administrator" ? (
+                            <React.Fragment>
+                              <div className="dropdown-divider" />
+                              <NavLink
+                                to="/identity/city"
+                                className="btn btn-secondary dropdown-item">
+                                City
+                              </NavLink>
+                              <div className="dropdown-divider" />
+                              <NavLink
+                                to="/identity/country"
+                                className="btn btn-secondary dropdown-item">
+                                Country
+                              </NavLink>
+                            </React.Fragment>
+                          ) : null
+                        )}
                       </div>
                     </li>
                   </ul>
@@ -155,7 +164,8 @@ class Navbar extends Component {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.identity.isAuthenticated
+    isAuthenticated: state.identity.isAuthenticated,
+    roles: state.identity.roles
   };
 };
 

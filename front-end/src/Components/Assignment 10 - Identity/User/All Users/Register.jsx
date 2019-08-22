@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import Title from "../../../UI/Title";
 import * as actionTypes from "../../../Actions/Assignment 10/actions/identityActions";
+import * as actionAdmin from "../../../Actions/Assignment 10/actions/adminActions";
 
 class Register extends Component {
   state = {
@@ -15,7 +16,8 @@ class Register extends Component {
     email: "",
     password: "",
     confirmPassword: "",
-    error: ""
+    error: "",
+    admin: false
   };
 
   validateUserNameInput = str => {
@@ -358,7 +360,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onRegistrationSubmit: user => dispatch(actionTypes.RegisterAsync(user))
+    onRegistrationSubmit: user => dispatch(actionTypes.RegisterAsync(user)),
+    onAdminRegistrationSubmit: user => dispatch()
   };
 };
 

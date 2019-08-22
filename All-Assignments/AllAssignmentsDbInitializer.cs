@@ -15,9 +15,9 @@ namespace All_Assignments
 
             #region Roles
 
-            if (!roleManager.RoleExistsAsync("Admin").Result)
+            if (!roleManager.RoleExistsAsync("Administrator").Result)
             {
-                var role = new IdentityRole("Admin");
+                var role = new IdentityRole("Administrator");
 
                 roleManager.CreateAsync(role).Wait();
             }
@@ -52,7 +52,7 @@ namespace All_Assignments
 
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, "Admin").Wait();
+                    userManager.AddToRoleAsync(user, "Administrator").Wait();
                     userManager.AddToRoleAsync(user, "NormalUser").Wait();
                 }
             }

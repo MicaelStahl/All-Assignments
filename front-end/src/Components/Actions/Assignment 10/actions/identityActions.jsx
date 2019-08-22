@@ -14,7 +14,6 @@ function Register(user) {
     user
   };
 }
-
 export function RegisterAsync(user) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
@@ -51,7 +50,7 @@ export function RegisterAsync(user) {
   };
 }
 
-function SignIn(roles) {
+function SignIn(roles = []) {
   return {
     type: SIGN_IN,
     roles
@@ -82,14 +81,14 @@ export function SignInAsync(user10) {
               adminToken: response.data.userToken,
               frontEndToken: response.data.tokenToken
             };
-            dispatch(actionOptions.SaveAdminToLocal(admin));
+            actionOptions.SaveAdminToLocal(admin);
           } else {
             const user = {
               userId: response.data.userId,
               userToken: response.data.userToken,
               tokenToken: response.data.tokenToken
             };
-            dispatch(actionOptions.SaveUserToLocal(user));
+            actionOptions.SaveUserToLocal(user);
           }
           dispatch(SignIn(response.data.roles));
         } else if (response.status === 404 || response.status === 400) {
@@ -101,8 +100,9 @@ export function SignInAsync(user10) {
         // ToDo
         if (err.status === "notfound") {
           console.error(err.statusText);
+        } else {
+          console.error("Error:", err);
         }
-        console.error("Error:", err);
         // ToDo
       });
   };

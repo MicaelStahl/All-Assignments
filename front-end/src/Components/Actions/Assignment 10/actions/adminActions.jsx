@@ -2,6 +2,7 @@ import axios from "axios";
 
 import * as actionOptions from "./optionsActions";
 
+export const ADMIN_CREATE_USER = "ADMIN_CREATE_USER";
 export const ADMIN_GET_USERS = "ADMIN_GET_USERS";
 export const ADMIN_GET_USER = "ADMIN_GET_USER";
 export const ADMIN_EDIT_USER = "ADMIN_EDIT_USER";
@@ -11,6 +12,66 @@ export const ADMIN_DELETE_USER = "ADMIN_DELETE_USER";
 const adminUrl = "http://localhost:50691/api/adminApi/";
 
 //#region ADMIN
+
+//#region CreateUser
+
+function AdminCreateUser(users) {
+  return {
+    type: ADMIN_CREATE_USER,
+    users
+  };
+}
+
+export function AdminCreateUserAsync(user10, users = []) {
+  return dispatch => {
+    axios.interceptors.request.use(
+      config => {
+        const token = actionOptions.BackEndToken();
+
+        if (token !== undefined || token !== null) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          config.headers["withCredentials"] = true;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
+
+    const admin = actionOptions.GetAdmin();
+
+    const user = {
+      AdminId: admin.AdminId,
+      AdminToken: admin.AdminToken,
+      UserName: user10.userName,
+      FirstName: user10.firstName,
+      LastName: user10.lastName,
+      Age: user10.age,
+      Email: user10.email,
+      UserToken: user10.userToken, // Will always be null.
+      Admin: user10.admin
+    };
+
+    axios
+      .post(adminUrl + "create-user", user, {
+        cancelToken: actionOptions.CreateCancelToken(),
+        validateStatus: function(status) {
+          return status <= 500;
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          const userList = users.push(response.data);
+        }
+      });
+  };
+}
+
+//#endregion
 
 //#region GetUser
 
@@ -110,9 +171,9 @@ export function AdminGetUsersAsync() {
         return Promise.reject(error);
       }
     );
-
+    const admin = actionOptions.GetAdmin();
     axios
-      .get(adminUrl + "get-users", {
+      .post(adminUrl + "get-users/", admin, {
         cancelToken: actionOptions.CreateCancelToken(),
         validateStatus: function(status) {
           return status <= 500; // Reject only if the status code is greater than to 500
@@ -121,7 +182,15 @@ export function AdminGetUsersAsync() {
       })
       .then(response => {
         if (response.status === 200) {
-          dispatch(AdminGetUsers(response.data));
+          const newAdmin = {
+            adminId: response.data.adminId,
+            adminToken: response.data.adminToken,
+            frontEndToken: response.data.frontEndToken
+          };
+
+          actionOptions.SaveAdminToLocal(newAdmin);
+
+          dispatch(AdminGetUsers(response.data.users));
         } else if (response.status === 401) {
           dispatch(
             actionOptions.ErrorMessageAsync(

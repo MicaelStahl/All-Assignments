@@ -18,6 +18,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         users: action.users
       };
+
+    case actionTypes.ADMIN_CREATE_USER:
+      return {
+        ...state,
+        users: action.users
+      };
+
     default:
       break;
   }

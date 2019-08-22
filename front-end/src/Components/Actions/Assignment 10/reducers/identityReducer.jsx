@@ -29,7 +29,8 @@ export function reducer(state = initialState, action) {
         ...state,
         userToken: "",
         isAuthenticated: false,
-        success: ""
+        success: "",
+        roles: []
       };
 
     default:

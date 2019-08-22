@@ -147,7 +147,7 @@ namespace All_Assignments.Repositories.Assignment_10
                     throw new Exception("The current user could not be verified. Please try again.");
                 }
 
-                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-frontend", userToken);
+                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-backend", userToken);
 
                 if (!result)
                 {
@@ -187,9 +187,12 @@ namespace All_Assignments.Repositories.Assignment_10
             }
         }
 
+        #endregion
+
+        #region Signin/Signout
+
         public async Task<ReturnedUserVM> LogInUser(LoginUser10 user10)
         {
-            ReturnedUserVM returnedUser = new ReturnedUserVM();
 
             try
             {
@@ -209,11 +212,13 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 if (result.Succeeded)
                 {
+                    ReturnedUserVM returnedUser = new ReturnedUserVM();
+
                     returnedUser.UserId = user.Id;
 
                     returnedUser.TokenToken = VerificationToken();
 
-                    returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-frontend");
+                    returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
 
                     returnedUser.Roles = await _userManager.GetRolesAsync(user);
 
@@ -230,6 +235,8 @@ namespace All_Assignments.Repositories.Assignment_10
             }
             catch (Exception ex)
             {
+                ReturnedUserVM returnedUser = new ReturnedUserVM();
+
                 returnedUser.ErrorMessage = ex.Message;
                 return returnedUser;
             }
@@ -238,8 +245,6 @@ namespace All_Assignments.Repositories.Assignment_10
 
         public async Task<ResultVM> LogOutUser(string userId, string userToken)
         {
-            ResultVM userVM = new ResultVM();
-
             try
             {
                 if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userToken))
@@ -254,13 +259,15 @@ namespace All_Assignments.Repositories.Assignment_10
                     throw new Exception("User could not be found. Please try again or contact administration if this problem persists.");
                 }
 
-                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-frontend", userToken);
+                var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-backend", userToken);
 
                 if (result)
                 {
                     await _signInManager.SignOutAsync();
-
-                    userVM.Success = "User was successfully signed out.";
+                    ResultVM userVM = new ResultVM
+                    {
+                        Success = "User was successfully signed out."
+                    };
 
                     return userVM;
                 }
@@ -272,10 +279,14 @@ namespace All_Assignments.Repositories.Assignment_10
             }
             catch (Exception ex)
             {
-                userVM.Failed = ex.Message;
+                ResultVM userVM = new ResultVM
+                {
+                    Failed = ex.Message
+                };
                 return userVM;
             }
         }
+
         #endregion
 
         #region Update

@@ -26,9 +26,8 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         }
 
         #region Create
-        public async Task<AdminResultVM> Create(RegisterAdminUser10 user)
+        public async Task<AdminUserDetailsVM> Create(RegisterAdminUser10 user)
         {
-            AdminResultVM resultVM = new AdminResultVM();
             try
             {
                 var admin = await _userManager.FindByIdAsync(user.AdminId);
@@ -70,13 +69,26 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     _ = user.Admin == true ? await _userManager.AddToRolesAsync(user, roleNames)
                         : await _userManager.AddToRoleAsync(user, "NormalUser");
 
-                    resultVM.Success = "User was successfully created!";
+                    var newUser = await _userManager.FindByNameAsync(user.UserName);
 
-                    resultVM.AdminId = admin.Id;
-                    resultVM.FrontEndToken = VerificationToken();
-                    resultVM.AdminToken = await UserToken(admin);
+                    AdminUserDetailsVM userVM = new AdminUserDetailsVM
+                    {
+                        AdminId = admin.Id,
+                        FrontEndToken = VerificationToken(),
+                        AdminToken = await UserToken(admin),
+                        User = new DetailsVM
+                        {
+                            UserId = newUser.Id,
+                            UserName = newUser.UserName,
+                            FirstName = newUser.FirstName,
+                            LastName = newUser.LastName,
+                            Age = newUser.Age,
+                            Email = newUser.Email,
+                            Roles = new List<string>(roleNames)
+                        }
+                    };
 
-                    return resultVM;
+                    return userVM;
                 }
                 else
                 { // Unsure if I'll keep this.
@@ -86,9 +98,11 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
             catch (Exception ex)
             { // Doing this for a more versatile error-handling, and to not send down unnecessary information if something fails.
-                resultVM.Failed = ex.Message;
+                AdminUserDetailsVM userVM = new AdminUserDetailsVM();
 
-                return resultVM;
+                userVM.ErrorMessage = ex.Message;
+
+                return userVM;
             }
         }
         #endregion
@@ -190,6 +204,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     AdminId = admin.Id,
                     FrontEndToken = VerificationToken(),
                     AdminToken = await UserToken(admin),
+                    Users = new List<DetailsVM>()
                 };
 
                 foreach (var item in users)

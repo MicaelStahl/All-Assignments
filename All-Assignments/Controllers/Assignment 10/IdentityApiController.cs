@@ -273,6 +273,11 @@ namespace All_Assignments.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
+            // These two lines are here for developing purposes only and will be removed at a later stage.
+            //await _signInManager.SignOutAsync();
+
+            //return Ok("You successfully signed out!");
+
             var result = await _service.LogOutUser(userVM.UserId, userVM.UserToken);
 
             if (result.Success != null)

@@ -52,7 +52,7 @@ namespace All_Assignments.Controllers.Assignment_10
             return BadRequest(user.ErrorMessage);
         }
 
-        [HttpGet("get-users")]
+        [HttpPost("get-users")]
         public async Task<IActionResult> GetUsers(AdminVerificationVM admin)
         {
             try
@@ -90,12 +90,12 @@ namespace All_Assignments.Controllers.Assignment_10
 
             var result = await _service.Create(user);
 
-            if (result.Failed == null)
+            if (result.ErrorMessage == null)
             {
-                return Ok(result.Success);
+                return Ok(result);
             }
 
-            return BadRequest(result.Failed);
+            return BadRequest(result.ErrorMessage);
         }
 
         [HttpPut("edit-user")]
