@@ -22,7 +22,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.ADMIN_CREATE_USER:
       return {
         ...state,
-        users: action.users
+        users: state.users.push(action.user)
       };
 
     default:

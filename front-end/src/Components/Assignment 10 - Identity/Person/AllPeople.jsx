@@ -50,12 +50,15 @@ class AllPeople extends Component {
                   <td className="d-table-cell">{person.person.phoneNumber}</td>
                   <td className="d-table-cell">{person.cityName}</td>
                   <td className="d-table-cell">
-                    <Link
-                      onClick={() => this.props.onEditLoad(person.person.id)}
-                      className="btn btn-warning btn-sm"
-                      to={this.props.match.url + "/edit/" + person.person.id}>
-                      Edit
-                    </Link>
+                    {this.props.roles.includes("Administrator") ? (
+                      <Link
+                        onClick={() => this.props.onEditLoad(person.person.id)}
+                        className="btn btn-warning btn-sm"
+                        to={this.props.match.url + "/edit/" + person.person.id}>
+                        Edit
+                      </Link>
+                    ) : null}
+
                     <Link
                       onClick={() => this.props.onDetailsLoad(person.person.id)}
                       className="btn btn-primary btn-sm ml-1"
@@ -64,12 +67,19 @@ class AllPeople extends Component {
                       }>
                       Details
                     </Link>
-                    <Link
-                      onClick={() => this.props.onDeleteLoad(person.person.id)}
-                      className="btn btn-danger btn-sm ml-1"
-                      to={this.props.match.url + "/delete/" + person.person.id}>
-                      Delete
-                    </Link>
+
+                    {this.props.roles.includes("Administrator") ? (
+                      <Link
+                        onClick={() =>
+                          this.props.onDeleteLoad(person.person.id)
+                        }
+                        className="btn btn-danger btn-sm ml-1"
+                        to={
+                          this.props.match.url + "/delete/" + person.person.id
+                        }>
+                        Delete
+                      </Link>
+                    ) : null}
                   </td>
                 </tr>
               ))}
@@ -88,7 +98,8 @@ const mapStateToProps = state => {
     people: state.person.allPeople,
     error: state.person.personError,
     isLoading: state.options.isLoading,
-    status: state.person.status
+    status: state.person.status,
+    roles: state.identity.roles
   };
 };
 

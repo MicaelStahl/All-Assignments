@@ -18,9 +18,11 @@ export function reducer(state = initialState, action) {
       };
 
     case actionTypes.REGISTER:
+      const { users } = state;
+      users.push(action.user);
       return {
         ...state,
-        users: state.users.push(action.user),
+        users,
         success: "User was successfully registered."
       };
 

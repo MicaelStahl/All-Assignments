@@ -15,14 +15,14 @@ const adminUrl = "http://localhost:50691/api/adminApi/";
 
 //#region CreateUser
 
-function AdminCreateUser(users) {
+function AdminCreateUser(user) {
   return {
     type: ADMIN_CREATE_USER,
-    users
+    user
   };
 }
 
-export function AdminCreateUserAsync(user10, users = []) {
+export function AdminCreateUserAsync(user10) {
   return dispatch => {
     axios.interceptors.request.use(
       config => {
@@ -47,14 +47,17 @@ export function AdminCreateUserAsync(user10, users = []) {
     const user = {
       AdminId: admin.AdminId,
       AdminToken: admin.AdminToken,
-      UserName: user10.userName,
-      FirstName: user10.firstName,
-      LastName: user10.lastName,
-      Age: user10.age,
-      Email: user10.email,
-      UserToken: user10.userToken, // Will always be null.
-      Admin: user10.admin
+      UserName: user10.UserName,
+      FirstName: user10.FirstName,
+      LastName: user10.LastName,
+      Age: user10.Age,
+      Email: user10.Email,
+      Password: user10.Password,
+      ComparePassword: user10.ComparePassword,
+      UserToken: user10.UserToken, // Will always be null.
+      Admin: user10.Admin
     };
+    console.log("[handleAdminSubmit]", user);
 
     axios
       .post(adminUrl + "create-user", user, {
@@ -65,8 +68,27 @@ export function AdminCreateUserAsync(user10, users = []) {
       })
       .then(response => {
         if (response.status === 200) {
-          const userList = users.push(response.data);
+          const newAdmin = {
+            adminId: response.data.adminId,
+            adminToken: response.data.adminToken,
+            frontEndToken: response.data.frontEndToken
+          };
+
+          actionOptions.SaveAdminToLocal(newAdmin);
+
+          dispatch(AdminCreateUser(response.data.user));
+        } else if ((response.status === 404) | 400) {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
+        } else if (response.status === 401) {
+          // ToDo
+        } else {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
         }
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(actionOptions.ErrorMessageAsync(err));
       });
   };
 }
@@ -155,7 +177,6 @@ function AdminGetUsers(users) {
 
 export function AdminGetUsersAsync() {
   return dispatch => {
-    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios.interceptors.request.use(
       config => {
         const token = actionOptions.BackEndToken();
@@ -171,6 +192,7 @@ export function AdminGetUsersAsync() {
         return Promise.reject(error);
       }
     );
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     const admin = actionOptions.GetAdmin();
     axios
       .post(adminUrl + "get-users/", admin, {
@@ -182,12 +204,12 @@ export function AdminGetUsersAsync() {
       })
       .then(response => {
         if (response.status === 200) {
+          console.log(response.data);
           const newAdmin = {
             adminId: response.data.adminId,
             adminToken: response.data.adminToken,
             frontEndToken: response.data.frontEndToken
           };
-
           actionOptions.SaveAdminToLocal(newAdmin);
 
           dispatch(AdminGetUsers(response.data.users));

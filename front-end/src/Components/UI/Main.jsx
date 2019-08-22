@@ -19,6 +19,7 @@ import Users from "../Assignment 10 - Identity/User/Admin Only/Users";
 import Details from "../Assignment 10 - Identity/User/All Users/Details";
 
 const Main = props => {
+  // This is what I'd like to call organized chaos.
   return (
     <React.Fragment>
       <Switch>
@@ -50,23 +51,40 @@ const Main = props => {
           exact
           path="/users"
           render={() =>
-            props.isAuthenticated === true ? (
+            props.roles.includes("Administrator") === true ? (
               <Users />
             ) : (
-              <Redirect to="/signin" />
+              <Redirect to="/" />
             )
           }
         />
         <Route exact path="/users/details/:id" component={Details} />
-        {/* Change these later. */}
+        <Route exact path="/profile/:id" component={Details} />
+
         <Route exact path="/users/edit/:id" component={Details} />
         <Route exact path="/users/edit-password/:id" component={Details} />
         <Route exact path="/users/delete/:id" component={Details} />
 
         <Route exact path="/identity" component={IdentityIndex} />
         <Route exact path="/identity/person" component={Person} />
-        <Route exact path="/identity/city" component={City} />
-        <Route exact path="/identity/country" component={Country} />
+        <Route
+          exact
+          path="/identity/city"
+          component={() =>
+            props.roles.includes("Administrator") ? <City /> : <IdentityIndex />
+          }
+        />
+        <Route
+          exact
+          path="/identity/country"
+          component={() =>
+            props.roles.includes("Administrator") ? (
+              <Country />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
 
         {/* ---------- Assignment 11 ---------- */}
 
@@ -80,7 +98,8 @@ const Main = props => {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.identity.isAuthenticated
+    isAuthenticated: state.identity.isAuthenticated,
+    roles: state.identity.roles
   };
 };
 

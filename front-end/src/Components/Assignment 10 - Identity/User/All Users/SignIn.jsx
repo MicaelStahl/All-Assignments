@@ -168,6 +168,7 @@ class LoginScreen extends Component {
                 value="Submit"
                 className="btn btn-primary btn-sm float-left"
               />
+              <p className="float-left ml-1">No account?</p>
               <Link className="ml-3" to="/register">
                 <ins>Register</ins>
               </Link>

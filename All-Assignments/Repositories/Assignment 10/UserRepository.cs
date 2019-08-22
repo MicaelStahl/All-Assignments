@@ -216,7 +216,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
                     returnedUser.UserId = user.Id;
 
-                    returnedUser.TokenToken = VerificationToken();
+                    returnedUser.FrontEndToken = VerificationToken();
 
                     returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
 

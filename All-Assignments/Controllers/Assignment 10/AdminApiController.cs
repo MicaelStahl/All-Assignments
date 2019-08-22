@@ -80,7 +80,7 @@ namespace All_Assignments.Controllers.Assignment_10
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost("create-user")]
         public async Task<IActionResult> CreateUser(RegisterAdminUser10 user)
         {
             if (!ModelState.IsValid)

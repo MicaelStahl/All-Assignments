@@ -19,6 +19,18 @@ export default function reducer(state = initialState, action) {
         errorMessage: action.errorMessage
       };
 
+    case actionTypes.SAVE_ADMIN_TO_LOCAL:
+      localStorage.setItem("userId", action.admin.adminId);
+      localStorage.setItem("userToken", action.admin.adminToken);
+      localStorage.setItem("backend-token", action.admin.frontEndToken);
+      break;
+
+    case actionTypes.SAVE_USER_TO_LOCAL:
+      localStorage.setItem("backend-token", action.user.frontEndToken);
+      localStorage.setItem("userToken", action.user.userToken);
+      localStorage.setItem("userId", action.user.userId);
+      break;
+
     default:
       break;
   }

@@ -3,6 +3,7 @@ import { NavLink, Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 import * as actionTypes from "../Actions/Assignment 10/actions/identityActions";
+import * as actionUser from "../Actions/Assignment 10/actions/userActions";
 
 class Navbar extends Component {
   constructor(props) {
@@ -48,8 +49,12 @@ class Navbar extends Component {
                     ) : null}
                     <li className="nav-item">
                       <NavLink
+                        onClick={this.props.onProfileClick(
+                          localStorage.getItem("userId"),
+                          this.props.users
+                        )}
                         className="nav-link text-light btn btn-dark"
-                        to="/profile">
+                        to={"/profile/" + localStorage.getItem("userId")}>
                         Profile
                       </NavLink>
                     </li>
@@ -165,13 +170,16 @@ class Navbar extends Component {
 const mapStateToProps = state => {
   return {
     isAuthenticated: state.identity.isAuthenticated,
-    roles: state.identity.roles
+    roles: state.identity.roles,
+    users: state.admin.users
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSignOut: () => dispatch(actionTypes.SignOutAsync())
+    onSignOut: () => dispatch(actionTypes.SignOutAsync()),
+    onProfileClick: (userId, users) =>
+      dispatch(actionUser.UserDetailsAsync(userId, users))
   };
 };
 

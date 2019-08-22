@@ -54,7 +54,17 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     throw new Exception("The passwords does not match.");
                 }
 
-                var result = await _userManager.CreateAsync(user, user.Password);
+                var appUser = new AppUser10
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Age = user.Age,
+                    Email = user.Email,
+                    SecurityStamp = user.SecurityStamp
+                };
+
+                var result = await _userManager.CreateAsync(appUser, user.Password);
 
                 if (result.Succeeded)
                 {
@@ -65,11 +75,12 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     // This is here because I didn't know how else to only get the name of the roles to use in AddToRolesAsync.
                     roles.ForEach(x => roleNames.Add(x.Name));
 
-                    // This checks if the Admin boolean is true, if it is, it adds the user to all roles. otherwise only to NormalUser.
-                    _ = user.Admin == true ? await _userManager.AddToRolesAsync(user, roleNames)
-                        : await _userManager.AddToRoleAsync(user, "NormalUser");
-
                     var newUser = await _userManager.FindByNameAsync(user.UserName);
+
+                    // This checks if the Admin boolean is true, if it is, it adds the user to all roles. otherwise only to NormalUser.
+                    _ = user.Admin == true ? await _userManager.AddToRolesAsync(newUser, roleNames)
+                        : await _userManager.AddToRoleAsync(newUser, "NormalUser");
+
 
                     AdminUserDetailsVM userVM = new AdminUserDetailsVM
                     {

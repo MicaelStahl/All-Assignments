@@ -2,6 +2,8 @@ import axios from "axios";
 
 export const LOADING = "LOADING";
 export const ERROR = "ERROR";
+export const SAVE_ADMIN_TO_LOCAL = "SAVE_ADMIN_TO_LOCAL";
+export const SAVE_USER_TO_LOCAL = "SAVE_USER_TO_LOCAL";
 
 export function CreateCancelToken() {
   const cancelToken = axios.CancelToken;
@@ -14,15 +16,17 @@ export function BackEndToken() {
 }
 
 export function SaveAdminToLocal(admin) {
-  localStorage.setItem("userId", admin.adminId);
-  localStorage.setItem("userToken", admin.adminToken);
-  localStorage.setItem("backend-token", admin.frontEndToken);
+  return {
+    type: SAVE_ADMIN_TO_LOCAL,
+    admin
+  };
 }
 
 export function SaveUserToLocal(user) {
-  localStorage.setItem("backend-token", user.tokenToken);
-  localStorage.setItem("userToken", user.userToken);
-  localStorage.setItem("userId", user.userId);
+  return {
+    type: SAVE_USER_TO_LOCAL,
+    user
+  };
 }
 
 export function GetAdmin() {

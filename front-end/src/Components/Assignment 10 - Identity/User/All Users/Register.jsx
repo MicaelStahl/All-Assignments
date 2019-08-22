@@ -103,14 +103,50 @@ class Register extends Component {
         });
         return;
       }
+    } else if (name === "admin") {
+      this.setState({ admin: !this.state.admin, error: "" });
+      return;
     }
 
     this.setState({ [name]: value, error: "" });
   };
 
+  handleValidateSubmit = user => {
+    console.log("handleValidateSubmit", user);
+    if (this.validateUserNameInput(user.UserName) === undefined) {
+      this.setState({ error: "Invalid username" });
+      return;
+    } else if (
+      this.validateFirstAndLastNameInput(user.FirstName) === undefined
+    ) {
+      this.setState({ error: "Invalid firstname" });
+      return;
+    } else if (
+      this.validateFirstAndLastNameInput(user.LastName) === undefined
+    ) {
+      this.setState({ error: "Invalid lastname" });
+      return;
+    } else if (this.validatePasswordInput(user.Password) === undefined) {
+      this.setState({ error: "Invalid password" });
+      return;
+    } else if (user.Password !== user.ComparePassword) {
+      this.setState({ error: "The passwords does not match." });
+      return;
+    } else if (this.validateEmailInput(user.Email) === undefined) {
+      this.setState({ error: "Invalid email" });
+      return;
+    } else if (Number(user.Age) > 110 || Number(user.Age) < 18) {
+      this.setState({
+        error: "Invalid age given. Must be between 18 to 110 years old."
+      });
+      return;
+    }
+  };
+
   handleSubmit = event => {
     // ToDo
     event.preventDefault();
+
     const {
       userName,
       firstName,
@@ -121,35 +157,6 @@ class Register extends Component {
       confirmPassword
     } = event.target;
 
-    if (this.validateUserNameInput(userName.value) === undefined) {
-      this.setState({ error: "Invalid username" });
-      return;
-    } else if (
-      this.validateFirstAndLastNameInput(firstName.value) === undefined
-    ) {
-      this.setState({ error: "Invalid firstname" });
-      return;
-    } else if (
-      this.validateFirstAndLastNameInput(lastName.value) === undefined
-    ) {
-      this.setState({ error: "Invalid lastname" });
-      return;
-    } else if (this.validatePasswordInput(password.value) === undefined) {
-      this.setState({ error: "Invalida password" });
-      return;
-    } else if (password.value !== confirmPassword.value) {
-      this.setState({ error: "The passwords does not match." });
-      return;
-    } else if (this.validateEmailInput(email.value) === undefined) {
-      this.setState({ error: "Invalid email" });
-      return;
-    } else if (Number(age.value) > 110 || Number(age.value) < 18) {
-      this.setState({
-        error: "Invalid age given. Must be between 18 to 110 years old."
-      });
-      return;
-    }
-
     const user = {
       UserName: userName.value,
       FirstName: firstName.value,
@@ -159,16 +166,49 @@ class Register extends Component {
       Password: password.value,
       ComparePassword: confirmPassword.value
     };
+    this.handleValidateSubmit(user);
 
-    console.log("[User]", user);
-
-    this.props.onRegistrationSubmit(user);
+    if (this.state.error === "") {
+      this.props.onRegistrationSubmit(user);
+    }
 
     // Temporary setTimeout to make sure everything works properly.
     // Currently inactive due to me testing Registration.
     // setTimeout(this.setState({ redirect: true }), 100);
 
     // ToDo
+  };
+
+  handleAdminSubmit = event => {
+    event.preventDefault();
+
+    const {
+      userName,
+      firstName,
+      lastName,
+      age,
+      email,
+      password,
+      confirmPassword
+    } = event.target;
+
+    const user = {
+      UserName: userName.value,
+      FirstName: firstName.value,
+      LastName: lastName.value,
+      Age: age.value,
+      Email: email.value,
+      Admin: this.state.admin,
+      Password: password.value,
+      ComparePassword: confirmPassword.value
+    };
+
+    this.handleValidateSubmit(user);
+
+    if (this.state.error === "") {
+      console.log("[handleAdminSubmit]", "Hello");
+      this.props.onAdminRegistrationSubmit(user);
+    }
   };
 
   handleRedirect = () => {
@@ -208,7 +248,13 @@ class Register extends Component {
         </button>
         <div className="mt-3 col-3 AlignCenter border box-shadow shadow">
           <h3 className="text-center">Register user</h3>
-          <form className="form" onSubmit={this.handleSubmit}>
+          <form
+            className="form"
+            onSubmit={
+              this.props.roles.includes("Administrator") === true
+                ? this.handleAdminSubmit
+                : this.handleSubmit
+            }>
             {this.props.error === "" ? null : (
               <p className="text-danger font-weight-bold text-center">
                 {this.props.error}
@@ -304,6 +350,18 @@ class Register extends Component {
                 />
               </label>
             </div>
+            {this.props.roles.includes("Administrator") === true ? (
+              <div className="form-group">
+                <label className="col-form-label">Admin</label>
+                <input
+                  type="checkbox"
+                  name="admin"
+                  onChange={this.handleChange}
+                  checked={this.state.admin}
+                  className="form-inline"
+                />
+              </div>
+            ) : null}
             <div className="form-group">
               <label className="col-form-label">
                 Password
@@ -354,14 +412,16 @@ class Register extends Component {
 const mapStateToProps = state => {
   return {
     error: state.identity.error,
-    success: state.identity.success
+    success: state.identity.success,
+    roles: state.identity.roles
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     onRegistrationSubmit: user => dispatch(actionTypes.RegisterAsync(user)),
-    onAdminRegistrationSubmit: user => dispatch()
+    onAdminRegistrationSubmit: user =>
+      dispatch(actionAdmin.AdminCreateUserAsync(user))
   };
 };
 

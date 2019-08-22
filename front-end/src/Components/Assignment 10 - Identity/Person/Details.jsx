@@ -46,7 +46,9 @@ class Details extends Component {
                 <th className="d-table-cell">Gender</th>
                 <th className="d-table-cell">Phonenumber</th>
                 <th className="d-table-cell">City</th>
-                <th className="d-table-cell">Options</th>
+                {this.props.roles.includes("Administrator") ? (
+                  <th className="d-table-cell">Options</th>
+                ) : null}
               </tr>
             </thead>
             <tbody>
@@ -58,19 +60,25 @@ class Details extends Component {
                 <td className="d-table-cell">{person.person.gender}</td>
                 <td className="d-table-cell">{person.person.phoneNumber}</td>
                 <td className="d-table-cell">{person.cityName}</td>
-                <td className="d-table-cell">
-                  <Link
-                    className="btn btn-warning btn-sm"
-                    to={"/identity/person/edit/" + person.person.id}>
-                    Edit
-                  </Link>
-                  <Link
-                    onClick={() => this.props.onDeleteLoad(person.person.id)}
-                    className="btn btn-danger btn-sm ml-1"
-                    to={"/identity/person/delete/" + person.person.id}>
-                    Delete
-                  </Link>
-                </td>
+                {this.props.roles.includes("Administrator") ? (
+                  <td className="d-table-cell">
+                    <React.Fragment>
+                      <Link
+                        className="btn btn-warning btn-sm"
+                        to={"/identity/person/edit/" + person.person.id}>
+                        Edit
+                      </Link>
+                      <Link
+                        onClick={() =>
+                          this.props.onDeleteLoad(person.person.id)
+                        }
+                        className="btn btn-danger btn-sm ml-1"
+                        to={"/identity/person/delete/" + person.person.id}>
+                        Delete
+                      </Link>
+                    </React.Fragment>
+                  </td>
+                ) : null}
               </tr>
             </tbody>
           </table>
@@ -85,7 +93,8 @@ class Details extends Component {
 const mapStateToProps = state => {
   return {
     person: state.person.onePerson,
-    isLoading: state.options.isLoading
+    isLoading: state.options.isLoading,
+    roles: state.identity.roles
   };
 };
 

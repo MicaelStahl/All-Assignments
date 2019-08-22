@@ -79,16 +79,16 @@ export function SignInAsync(user10) {
             const admin = {
               adminId: response.data.userId,
               adminToken: response.data.userToken,
-              frontEndToken: response.data.tokenToken
+              frontEndToken: response.data.frontEndToken
             };
-            actionOptions.SaveAdminToLocal(admin);
+            dispatch(actionOptions.SaveAdminToLocal(admin));
           } else {
             const user = {
               userId: response.data.userId,
               userToken: response.data.userToken,
-              tokenToken: response.data.tokenToken
+              frontEndToken: response.data.frontEndToken
             };
-            actionOptions.SaveUserToLocal(user);
+            dispatch(actionOptions.SaveUserToLocal(user));
           }
           dispatch(SignIn(response.data.roles));
         } else if (response.status === 404 || response.status === 400) {
