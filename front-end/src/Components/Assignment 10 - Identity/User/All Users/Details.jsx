@@ -9,10 +9,13 @@ import Loading from "../../../UI/Loading";
 
 const Details = props => {
   if (!props.isLoading) {
+    console.log(props.user);
     return (
       <React.Fragment>
         <Title Title={"Details of " + props.user.userName} />
         <div className="col-4 border shadow box-shadow AlignCenter">
+          <h3>Details</h3>
+          <hr />
           <div className=" form-group">
             <label className="font-weight-bold">
               <ins>Username:</ins>
@@ -37,6 +40,24 @@ const Details = props => {
             </label>
             <p>{props.user.email}</p>
           </div>
+          {props.roles.includes("Administrator") ? (
+            <div className="form-group">
+              <label className="font-weight-bold">
+                <ins>Roles:</ins>
+              </label>
+              <ul className="list-unstyled">
+                {props.user.roles.count === 0 ? (
+                  <li>
+                    <p>No roles available.</p>
+                  </li>
+                ) : (
+                  props.user.roles.map((role, index) => (
+                    <li key={index}>{role}</li>
+                  ))
+                )}
+              </ul>
+            </div>
+          ) : null}
           <div className="form-group">
             <label className="font-weight-bold">
               <ins>Options:</ins>
@@ -100,6 +121,7 @@ const Details = props => {
             </div>
           </div>
         </div>
+        <hr />
       </React.Fragment>
     );
   } else {
@@ -110,8 +132,8 @@ const Details = props => {
 const mapStateToProps = state => {
   return {
     isLoading: state.options.isLoading,
-    user: state.user.user,
-    users: state.admin.users,
+    user: state.identity.user,
+    users: state.identity.users,
     roles: state.identity.roles
   };
 };

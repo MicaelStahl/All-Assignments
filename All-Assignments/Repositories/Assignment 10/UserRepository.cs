@@ -117,6 +117,7 @@ namespace All_Assignments.Repositories.Assignment_10
                     Age = user.Age,
                     Email = user.Email,
                     VerificationToken = VerificationToken(),
+                    Roles = await _userManager.GetRolesAsync(user),
                     UserToken = await UserToken(user)
                 };
 

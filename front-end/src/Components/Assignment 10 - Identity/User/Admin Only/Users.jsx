@@ -15,6 +15,7 @@ class Users extends Component {
   }
 
   render() {
+    console.log(this.props.users);
     if (!this.props.isLoading) {
       return (
         <React.Fragment>
@@ -92,7 +93,7 @@ class Users extends Component {
 
 const mapStateToProps = state => {
   return {
-    users: state.admin.users,
+    users: state.identity.users,
     isLoading: state.options.isLoading
   };
 };

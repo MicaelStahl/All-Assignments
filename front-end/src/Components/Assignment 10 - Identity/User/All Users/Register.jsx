@@ -326,7 +326,7 @@ class Register extends Component {
               <label className="col-form-label">
                 Age
                 <input
-                  type="text"
+                  type="number"
                   name="age"
                   min="18"
                   max="110"

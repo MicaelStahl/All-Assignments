@@ -2,6 +2,7 @@ import * as actionTypes from "../actions/identityActions";
 
 const initialState = {
   users: [],
+  user: [],
   roles: [],
   isAuthenticated: false,
   success: ""
@@ -33,6 +34,18 @@ export function reducer(state = initialState, action) {
         isAuthenticated: false,
         success: "",
         roles: []
+      };
+
+    case actionTypes.UPDATE_USERLIST:
+      return {
+        ...state,
+        users: action.users
+      };
+
+    case actionTypes.UPDATE_USER:
+      return {
+        ...state,
+        user: action.user
       };
 
     default:

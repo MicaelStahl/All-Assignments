@@ -297,8 +297,6 @@ namespace All_Assignments.Controllers
         #region (U)PDATE
 
         [HttpPut("edit-user")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, NormalUser")]
         public async Task<IActionResult> EditUser(AppUser10 user10)
         {
             if (!ModelState.IsValid)

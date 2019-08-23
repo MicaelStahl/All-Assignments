@@ -50,14 +50,12 @@ class AllPeople extends Component {
                   <td className="d-table-cell">{person.person.phoneNumber}</td>
                   <td className="d-table-cell">{person.cityName}</td>
                   <td className="d-table-cell">
-                    {this.props.roles.includes("Administrator") ? (
-                      <Link
-                        onClick={() => this.props.onEditLoad(person.person.id)}
-                        className="btn btn-warning btn-sm"
-                        to={this.props.match.url + "/edit/" + person.person.id}>
-                        Edit
-                      </Link>
-                    ) : null}
+                    <Link
+                      onClick={() => this.props.onEditLoad(person.person.id)}
+                      className="btn btn-warning btn-sm"
+                      to={this.props.match.url + "/edit/" + person.person.id}>
+                      Edit
+                    </Link>
 
                     <Link
                       onClick={() => this.props.onDetailsLoad(person.person.id)}

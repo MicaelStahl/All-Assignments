@@ -99,7 +99,7 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpPut("edit-user")]
-        public async Task<IActionResult> EditUser(AdminUserDetailsVM userVM)
+        public async Task<IActionResult> EditUser(AdminEditUserVM userVM)
         {
             try
             {
