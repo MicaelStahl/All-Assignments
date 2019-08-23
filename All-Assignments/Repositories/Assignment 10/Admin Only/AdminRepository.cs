@@ -109,9 +109,10 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
             catch (Exception ex)
             { // Doing this for a more versatile error-handling, and to not send down unnecessary information if something fails.
-                AdminUserDetailsVM userVM = new AdminUserDetailsVM();
-
-                userVM.ErrorMessage = ex.Message;
+                AdminUserDetailsVM userVM = new AdminUserDetailsVM
+                {
+                    ErrorMessage = ex.Message
+                };
 
                 return userVM;
             }
@@ -123,7 +124,9 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.UserId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken))
+                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) ||
+                    string.IsNullOrWhiteSpace(verificationVM.UserId) ||
+                    string.IsNullOrWhiteSpace(verificationVM.AdminToken))
                 {
                     throw new Exception("Something went wrong.");
                 }
@@ -149,23 +152,34 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     throw new Exception("User could not be found.");
                 }
 
+                DetailsVM User = new DetailsVM
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Age = user.Age,
+                    Email = user.Email,
+                    IsAdmin = user.IsAdmin,
+                    Roles = await _userManager.GetRolesAsync(user),
+                };
+
                 AdminUserDetailsVM userVM = new AdminUserDetailsVM
                 {
-                    User =
-                    {
-                        UserId = user.Id,
-                        UserName = user.UserName,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Age = user.Age,
-                        Email = user.Email,
-                        Roles = await _userManager.GetRolesAsync(user),
-                    },
-
                     AdminId = admin.Id,
+                    User = User,
                     FrontEndToken = VerificationToken(),
-                    AdminToken = await UserToken(admin)
+                    AdminToken = await UserToken(admin),
+                    
                 };
+
+                //var roleNames = await _userManager.GetRolesAsync(user);
+
+                //foreach (var item in roleNames)
+                //{
+                //    userVM.User.Roles.Add(item);
+                //}
+
 
                 return userVM;
             }

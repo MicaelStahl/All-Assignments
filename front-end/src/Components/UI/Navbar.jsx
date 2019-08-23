@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import * as actionTypes from "../Actions/Assignment 10/actions/identityActions";
 import * as actionUser from "../Actions/Assignment 10/actions/userActions";
+import * as actionAdmin from "../Actions/Assignment 10/actions/adminActions";
 
 class Navbar extends Component {
   constructor(props) {
@@ -48,15 +49,49 @@ class Navbar extends Component {
                       </li>
                     ) : null}
                     <li className="nav-item">
-                      <NavLink
-                        onClick={this.props.onProfileClick(
-                          localStorage.getItem("userId"),
-                          this.props.users
-                        )}
+                      {this.props.roles.includes("Administrator") ? (
+                        <NavLink
+                          to={"/profile/" + localStorage.getItem("userId")}
+                          className="nav-link text-light btn btn-dark"
+                          onClick={() =>
+                            this.props.onAdminProfileClick(
+                              localStorage.getItem("userId"),
+                              this.props.users
+                            )
+                          }>
+                          Profile
+                        </NavLink>
+                      ) : (
+                        <NavLink
+                          to={"/profile/" + localStorage.getItem("userId")}
+                          className="nav-link text-light btn btn-dark"
+                          onClick={() =>
+                            this.props.onProfileClick(
+                              localStorage.getItem("userId"),
+                              this.props.users
+                            )
+                          }>
+                          Profile
+                        </NavLink>
+                      )}
+                      {/* <NavLink
+                        onClick={
+                          this.props.roles.includes("Administrator")
+                            ? () =>
+                                this.props.onAdminProfileClick(
+                                  localStorage.getItem("userId"),
+                                  this.props.users
+                                )
+                            : () =>
+                                this.props.onProfileClick(
+                                  localStorage.getItem("userId"),
+                                  this.props.users
+                                )
+                        }
                         className="nav-link text-light btn btn-dark"
                         to={"/profile/" + localStorage.getItem("userId")}>
                         Profile
-                      </NavLink>
+                      </NavLink> */}
                     </li>
                     <li className="nav-item">
                       <Link
@@ -179,7 +214,9 @@ const mapDispatchToProps = dispatch => {
   return {
     onSignOut: () => dispatch(actionTypes.SignOutAsync()),
     onProfileClick: (userId, users) =>
-      dispatch(actionUser.UserDetailsAsync(userId, users))
+      dispatch(actionUser.UserDetailsAsync(userId, users)),
+    onAdminProfileClick: (userId, users) =>
+      dispatch(actionAdmin.AdminGetUserAsync(userId, users))
   };
 };
 

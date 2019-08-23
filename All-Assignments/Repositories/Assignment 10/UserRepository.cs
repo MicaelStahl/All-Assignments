@@ -116,6 +116,7 @@ namespace All_Assignments.Repositories.Assignment_10
                     LastName = user.LastName,
                     Age = user.Age,
                     Email = user.Email,
+                    IsAdmin = user.IsAdmin,
                     VerificationToken = VerificationToken(),
                     Roles = await _userManager.GetRolesAsync(user),
                     UserToken = await UserToken(user)
@@ -194,7 +195,6 @@ namespace All_Assignments.Repositories.Assignment_10
 
         public async Task<ReturnedUserVM> LogInUser(LoginUser10 user10)
         {
-
             try
             {
                 if (string.IsNullOrWhiteSpace(user10.Password) || string.IsNullOrWhiteSpace(user10.UserName))
@@ -213,15 +213,16 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 if (result.Succeeded)
                 {
-                    ReturnedUserVM returnedUser = new ReturnedUserVM();
+                    ReturnedUserVM returnedUser = new ReturnedUserVM
+                    {
+                        UserId = user.Id,
 
-                    returnedUser.UserId = user.Id;
+                        FrontEndToken = VerificationToken(),
 
-                    returnedUser.FrontEndToken = VerificationToken();
+                        UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend"),
 
-                    returnedUser.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");
-
-                    returnedUser.Roles = await _userManager.GetRolesAsync(user);
+                        Roles = await _userManager.GetRolesAsync(user)
+                    };
 
                     return returnedUser;
                 }
@@ -236,9 +237,10 @@ namespace All_Assignments.Repositories.Assignment_10
             }
             catch (Exception ex)
             {
-                ReturnedUserVM returnedUser = new ReturnedUserVM();
-
-                returnedUser.ErrorMessage = ex.Message;
+                ReturnedUserVM returnedUser = new ReturnedUserVM
+                {
+                    ErrorMessage = ex.Message
+                };
                 return returnedUser;
             }
 

@@ -48,20 +48,6 @@ class Edit extends Component {
     return str.match("^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,4})+$");
   };
 
-  validatePasswordInput = str => {
-    // This regex checks so that the password contains the following;
-    // At least one uppercase letter A-Ö
-    // At least one lowercase letter a-ö
-    // At least one number 0-9
-    // At least one special character ( @ $ % ^ & * - )
-    // At least 8 characters long.
-    // And less or exactly 20 characters long.
-    // No spaces.
-    return str.match(
-      "^(?=.*?[A-Ö])(?=.*?[a-ö])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
-    );
-  };
-
   handleChange = event => {
     // ToDo
     const { name, value } = event.target;
@@ -126,12 +112,6 @@ class Edit extends Component {
     ) {
       this.setState({ error: "Invalid lastname" });
       return;
-    } else if (this.validatePasswordInput(user.Password) === undefined) {
-      this.setState({ error: "Invalid password" });
-      return;
-    } else if (user.Password !== user.ComparePassword) {
-      this.setState({ error: "The passwords does not match." });
-      return;
     } else if (this.validateEmailInput(user.Email) === undefined) {
       this.setState({ error: "Invalid email" });
       return;
@@ -147,15 +127,7 @@ class Edit extends Component {
     // ToDo
     event.preventDefault();
 
-    const {
-      userName,
-      firstName,
-      lastName,
-      age,
-      email,
-      password,
-      confirmPassword
-    } = event.target;
+    const { userName, firstName, lastName, age, email } = event.target;
 
     const user = {
       UserName: userName.value,
@@ -163,8 +135,7 @@ class Edit extends Component {
       LastName: lastName.value,
       Age: age.value,
       Email: email.value,
-      Password: password.value,
-      ComparePassword: confirmPassword.value
+      Roles: this.props.roles
     };
     this.handleValidateSubmit(user);
 
@@ -182,25 +153,20 @@ class Edit extends Component {
   handleAdminSubmit = event => {
     event.preventDefault();
 
-    const {
-      userName,
-      firstName,
-      lastName,
-      age,
-      email,
-      password,
-      confirmPassword
-    } = event.target;
+    const { userId, userName, firstName, lastName, age, email } = event.target;
 
     const user = {
+      UserId: userId.value,
       UserName: userName.value,
       FirstName: firstName.value,
       LastName: lastName.value,
       Age: age.value,
       Email: email.value,
-      Admin: this.state.admin,
-      Password: password.value,
-      ComparePassword: confirmPassword.value
+      IsAdmin:
+        this.state.isAdmin === ""
+          ? this.props.user.isAdmin
+          : this.state.isAdmin,
+      Roles: this.props.roles
     };
 
     this.handleValidateSubmit(user);
@@ -234,7 +200,15 @@ class Edit extends Component {
 
       // this is because getting the values from redux turns it into an array.
 
-      const { userName, firstName, lastName, age, email, isAdmin } = user;
+      const {
+        userId,
+        userName,
+        firstName,
+        lastName,
+        age,
+        email,
+        isAdmin
+      } = user;
 
       return (
         <React.Fragment>
@@ -260,6 +234,7 @@ class Edit extends Component {
                   {this.props.success}
                 </p>
               )}
+              <input type="hidden" value={userId} name="userId" />
               <div className="form-group">
                 <label className="col-form-label">
                   Username
@@ -345,7 +320,7 @@ class Edit extends Component {
                   />
                 </label>
               </div>
-              {this.props.roles.includes("Administrator") === true ? (
+              {this.props.roles.includes("Administrator") ? (
                 <div className="form-group">
                   <label className="col-form-label">Admin</label>
                   <input

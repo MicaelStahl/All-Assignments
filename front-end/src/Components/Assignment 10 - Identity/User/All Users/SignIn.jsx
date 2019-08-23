@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
 import Title from "../../../UI/Title";
-import * as actionTypes from "../../../Actions/Assignment 10/actions/identityActions";
+import * as actionIdentity from "../../../Actions/Assignment 10/actions/identityActions";
 
 class LoginScreen extends Component {
   state = {
-    redirect: false,
     userName: "",
     password: "",
-    error: ""
+    error: "",
+    success: ""
   };
 
   validateUserNameInput = str => {
@@ -107,8 +107,11 @@ class LoginScreen extends Component {
 
     this.props.onSigninSubmit(user10);
 
+    if (this.props.isAuthenticated) {
+      this.setState({ success: "User was successfully signed in" });
+    }
+
     // Temporary setTimeout to make sure everything works.
-    setTimeout(this.setState({ redirect: true }), 100);
 
     // ToDo
   };
@@ -124,11 +127,11 @@ class LoginScreen extends Component {
             {this.props.error === "" ? null : (
               <p className="text-danger font-weight-bold">{this.props.error}</p>
             )}
-            {this.props.success === "" ? null : (
+            {this.props.isAuthenticated ? (
               <p className="text-success font-weight-bold">
                 {this.props.success}
               </p>
-            )}
+            ) : null}
             {error === "" ? null : (
               <ul className="list-unstyled">
                 {error.split("\n").map((err, index) => (
@@ -183,13 +186,13 @@ class LoginScreen extends Component {
 const mapStateToProps = state => {
   return {
     error: state.identity.error,
-    success: state.identity.success
+    isAuthenticated: state.identity.isAuthenticated
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSigninSubmit: user10 => dispatch(actionTypes.SignInAsync(user10))
+    onSigninSubmit: user10 => dispatch(actionIdentity.SignInAsync(user10))
   };
 };
 

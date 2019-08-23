@@ -2,6 +2,7 @@ import axios from "axios";
 
 import * as actionOptions from "./optionsActions";
 import * as actionIdentity from "./identityActions";
+import * as actionAdmin from "./adminActions";
 
 export const USER_DETAILS = "USER_DETAILS";
 export const USER_EDIT = "USER_EDIT";
@@ -16,9 +17,7 @@ const userUrl = "http://localhost:50691/api/identityApi/";
 
 export function UserDetailsAsync(userId, users = []) {
   return dispatch => {
-    console.log(userId);
     let userVM = users.find(x => x.userId === userId);
-    console.log(userVM);
     if (userVM !== undefined) {
       dispatch(actionIdentity.UpdateUser(userVM));
     } else {
@@ -39,12 +38,10 @@ export function UserDetailsAsync(userId, users = []) {
         }
       );
 
-      if (userVM === undefined) {
-        userVM = {
-          UserToken: localStorage.getItem("userToken"),
-          UserId: userId
-        };
-      }
+      userVM = {
+        UserToken: localStorage.getItem("userToken"),
+        UserId: userId
+      };
 
       userVM.userToken =
         localStorage.getItem("userToken") === undefined
@@ -117,7 +114,7 @@ export function UserEditAsync(user, users = []) {
         IsAdmin: user.IsAdmin
       }
     };
-
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .put(userUrl + "edit-user", user10, {
         cancelToken: actionOptions.CreateCancelToken(),
@@ -126,14 +123,87 @@ export function UserEditAsync(user, users = []) {
         }
       })
       .then(response => {
-        if (response.data === 200) {
+        if (response.status === 200) {
           const index = users.findIndex(x => x.userId === user10.userId);
 
           if (index === -1) {
-            dispatch();
+            dispatch(actionAdmin.AdminGetUsersAsync());
+          } else {
+            users = users.splice(index, 1, response.data.user);
+            dispatch(actionIdentity.UpdateUserList(users));
           }
+        } else if ((response.status === 400) | 404) {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
+        } else {
+          dispatch(actionOptions.ErrorMessageAsync("Something went wrong."));
         }
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(actionOptions.ErrorMessageAsync(err));
       });
+  };
+}
+
+//#endregion
+
+//#region UserDelete
+
+function UserDelete(userId) {
+  return {
+    type: USER_DELETE,
+    userId
+  };
+}
+
+export function UserDeleteAsync(userId, users) {
+  return dispatch => {
+    axios.interceptors.request.use(
+      config => {
+        const token = actionOptions.BackEndToken();
+
+        if (token !== undefined || token !== null) {
+          config.headers["Authentication"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          config.headers["withCredentials"] = true;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
+
+    const user = actionOptions.GetUser();
+
+    if (user.UserId !== userId) {
+      throw new Error("Something went wrong. Please try again");
+    } else {
+      axios
+        .delete(userUrl + "delete-user/" + userId + "/" + user.UserToken, {
+          cancelToken: actionOptions.CreateCancelToken(),
+          validateStatus: function(status) {
+            return status <= 500;
+          }
+        })
+        .then(response => {
+          if (response.status === 200) {
+            dispatch(UserDelete(userId));
+          } else if ((response.status === 404) | 400) {
+            dispatch(actionOptions.ErrorMessageAsync(response.data));
+          } else {
+            dispatch(actionOptions.ErrorMessageAsync("Something went wrong."));
+          }
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
+        })
+        .catch(err => {
+          console.error(err);
+          dispatch(actionOptions.ErrorMessageAsync(err));
+        });
+    }
   };
 }
 

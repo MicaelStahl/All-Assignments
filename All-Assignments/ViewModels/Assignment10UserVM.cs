@@ -114,7 +114,7 @@ namespace All_Assignments.ViewModels
         /// <summary>
         /// Signals whether the chosen user is an admin or not.
         /// </summary>
-        public bool IsAdmin { get; protected set; }
+        public bool IsAdmin { get; set; }
 
         public IList<string> Roles { get; set; }
 
@@ -274,8 +274,6 @@ namespace All_Assignments.ViewModels
     /// </summary>
     public class RegisterAdminUser10 : RegisterUser10, IAdminVerification
     {
-        public bool IsAdmin { get; set; }
-
         public string AdminId { get; set; }
 
         public string AdminToken { get; set; }

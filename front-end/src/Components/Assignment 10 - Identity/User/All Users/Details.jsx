@@ -8,8 +8,7 @@ import Title from "../../../UI/Title";
 import Loading from "../../../UI/Loading";
 
 const Details = props => {
-  if (!props.isLoading) {
-    console.log(props.user);
+  if (!props.isLoading && props.user !== "") {
     return (
       <React.Fragment>
         <Title Title={"Details of " + props.user.userName} />

@@ -106,11 +106,10 @@ export function AdminCreateUserAsync(user10) {
 
 export function AdminGetUserAsync(userId, users = []) {
   return dispatch => {
-    console.log(userId);
-    const user = users.filter(x => x.userId === userId);
+    const user = users.find(x => x.userId === userId);
 
     // If the user exists in the redux state, then dispatch the user.
-    if (user !== undefined || user !== []) {
+    if (user !== undefined) {
       dispatch(actionIdentity.UpdateUser(user));
     }
     // Else if the user doesn't exist in the redux state, then call the backend for the user.
@@ -131,10 +130,19 @@ export function AdminGetUserAsync(userId, users = []) {
           return Promise.reject(error);
         }
       );
+
       dispatch(actionOptions.ItemsAreLoadingAsync(true));
+
+      const getAdmin = actionOptions.GetAdmin();
+
+      const admin = {
+        AdminId: getAdmin.AdminId,
+        AdminToken: getAdmin.AdminToken,
+        UserId: userId
+      };
+
       axios
-        .get(adminUrl + "get-user/" + userId, {
-          "Content-Type": "application/json",
+        .post(adminUrl + "get-user", admin, {
           cancelToken: actionOptions.CreateCancelToken(),
           validateStatus: function(status) {
             return status < 500;
@@ -142,7 +150,6 @@ export function AdminGetUserAsync(userId, users = []) {
         })
         .then(response => {
           if (response.status === 200) {
-            console.log(response.data);
             dispatch(actionIdentity.UpdateUser(response.data.user));
           } else if (response.status === 404 || response.status === 400) {
             dispatch(actionOptions.ErrorMessageAsync(response.data));
@@ -206,7 +213,6 @@ export function AdminGetUsersAsync() {
       })
       .then(response => {
         if (response.status === 200) {
-          console.log(response.data);
           const newAdmin = {
             adminId: response.data.adminId,
             adminToken: response.data.adminToken,
@@ -242,7 +248,7 @@ export function AdminGetUsersAsync() {
 //   };
 // }
 
-export function AdminEditUserAsync(userVM, users = []) {
+export function AdminEditUserAsync(user, users = []) {
   return dispatch => {
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
 
@@ -262,6 +268,25 @@ export function AdminEditUserAsync(userVM, users = []) {
       }
     );
 
+    const admin = actionOptions.GetAdmin();
+
+    const userVM = {
+      User: {
+        UserId: user.UserId,
+        UserName: user.UserName,
+        FirstName: user.FirstName,
+        LastName: user.LastName,
+        Age: user.Age,
+        Email: user.Email,
+        IsAdmin: user.IsAdmin,
+        Roles: user.Roles
+      },
+      AdminId: admin.AdminId,
+      AdminToken: admin.AdminToken
+    };
+
+    console.log(userVM);
+
     axios
       .put(adminUrl + "edit-user", userVM, {
         cancelToken: actionOptions.CreateCancelToken(),
@@ -271,19 +296,21 @@ export function AdminEditUserAsync(userVM, users = []) {
       })
       .then(response => {
         if (response.status === 200) {
-          const index = users.findIndex(x => x.userId === userVM.userId);
-
+          const index = users.findIndex(x => x.userId === userVM.UserId);
+          console.log("[userVM]", userVM);
+          console.log(users, userVM);
           if (index !== -1) {
             users.splice(index, 1, userVM);
             dispatch(actionIdentity.UpdateUserList(users));
           } else {
-            throw new Error("Something went wrong.");
+            dispatch(AdminGetUsersAsync());
           }
         } else if ((response.status === 400) | 404) {
           dispatch(actionOptions.ErrorMessageAsync(response.data));
         } else {
           dispatch(actionOptions.ErrorMessageAsync(response.data));
         }
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -341,17 +368,15 @@ export function EditUserPasswordAsync(user, users = []) {
 
 //#region DeleteUser
 
-// function AdminDeleteUser(users) {
-//   return {
-//     type: ADMIN_DELETE_USER,
-//     users
-//   };
-// }
+function AdminDeleteUser(userId) {
+  return {
+    type: ADMIN_DELETE_USER,
+    userId
+  };
+}
 
-export function AdminDeleteUserAsync(userId, users = []) {
+export function AdminDeleteUserAsync(userId) {
   return dispatch => {
-    const user = users.find(x => (x.userId = userId));
-
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
 
     axios.interceptors.request.use(
@@ -369,8 +394,21 @@ export function AdminDeleteUserAsync(userId, users = []) {
         return Promise.reject(error);
       }
     );
+
+    const admin = actionOptions.GetAdmin();
+
+    const verificationVM = {
+      UserId: userId,
+      AdminId: admin.AdminId,
+      AdminToken: admin.AdminToken
+    };
+
+    // const adminId = admin.AdminId;
+    // const adminToken = admin.AdminToken;
+
     axios
-      .delete(adminUrl + user.userId, {
+      // .delete(`${adminUrl}${userId}/${adminId}/${adminToken}`, {
+      .post(adminUrl + "delete-user", verificationVM, {
         cancelToken: actionOptions.CreateCancelToken(),
         validateStatus: function(status) {
           return status <= 500;
@@ -378,8 +416,7 @@ export function AdminDeleteUserAsync(userId, users = []) {
       })
       .then(response => {
         if (response.status === 200) {
-          users = users.filter(x => x.userId !== userId);
-          dispatch(actionIdentity.UpdateUserList(users));
+          dispatch(actionIdentity.DeleteUser(userId));
         } else {
           dispatch(actionOptions.ErrorMessageAsync(response.data));
         }

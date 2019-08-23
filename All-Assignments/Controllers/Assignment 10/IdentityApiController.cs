@@ -414,7 +414,7 @@ namespace All_Assignments.Controllers
 
         #region (D)ELETE
 
-        [HttpDelete("delete-user")]
+        [HttpDelete("delete-user/{userId}/{userToken}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string userId, string userToken)
         {

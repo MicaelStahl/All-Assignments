@@ -18,6 +18,7 @@ import SignIn from "../Assignment 10 - Identity/User/All Users/SignIn";
 import Users from "../Assignment 10 - Identity/User/Admin Only/Users";
 import Details from "../Assignment 10 - Identity/User/All Users/Details";
 import Edit from "../Assignment 10 - Identity/User/All Users/Edit";
+import Delete from "../Assignment 10 - Identity/User/All Users/Delete";
 
 const Main = props => {
   // This is what I'd like to call organized chaos.
@@ -63,11 +64,12 @@ const Main = props => {
             )
           }
         />
+        <Redirect exact from="/profile/:id" to="/users/details/:id" />
         <Route exact path="/users/details/:id" component={Details} />
         <Route exact path="/profile/:id" component={Details} />
         <Route exact path="/users/edit/:id" component={Edit} />
         <Route exact path="/users/edit-password/:id" component={Details} />
-        <Route exact path="/users/delete/:id" component={Details} />
+        <Route exact path="/users/delete/:id" component={Delete} />
         <Route exact path="/identity" component={IdentityIndex} />
         <Route
           exact
