@@ -29,7 +29,7 @@ namespace All_Assignments.Controllers.Assignment_10
             _service = service;
         }
 
-        [HttpGet("get-user/{id}")]
+        [HttpPost("get-user")]
         public async Task<IActionResult> GetUser(AdminVerificationForUserVM admin)
         {
             if (string.IsNullOrWhiteSpace(admin.AdminId) || string.IsNullOrWhiteSpace(admin.AdminToken) ||
@@ -99,7 +99,7 @@ namespace All_Assignments.Controllers.Assignment_10
         }
 
         [HttpPut("edit-user")]
-        public async Task<IActionResult> EditUser(AdminUserDetailsVM userVM)
+        public async Task<IActionResult> EditUser(AdminEditUserVM userVM)
         {
             try
             {
@@ -154,7 +154,8 @@ namespace All_Assignments.Controllers.Assignment_10
             }
         }
 
-        [HttpDelete("delete-user")]
+        //[HttpDelete("delete-user/{userId}/{adminId}/{adminToken}")]
+        [HttpPost("delete-user")]
         public async Task<IActionResult> DeleteUser(AdminVerificationForUserVM verificationVM)
         {
             try

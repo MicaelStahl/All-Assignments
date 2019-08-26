@@ -21,7 +21,7 @@ namespace All_Assignments.Interfaces.Assignment_10.Admin
         #endregion
 
         #region Update
-        Task<AdminUserDetailsVM> EditUser(AdminUserDetailsVM user);
+        Task<AdminUserDetailsVM> EditUser(AdminEditUserVM user);
         Task<AdminResultVM> ChangeUserPassword(AdminChangeUserPassword10 changePassword);
 
         // ToDo: Add a method to change users roles here later.

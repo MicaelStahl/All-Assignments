@@ -2,9 +2,9 @@ import * as actionTypes from "../actions/identityActions";
 
 const initialState = {
   users: [],
+  user: "",
   roles: [],
-  isAuthenticated: false,
-  success: ""
+  isAuthenticated: false
 };
 
 export function reducer(state = initialState, action) {
@@ -13,8 +13,7 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         isAuthenticated: true,
-        roles: action.roles,
-        success: "User was successfully signed in."
+        roles: action.roles
       };
 
     case actionTypes.REGISTER:
@@ -22,8 +21,7 @@ export function reducer(state = initialState, action) {
       users.push(action.user);
       return {
         ...state,
-        users,
-        success: "User was successfully registered."
+        users
       };
 
     case actionTypes.SIGN_OUT:
@@ -33,6 +31,24 @@ export function reducer(state = initialState, action) {
         isAuthenticated: false,
         success: "",
         roles: []
+      };
+
+    case actionTypes.UPDATE_USERLIST:
+      return {
+        ...state,
+        users: action.users
+      };
+
+    case actionTypes.UPDATE_USER:
+      return {
+        ...state,
+        user: action.user
+      };
+
+    case actionTypes.DELETE_USER:
+      return {
+        ...state,
+        users: state.users.filter(x => x.userId !== action.userId)
       };
 
     default:

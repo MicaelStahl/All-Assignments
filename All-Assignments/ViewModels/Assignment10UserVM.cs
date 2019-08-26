@@ -34,6 +34,8 @@ namespace All_Assignments.ViewModels
         public int Age { get; set; }
 
         public string UserToken { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 
     /// <summary>
@@ -109,6 +111,11 @@ namespace All_Assignments.ViewModels
 
         public string Email { get; set; }
 
+        /// <summary>
+        /// Signals whether the chosen user is an admin or not.
+        /// </summary>
+        public bool IsAdmin { get; set; }
+
         public IList<string> Roles { get; set; }
 
         /// <summary>
@@ -161,10 +168,19 @@ namespace All_Assignments.ViewModels
 
     // ------------------------------ Admin ViewModels ------------------------------ \\
 
+    public class AdminEditUserVM : IAdminVerification
+    {
+        public DetailsVM User { get; set; }
+
+        public string AdminId { get; set; }
+        public string AdminToken { get; set; }
+        public string FrontEndToken { get; set; }
+    }
+
     /// <summary>
     /// ViewModel to get the specificed user with Admin verification.
     /// </summary>
-    public class AdminUserDetailsVM :  IAdminVerification
+    public class AdminUserDetailsVM : IAdminVerification
     {
         public DetailsVM User { get; set; }
 
@@ -258,8 +274,6 @@ namespace All_Assignments.ViewModels
     /// </summary>
     public class RegisterAdminUser10 : RegisterUser10, IAdminVerification
     {
-        public bool Admin { get; set; }
-
         public string AdminId { get; set; }
 
         public string AdminToken { get; set; }

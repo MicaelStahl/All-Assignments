@@ -78,7 +78,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     var newUser = await _userManager.FindByNameAsync(user.UserName);
 
                     // This checks if the Admin boolean is true, if it is, it adds the user to all roles. otherwise only to NormalUser.
-                    _ = user.Admin == true ? await _userManager.AddToRolesAsync(newUser, roleNames)
+                    _ = user.IsAdmin == true ? await _userManager.AddToRolesAsync(newUser, roleNames)
                         : await _userManager.AddToRoleAsync(newUser, "NormalUser");
 
 
@@ -109,9 +109,10 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
             catch (Exception ex)
             { // Doing this for a more versatile error-handling, and to not send down unnecessary information if something fails.
-                AdminUserDetailsVM userVM = new AdminUserDetailsVM();
-
-                userVM.ErrorMessage = ex.Message;
+                AdminUserDetailsVM userVM = new AdminUserDetailsVM
+                {
+                    ErrorMessage = ex.Message
+                };
 
                 return userVM;
             }
@@ -123,7 +124,9 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.UserId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken))
+                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) ||
+                    string.IsNullOrWhiteSpace(verificationVM.UserId) ||
+                    string.IsNullOrWhiteSpace(verificationVM.AdminToken))
                 {
                     throw new Exception("Something went wrong.");
                 }
@@ -149,23 +152,34 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     throw new Exception("User could not be found.");
                 }
 
+                DetailsVM User = new DetailsVM
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Age = user.Age,
+                    Email = user.Email,
+                    IsAdmin = user.IsAdmin,
+                    Roles = await _userManager.GetRolesAsync(user),
+                };
+
                 AdminUserDetailsVM userVM = new AdminUserDetailsVM
                 {
-                    User =
-                    {
-                        UserId = user.Id,
-                        UserName = user.UserName,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Age = user.Age,
-                        Email = user.Email,
-                        Roles = await _userManager.GetRolesAsync(user),
-                    },
-
                     AdminId = admin.Id,
+                    User = User,
                     FrontEndToken = VerificationToken(),
-                    AdminToken = await UserToken(admin)
+                    AdminToken = await UserToken(admin),
+                    
                 };
+
+                //var roleNames = await _userManager.GetRolesAsync(user);
+
+                //foreach (var item in roleNames)
+                //{
+                //    userVM.User.Roles.Add(item);
+                //}
+
 
                 return userVM;
             }
@@ -254,7 +268,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         #endregion
 
         #region Update
-        public async Task<AdminUserDetailsVM> EditUser(AdminUserDetailsVM user)
+        public async Task<AdminUserDetailsVM> EditUser(AdminEditUserVM user)
         {
             try
             {
@@ -285,6 +299,26 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                 original.Age = user.User.Age;
                 original.Email = user.User.Email;
 
+                // This big text of chaos represents a if else if format, 
+                // which checks whether the IsAdmin value was changed, and if it was, it changes the users role correctly.
+
+                _ = user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == true
+                    ? await _userManager.AddToRoleAsync(original, "Administrator")
+                    : user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == false
+                    ? await _userManager.RemoveFromRoleAsync(original, "Administrator") : null;
+
+                original.IsAdmin = user.User.IsAdmin;
+
+                // // This code right here does exactly the same thing as the code above.
+
+                //if (user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == true)
+                //{
+                //    await _userManager.AddToRoleAsync(original, "Administrator");
+                //}
+                //else if (user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == false)
+                //{
+                //    await _userManager.RemoveFromRoleAsync(original, "Administrator");
+                //}
 
                 var result = await _userManager.UpdateAsync(original);
 

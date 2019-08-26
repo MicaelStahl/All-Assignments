@@ -25,6 +25,12 @@ const reducer = (state = initialState, action) => {
         users: state.users.push(action.user)
       };
 
+    case actionTypes.ADMIN_DELETE_USER:
+      return {
+        ...state,
+        users: state.users.filter(x => x.userId !== action.userId)
+      };
+
     default:
       break;
   }

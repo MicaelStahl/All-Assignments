@@ -19,6 +19,9 @@ import StateLoader from "./StateLoader";
 
 const stateLoader = new StateLoader();
 
+// // This line is for whenever something goes wrong. it deletes all internal state values from redux.
+// stateLoader.ClearState();
+
 const store = configureStore(stateLoader.loadState());
 
 store.subscribe(() => {

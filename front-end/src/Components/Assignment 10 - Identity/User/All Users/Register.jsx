@@ -17,6 +17,7 @@ class Register extends Component {
     password: "",
     confirmPassword: "",
     error: "",
+    success: "",
     admin: false
   };
 
@@ -172,6 +173,10 @@ class Register extends Component {
       this.props.onRegistrationSubmit(user);
     }
 
+    if (this.props.isAuthenticated) {
+      this.setState({ success: "User was successfully signed in" });
+    }
+
     // Temporary setTimeout to make sure everything works properly.
     // Currently inactive due to me testing Registration.
     // setTimeout(this.setState({ redirect: true }), 100);
@@ -198,7 +203,7 @@ class Register extends Component {
       LastName: lastName.value,
       Age: age.value,
       Email: email.value,
-      Admin: this.state.admin,
+      IsAdmin: this.state.admin,
       Password: password.value,
       ComparePassword: confirmPassword.value
     };
@@ -208,6 +213,10 @@ class Register extends Component {
     if (this.state.error === "") {
       console.log("[handleAdminSubmit]", "Hello");
       this.props.onAdminRegistrationSubmit(user);
+    }
+
+    if (this.props.isAuthenticated) {
+      this.setState({ success: "User was successfully registered" });
     }
   };
 
@@ -261,7 +270,7 @@ class Register extends Component {
               </p>
             )}
 
-            {this.props.success === "" ? null : (
+            {this.state.success === "" ? null : (
               <p className="text-success font-weight-bold text-center">
                 {this.props.success}
               </p>
@@ -326,7 +335,7 @@ class Register extends Component {
               <label className="col-form-label">
                 Age
                 <input
-                  type="text"
+                  type="number"
                   name="age"
                   min="18"
                   max="110"
@@ -413,7 +422,8 @@ const mapStateToProps = state => {
   return {
     error: state.identity.error,
     success: state.identity.success,
-    roles: state.identity.roles
+    roles: state.identity.roles,
+    isAuthenticated: state.identity.isAuthenticated
   };
 };
 

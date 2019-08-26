@@ -5,8 +5,32 @@ import * as actionOptions from "./optionsActions";
 export const REGISTER = "REGISTER";
 export const SIGN_IN = "SIGN_IN";
 export const SIGN_OUT = "SIGN_OUT";
+export const UPDATE_USERLIST = "UPDATE_USERLIST";
+export const UPDATE_USER = "UPDATE_USER";
+export const DELETE_USER = "DELETE_USER";
 
 const apiUrl = "http://localhost:50691/api/identityApi/";
+
+export function DeleteUser(userId) {
+  return {
+    type: DELETE_USER,
+    userId
+  };
+}
+
+export function UpdateUser(user) {
+  return {
+    type: UPDATE_USER,
+    user
+  };
+}
+
+export function UpdateUserList(users) {
+  return {
+    type: UPDATE_USERLIST,
+    users
+  };
+}
 
 function Register(user) {
   return {

@@ -17,6 +17,8 @@ import Register from "../Assignment 10 - Identity/User/All Users/Register";
 import SignIn from "../Assignment 10 - Identity/User/All Users/SignIn";
 import Users from "../Assignment 10 - Identity/User/Admin Only/Users";
 import Details from "../Assignment 10 - Identity/User/All Users/Details";
+import Edit from "../Assignment 10 - Identity/User/All Users/Edit";
+import Delete from "../Assignment 10 - Identity/User/All Users/Delete";
 
 const Main = props => {
   // This is what I'd like to call organized chaos.
@@ -24,6 +26,7 @@ const Main = props => {
     <React.Fragment>
       <Switch>
         {/* ---------- Assignment 1 ---------- */}
+
         <Route exact path="/calculator" component={Calculator} />
 
         {/* ---------- Assignment 2 ---------- */}
@@ -33,11 +36,13 @@ const Main = props => {
         {/* ---------- Assignment 4 ---------- */}
 
         {/* ---------- Assignment 5 ---------- */}
+
         <Route exact path="/webpage" component={HTML} />
 
         {/* ---------- Assignment 6 ---------- */}
 
         {/* ---------- Assignment 7 ---------- */}
+
         <Route exact path="/guessing-game" component={GuessingGame} />
 
         {/* ---------- Assignment 8 ---------- */}
@@ -45,6 +50,7 @@ const Main = props => {
         {/* ---------- Assignment 9 ---------- */}
 
         {/* ---------- Assignment 10 ---------- */}
+
         <Route exact path="/signin" component={SignIn} />
         <Route exact path="/register" component={Register} />
         <Route
@@ -58,26 +64,30 @@ const Main = props => {
             )
           }
         />
+        <Redirect exact from="/profile/:id" to="/users/details/:id" />
         <Route exact path="/users/details/:id" component={Details} />
         <Route exact path="/profile/:id" component={Details} />
-
-        <Route exact path="/users/edit/:id" component={Details} />
+        <Route exact path="/users/edit/:id" component={Edit} />
         <Route exact path="/users/edit-password/:id" component={Details} />
-        <Route exact path="/users/delete/:id" component={Details} />
-
+        <Route exact path="/users/delete/:id" component={Delete} />
         <Route exact path="/identity" component={IdentityIndex} />
-        <Route exact path="/identity/person" component={Person} />
+        <Route
+          exact
+          path="/identity/person"
+          // Because if a user cannot access Person, he/she is not signed in.
+          render={() => (props.isAuthenticated ? <Person /> : <SignIn />)}
+        />
         <Route
           exact
           path="/identity/city"
-          component={() =>
+          render={() =>
             props.roles.includes("Administrator") ? <City /> : <IdentityIndex />
           }
         />
         <Route
           exact
           path="/identity/country"
-          component={() =>
+          render={() =>
             props.roles.includes("Administrator") ? (
               <Country />
             ) : (
@@ -85,10 +95,10 @@ const Main = props => {
             )
           }
         />
-
         {/* ---------- Assignment 11 ---------- */}
 
         {/* ---------- Globals ---------- */}
+
         <Route exact path="/" component={Home} />
         <Route component={NoMatch} />
       </Switch>

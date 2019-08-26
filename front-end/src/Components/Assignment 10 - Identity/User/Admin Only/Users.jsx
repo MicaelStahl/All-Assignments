@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect, withRouter } from "react-router-dom";
 
 import Title from "../../../UI/Title";
 import Loading from "../../../UI/Loading";
@@ -8,22 +8,41 @@ import * as actionUser from "../../../Actions/Assignment 10/actions/userActions"
 import * as actionAdmin from "../../../Actions/Assignment 10/actions/adminActions";
 
 class Users extends Component {
-  state = {};
+  state = { redirect: false };
 
   componentDidMount() {
     this.props.onSideLoad();
   }
 
+  handleRedirect = () => {
+    this.setState({ redirect: !this.state.redirect });
+  };
+
   render() {
+    if (this.state.redirect === true) {
+      return (
+        <Redirect
+          push
+          to={
+            this.props.history.goBack() === undefined
+              ? "/"
+              : this.props.history.goBack()
+          }
+        />
+      );
+    }
     if (!this.props.isLoading) {
       return (
         <React.Fragment>
           <Title Title="List of all users" />
           <button
-            onClick={() => this.props.history.goBack()}
-            className="btn btn-primary btn-sm mb-3">
+            onClick={this.handleRedirect}
+            className="btn btn-primary btn-sm mb-3 float-left">
             Return
           </button>
+          <Link className="float-right btn btn-primary btn-sm" to="/register">
+            Create new user
+          </Link>
           <table className="table table-active table-striped table-hover rounded">
             <caption>List of all users</caption>
             <thead>
@@ -92,7 +111,7 @@ class Users extends Component {
 
 const mapStateToProps = state => {
   return {
-    users: state.admin.users,
+    users: state.identity.users,
     isLoading: state.options.isLoading
   };
 };
@@ -111,4 +130,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Users);
+)(withRouter(Users));
