@@ -7,11 +7,24 @@ import Calculator from "../Assignment 1 - Calculator/Calculator";
 import HTML from "../Assignment 5 - Webpage/HTML";
 import GuessingGame from "../Assignment 7 - Guessing Game/GuessingGame";
 import IdentityIndex from "../Assignment 10 - Identity/IdentityIndex";
-import Person from "../Assignment 10 - Identity/Person/Person";
-import City from "../Assignment 10 - Identity/City/City";
-import NoMatch from "./NoMatch";
 
-import Country from "../Assignment 10 - Identity/Country/Country";
+import AllPeople from "../Assignment 10 - Identity/Person/AllPeople";
+import CreatePerson from "../Assignment 10 - Identity/Person/Create";
+import DetailsPerson from "../Assignment 10 - Identity/Person/Details";
+import EditPerson from "../Assignment 10 - Identity/Person/Edit";
+import DeletePerson from "../Assignment 10 - Identity/Person/Delete";
+
+import AllCities from "../Assignment 10 - Identity/City/AllCities";
+import CreateCity from "../Assignment 10 - Identity/City/Create";
+import DetailsCity from "../Assignment 10 - Identity/City/Details";
+import EditCity from "../Assignment 10 - Identity/City/Edit";
+import DeleteCity from "../Assignment 10 - Identity/City/Delete";
+
+import AllCountries from "../Assignment 10 - Identity/Country/AllCountries";
+import CreateCountry from "../Assignment 10 - Identity/Country/Create";
+import DetailsCountry from "../Assignment 10 - Identity/Country/Details";
+import EditCountry from "../Assignment 10 - Identity/Country/Edit";
+import DeleteCountry from "../Assignment 10 - Identity/Country/Delete";
 
 import Register from "../Assignment 10 - Identity/User/All Users/Register";
 import SignIn from "../Assignment 10 - Identity/User/All Users/SignIn";
@@ -20,6 +33,12 @@ import Details from "../Assignment 10 - Identity/User/All Users/Details";
 import Edit from "../Assignment 10 - Identity/User/All Users/Edit";
 import ChangePassword from "../Assignment 10 - Identity/User/All Users/Change-password";
 import Delete from "../Assignment 10 - Identity/User/All Users/Delete";
+
+import NoMatch from "./NoMatch";
+
+const countryUrl = "/identity/country";
+const personUrl = "/identity/person";
+const cityUrl = "identity/city";
 
 const Main = props => {
   // This is what I'd like to call organized chaos.
@@ -76,30 +95,147 @@ const Main = props => {
         />
         <Route exact path="/users/delete/:id" component={Delete} />
         <Route exact path="/identity" component={IdentityIndex} />
+
+        {/* ------------------------------ Person ------------------------------ */}
+
         <Route
           exact
-          path="/identity/person"
-          // Because if a user cannot access Person, he/she is not signed in.
-          render={() => (props.isAuthenticated ? <Person /> : <SignIn />)}
+          path={`${personUrl}/create-person`}
+          render={() => (props.isAuthenticated ? <CreatePerson /> : <SignIn />)}
         />
         <Route
           exact
-          path="/identity/city"
+          path={`${personUrl}/details/:id`}
           render={() =>
-            props.roles.includes("Administrator") ? <City /> : <IdentityIndex />
+            props.isAuthenticated ? <DetailsPerson /> : <SignIn />
           }
         />
         <Route
           exact
-          path="/identity/country"
+          path={`${personUrl}/edit/:id`}
+          render={() => (props.isAuthenticated ? <EditPerson /> : <SignIn />)}
+        />
+        <Route
+          exact
+          path={`${personUrl}/delete/:id`}
+          render={() => (props.isAuthenticated ? <DeletePerson /> : <SignIn />)}
+        />
+        <Route
+          exact
+          path={personUrl}
+          render={() => (props.isAuthenticated ? <AllPeople /> : <SignIn />)}
+        />
+
+        {/* ------------------------------ City ------------------------------ */}
+
+        <Route
+          exact
+          path={`${cityUrl}/create`}
           render={() =>
             props.roles.includes("Administrator") ? (
-              <Country />
+              <CreateCity />
             ) : (
               <IdentityIndex />
             )
           }
         />
+        <Route
+          exact
+          path={`${cityUrl}/details/:id`}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <DetailsCity />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+        <Route
+          exact
+          path={`${cityUrl}/edit/:id`}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <EditCity />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+        <Route exact path={`${cityUrl}/delete/:id`} component={Delete} />
+        <Route
+          exact
+          path={cityUrl}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <DeleteCity />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+
+        {/* ------------------------------ Country ------------------------------ */}
+
+        <Route
+          exact
+          path={`${countryUrl}/create-new-country`}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <CreateCountry />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+
+        <Route
+          exact
+          path={`${countryUrl}/details/:id`}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <DetailsCountry />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+
+        <Route
+          exact
+          path={`${countryUrl}/edit/:id`}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <EditCountry />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+
+        <Route
+          exact
+          path={`${countryUrl}/delete/:id`}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <DeleteCountry />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+
+        <Route
+          exact
+          path={countryUrl}
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <AllCountries />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+
         {/* ---------- Assignment 11 ---------- */}
 
         {/* ---------- Globals ---------- */}

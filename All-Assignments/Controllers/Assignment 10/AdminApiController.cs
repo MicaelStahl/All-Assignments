@@ -143,7 +143,7 @@ namespace All_Assignments.Controllers.Assignment_10
 
                 if (result.Failed == null)
                 {
-                    return Ok(result.Success);
+                    return Ok(result);
                 }
 
                 throw new Exception(result.Failed);

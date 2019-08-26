@@ -143,6 +143,22 @@ namespace All_Assignments.ViewModels
     }
 
     /// <summary>
+    /// A ViewModel that gets sent to the front-end after successful actions that updates the tokens.
+    /// </summary>
+    public class UserFrontUpdateVM
+    {
+        public string UserId { get; set; }
+
+        public string FrontEndToken { get; set; }
+
+        public string UserToken { get; set; }
+
+        public string Failed { get; set; }
+
+        public string Success { get; set; }
+    }
+
+    /// <summary>
     /// The main ViewModel for users to change password.
     /// </summary>
     public class ChangePassword10

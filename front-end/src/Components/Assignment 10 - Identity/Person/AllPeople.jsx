@@ -21,7 +21,7 @@ class AllPeople extends Component {
           {this.props.error}
           <Link
             onClick={() => this.props.onCreateLoad()}
-            to={this.props.match.url + "/create-person"}
+            to={"/identity/person/create-person"}
             className="btn btn-primary btn-sm mb-2">
             Create person
           </Link>
@@ -53,16 +53,14 @@ class AllPeople extends Component {
                     <Link
                       onClick={() => this.props.onEditLoad(person.person.id)}
                       className="btn btn-warning btn-sm"
-                      to={this.props.match.url + "/edit/" + person.person.id}>
+                      to={"/identity/person/edit/" + person.person.id}>
                       Edit
                     </Link>
 
                     <Link
                       onClick={() => this.props.onDetailsLoad(person.person.id)}
                       className="btn btn-primary btn-sm ml-1"
-                      to={
-                        this.props.match.url + "/details/" + person.person.id
-                      }>
+                      to={"/identity/person/details/" + person.person.id}>
                       Details
                     </Link>
 
@@ -72,9 +70,7 @@ class AllPeople extends Component {
                           this.props.onDeleteLoad(person.person.id)
                         }
                         className="btn btn-danger btn-sm ml-1"
-                        to={
-                          this.props.match.url + "/delete/" + person.person.id
-                        }>
+                        to={"/identity/person/delete/" + person.person.id}>
                         Delete
                       </Link>
                     ) : null}

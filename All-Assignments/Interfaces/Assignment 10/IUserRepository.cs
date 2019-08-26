@@ -32,7 +32,7 @@ namespace All_Assignments.Interfaces.Assignment_10
         #region Update
         Task<AppUser10> Edit(AppUser10 user);
 
-        Task<bool> ChangePassword(ChangePassword10 changePassword);
+        Task<UserFrontUpdateVM> ChangePassword(ChangePassword10 changePassword);
         #endregion
 
         // Delete

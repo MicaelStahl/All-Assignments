@@ -76,9 +76,9 @@ const Details = props => {
                     onClick={() =>
                       props.onAdminChoice(props.user.userId, props.users)
                     }
-                    to={"/users/edit-password/" + props.user.userId}
+                    to={"/users/change-password/" + props.user.userId}
                     className="btn btn-info btn-sm ml-1">
-                    Edit-password
+                    Change password
                   </Link>
                   <Link
                     onClick={() =>
@@ -103,9 +103,9 @@ const Details = props => {
                     onClick={() =>
                       props.onUserChoice(props.user.userId, props.users)
                     }
-                    to={"/users/edit-password/" + props.user.userId}
+                    to={"/users/change-password/" + props.user.userId}
                     className="btn btn-info btn-sm ml-1">
-                    Edit-password
+                    Change password
                   </Link>
                   <Link
                     onClick={() =>

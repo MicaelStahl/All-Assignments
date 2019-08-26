@@ -10,7 +10,8 @@ class ChangePassword extends Component {
     oldPassword: "",
     newPassword: "",
     comparePassword: "",
-    error: ""
+    error: "",
+    success: ""
   };
 
   validatePasswordInput = str => {
@@ -35,7 +36,7 @@ class ChangePassword extends Component {
   handleChange = event => {
     const { name, value } = event.target;
 
-    this.setState({ [name]: value });
+    this.setState({ [name]: value, error: "" });
   };
 
   handleValidateSubmit = changePassword => {
@@ -68,15 +69,19 @@ class ChangePassword extends Component {
 
     if (verification !== "Failed") {
       // ToDo
+      this.props.onUserFormSubmit(changePassword);
+
+      this.setState({ success: "Password was successfully changed." });
     }
   };
 
   handleAdminSubmit = event => {
     event.preventDefault();
 
-    const { oldPassword, newPassword, comparePassword } = event.target;
+    const { userId, oldPassword, newPassword, comparePassword } = event.target;
 
     const changePassword = {
+      UserId: userId.value,
       OldPassword: oldPassword.value,
       NewPassword: newPassword.value,
       ComparePassword: comparePassword.value
@@ -89,10 +94,13 @@ class ChangePassword extends Component {
     if (verification !== "Failed") {
       // ToDo
       this.props.onAdminFormSubmit(changePassword);
+
+      this.setState({ success: "Password was successfully changed." });
     }
   };
 
   render() {
+    // console.log(this.props.user);
     return (
       <React.Fragment>
         <Title Title="Change password" />
@@ -114,7 +122,14 @@ class ChangePassword extends Component {
                 ))}
               </ul>
             )}
+            {this.state.success === "" ? null : (
+              <p className="text-success font-weight-bold">
+                {this.state.success}
+              </p>
+            )}
             <hr />
+
+            <input type="hidden" value={this.props.user.userId} name="userId" />
 
             <div className="form-group">
               <label className="col-form-label">
@@ -178,6 +193,7 @@ class ChangePassword extends Component {
 
 const mapStateToProps = state => {
   return {
+    user: state.identity.user,
     isLoading: state.options.isLoading,
     roles: state.identity.roles
   };
@@ -187,7 +203,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onAdminFormSubmit: changePassword =>
       dispatch(actionAdmin.EditUserPasswordAsync(changePassword)),
-    onUserFormSubmit: changePassword => dispatch()
+    onUserFormSubmit: changePassword =>
+      dispatch(actionUser.UserEditPasswordAsync(changePassword))
   };
 };
 

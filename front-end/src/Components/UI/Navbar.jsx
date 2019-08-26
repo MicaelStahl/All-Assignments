@@ -167,7 +167,7 @@ class Navbar extends Component {
                         </NavLink>
                         <div className="dropdown-divider" />
                         <NavLink
-                          to="/identity/person"
+                          to="/identity/people"
                           className="btn btn-secondary dropdown-item">
                           Person
                         </NavLink>
@@ -176,13 +176,13 @@ class Navbar extends Component {
                             <React.Fragment>
                               <div className="dropdown-divider" />
                               <NavLink
-                                to="/identity/city"
+                                to="/identity/cities"
                                 className="btn btn-secondary dropdown-item">
                                 City
                               </NavLink>
                               <div className="dropdown-divider" />
                               <NavLink
-                                to="/identity/country"
+                                to="/identity/countries"
                                 className="btn btn-secondary dropdown-item">
                                 Country
                               </NavLink>

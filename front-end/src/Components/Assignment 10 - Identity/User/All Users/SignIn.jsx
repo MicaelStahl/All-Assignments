@@ -10,7 +10,7 @@ class LoginScreen extends Component {
     userName: "",
     password: "",
     error: "",
-    success: ""
+    errorMessage: this.props.error
   };
 
   validateUserNameInput = str => {
@@ -106,14 +106,6 @@ class LoginScreen extends Component {
     };
 
     this.props.onSigninSubmit(user10);
-
-    if (this.props.isAuthenticated) {
-      this.setState({ success: "User was successfully signed in" });
-    }
-
-    // Temporary setTimeout to make sure everything works.
-
-    // ToDo
   };
 
   render() {
@@ -125,11 +117,13 @@ class LoginScreen extends Component {
           <h3 className="text-center">Login</h3>
           <form className="form" onSubmit={this.handleSubmit}>
             {this.props.error === "" ? null : (
-              <p className="text-danger font-weight-bold">{this.props.error}</p>
+              <p id="errorText" className="text-danger font-weight-bold">
+                {this.props.error}
+              </p>
             )}
             {this.props.isAuthenticated ? (
               <p className="text-success font-weight-bold">
-                {this.props.success}
+                User was successfully signed in.
               </p>
             ) : null}
             {error === "" ? null : (
@@ -171,7 +165,7 @@ class LoginScreen extends Component {
                 value="Submit"
                 className="btn btn-primary btn-sm float-left"
               />
-              <p className="float-left ml-1">No account?</p>
+              <div className="float-left ml-1">No account?</div>
               <Link className="ml-3" to="/register">
                 <ins>Register</ins>
               </Link>
@@ -185,7 +179,7 @@ class LoginScreen extends Component {
 
 const mapStateToProps = state => {
   return {
-    error: state.identity.error,
+    error: state.options.errorMessage,
     isAuthenticated: state.identity.isAuthenticated
   };
 };

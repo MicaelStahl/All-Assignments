@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import Loading from "../../UI/Loading";
@@ -109,7 +109,7 @@ class Create extends Component {
         <React.Fragment>
           <Title Title="Create new city" />
           <button
-            onClick={() => this.props.history.push("/identity/city")}
+            onClick={() => this.props.history.goBack()}
             className="btn btn-primary btn-sm mb-3">
             Return
           </button>
@@ -189,4 +189,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Create);
+)(withRouter(Create));

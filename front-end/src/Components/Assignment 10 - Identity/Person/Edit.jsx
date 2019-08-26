@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/personActions";
@@ -103,7 +103,7 @@ class Edit extends Component {
 
           <button
             className="btn btn-primary btn-sm mb-2"
-            onClick={() => this.props.history.push("/identity/person")}>
+            onClick={() => this.props.history.goBack()}>
             Return
           </button>
 
@@ -274,4 +274,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Edit);
+)(withRouter(Edit));

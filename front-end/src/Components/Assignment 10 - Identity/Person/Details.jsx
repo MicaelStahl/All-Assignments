@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import Loading from "../../UI/Loading";
@@ -28,7 +28,7 @@ class Details extends Component {
 
           <button
             className="btn btn-primary btn-sm mb-2"
-            onClick={() => this.props.history.push("/identity/person")}>
+            onClick={() => this.props.history.goBack()}>
             Return
           </button>
 
@@ -46,9 +46,7 @@ class Details extends Component {
                 <th className="d-table-cell">Gender</th>
                 <th className="d-table-cell">Phonenumber</th>
                 <th className="d-table-cell">City</th>
-                {this.props.roles.includes("Administrator") ? (
-                  <th className="d-table-cell">Options</th>
-                ) : null}
+                <th className="d-table-cell">Options</th>
               </tr>
             </thead>
             <tbody>
@@ -60,25 +58,21 @@ class Details extends Component {
                 <td className="d-table-cell">{person.person.gender}</td>
                 <td className="d-table-cell">{person.person.phoneNumber}</td>
                 <td className="d-table-cell">{person.cityName}</td>
-                {this.props.roles.includes("Administrator") ? (
-                  <td className="d-table-cell">
-                    <React.Fragment>
-                      <Link
-                        className="btn btn-warning btn-sm"
-                        to={"/identity/person/edit/" + person.person.id}>
-                        Edit
-                      </Link>
-                      <Link
-                        onClick={() =>
-                          this.props.onDeleteLoad(person.person.id)
-                        }
-                        className="btn btn-danger btn-sm ml-1"
-                        to={"/identity/person/delete/" + person.person.id}>
-                        Delete
-                      </Link>
-                    </React.Fragment>
-                  </td>
-                ) : null}
+                <td className="d-table-cell">
+                  <Link
+                    className="btn btn-warning btn-sm"
+                    to={"/identity/person/edit/" + person.person.id}>
+                    Edit
+                  </Link>
+                  {this.props.roles.includes("Administrator") ? (
+                    <Link
+                      onClick={() => this.props.onDeleteLoad(person.person.id)}
+                      className="btn btn-danger btn-sm ml-1"
+                      to={"/identity/person/delete/" + person.person.id}>
+                      Delete
+                    </Link>
+                  ) : null}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -107,4 +101,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Details);
+)(withRouter(Details));

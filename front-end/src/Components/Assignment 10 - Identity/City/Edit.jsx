@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 
 import Loading from "../../UI/Loading";
 import Title from "../../UI/Title";
@@ -95,7 +95,7 @@ class Edit extends Component {
           <Title Title={"Editing " + city.city.name} />
           <button
             className="btn btn-primary btn-sm mb-3"
-            onClick={() => this.props.history.push("/identity/city")}>
+            onClick={() => this.props.history.goBack()}>
             Return
           </button>
           {this.state.error === "" ? null : (
@@ -183,4 +183,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Edit);
+)(withRouter(Edit));

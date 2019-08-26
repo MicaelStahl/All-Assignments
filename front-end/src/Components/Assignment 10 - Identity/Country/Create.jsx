@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 
 import Title from "../../UI/Title";
 import * as actionTypes from "../../Actions/Assignment 10/actions/countryActions";
@@ -89,7 +89,7 @@ class Create extends Component {
       <React.Fragment>
         <Title Title="Create new country" />
         <button
-          onClick={() => this.props.history.push("/identity/country")}
+          onClick={() => this.props.history.goBack()}
           className="btn btn-primary btn-sm mb-3">
           Return
         </button>
@@ -158,4 +158,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   null,
   mapDispatchToProps
-)(Create);
+)(withRouter(Create));

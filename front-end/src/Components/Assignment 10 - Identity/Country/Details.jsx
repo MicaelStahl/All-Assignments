@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, withRouter } from "react-router-dom";
 
 import * as actionTypes from "../../Actions/Assignment 10/actions/countryActions";
 import Title from "../../UI/Title";
@@ -31,7 +31,7 @@ class Details extends Component {
         <React.Fragment>
           <Title Title={"Details of " + this.props.country.country.name} />
           <button
-            onClick={() => this.props.history.push("/identity/country")}
+            onClick={() => this.props.history.goBack()}
             className="btn btn-primary btn-sm mb-3 float-left">
             Return
           </button>
@@ -144,4 +144,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Details);
+)(withRouter(Details));

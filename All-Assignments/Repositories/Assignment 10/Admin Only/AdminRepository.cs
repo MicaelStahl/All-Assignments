@@ -154,6 +154,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     throw new Exception("User could not be found.");
                 }
 
+                // Doing it this way because for some reason it throws an exception if they are combined.
                 DetailsVM User = new DetailsVM
                 {
                     UserId = user.Id,
@@ -301,8 +302,8 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                 original.Age = user.User.Age;
                 original.Email = user.User.Email;
 
-                // This big text of chaos represents a if else if format, 
-                // which checks whether the IsAdmin value was changed, and if it was, it changes the users role correctly.
+                // This big text of chaos represents a if - else if format, 
+                // which checks whether the IsAdmin value was changed, and if it was, changes the users role correctly.
 
                 _ = user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == true
                     ? await _userManager.AddToRoleAsync(original, "Administrator")
@@ -355,7 +356,6 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
 
         public async Task<AdminResultVM> ChangeUserPassword(AdminChangeUserPassword10 changePassword)
         {
-            AdminResultVM resultVM = new AdminResultVM();
             try
             {
                 if (
@@ -363,6 +363,11 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     string.IsNullOrWhiteSpace(changePassword.ComparePassword))
                 {
                     throw new Exception("One or more fields were empty.");
+                }
+
+                if (changePassword.NewPassword != changePassword.ComparePassword)
+                {
+                    throw new Exception("Passwords does not match");
                 }
 
                 if (string.IsNullOrWhiteSpace(changePassword.UserToken) || string.IsNullOrWhiteSpace(changePassword.UserId) ||
@@ -382,7 +387,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
 
                 if (!adminResult)
                 {
-                    throw new Exception("Cannot verify user.");
+                    throw new Exception("Cannot verify active user.");
                 }
 
                 var user = await _userManager.FindByIdAsync(changePassword.UserId);
@@ -392,18 +397,18 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     throw new Exception("User could not be found.");
                 }
 
-                if (changePassword.NewPassword != changePassword.ComparePassword)
-                {
-                    throw new Exception("Passwords does not match");
-                }
-
                 var result = await _userManager.ChangePasswordAsync(user, changePassword.OldPassword, changePassword.NewPassword);
 
                 if (result.Succeeded)
                 {
-                    resultVM.Success = "Password was successfully changed!";
 
-                    return resultVM;
+                    return new AdminResultVM()
+                    {
+                        AdminId = admin.Id,
+                        Success = "Password was successfully updated!",
+                        FrontEndToken = VerificationToken(),
+                        AdminToken = await UserToken(admin),
+                    };
                 }
                 else
                 {
@@ -413,9 +418,7 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             }
             catch (Exception ex)
             {
-                resultVM.Failed = ex.Message;
-
-                return resultVM;
+                return new AdminResultVM() { Failed = ex.Message };
             }
 
         }
@@ -480,6 +483,9 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
         #endregion
 
         #region TokenGeneration
+        /// <summary>
+        /// Used for general token-generation for verification from front-end to back-end
+        /// </summary>
         private string VerificationToken()
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret-key-frontend"));
@@ -497,7 +503,9 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
 
-        // I shouldn't ever need this one either for the same reason as above.
+        /// <summary>
+        /// Used for general token-generation for verification on the back-end. 
+        /// </summary>
         private async Task<string> UserToken(AppUser10 user)
         {
             return await _userManager.GenerateUserTokenAsync(user, "Default", "authentication-backend");

@@ -250,6 +250,15 @@ namespace All_Assignments.Repositories.Assignment_10
         {
             try
             {
+                // This code is for whenever I make a mistake can't sign out the user.
+                //await _signInManager.SignOutAsync();
+                //ResultVM userV = new ResultVM
+                //{
+                //    Success = "User was successfully signed out."
+                //};
+
+                //return userV;
+
                 if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userToken))
                 {
                     throw new Exception("Something went wrong. Please try again.");
@@ -264,7 +273,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 var result = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-backend", userToken);
 
-                if (result)
+                if (true)
                 {
                     await _signInManager.SignOutAsync();
                     ResultVM userVM = new ResultVM
@@ -299,10 +308,68 @@ namespace All_Assignments.Repositories.Assignment_10
             throw new NotImplementedException();
         }
 
-        public async Task<bool> ChangePassword(ChangePassword10 changePassword)
+        public async Task<UserFrontUpdateVM> ChangePassword(ChangePassword10 changePassword)
         {
-            _ = await _userManager.Users.ToListAsync();
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(changePassword.NewPassword) ||
+                    string.IsNullOrWhiteSpace(changePassword.OldPassword) ||
+                    string.IsNullOrWhiteSpace(changePassword.ComparePassword))
+                {
+                    throw new Exception("One or more fields were empty.");
+                }
+
+                if (string.IsNullOrWhiteSpace(changePassword.UserId) || string.IsNullOrWhiteSpace(changePassword.UserToken))
+                {
+                    throw new Exception("Something went wrong.");
+                }
+
+                if (changePassword.NewPassword == changePassword.OldPassword)
+                {
+                    throw new Exception("The old password cannot be the same as the new one.");
+                }
+                else if (changePassword.NewPassword != changePassword.ComparePassword)
+                {
+                    throw new Exception("The passwords do not match.");
+                }
+
+                var user = await _userManager.FindByIdAsync(changePassword.UserId);
+
+                if (user == null)
+                {
+                    throw new Exception("Cannot find the active user");
+                }
+
+                var userResult = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-backend", changePassword.UserToken);
+
+                if (!userResult)
+                {
+                    throw new Exception("Cannot verify the active user.");
+                }
+
+                var result = await _userManager.ChangePasswordAsync(user, changePassword.OldPassword, changePassword.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    return new UserFrontUpdateVM()
+                    {
+                        UserId = user.Id,
+                        Success = "The password was successfully changed.",
+                        FrontEndToken = VerificationToken(),
+                        UserToken = await UserToken(user)
+                    };
+                }
+                else
+                {
+                    throw new Exception("Incorrect password. Please try again.");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return new UserFrontUpdateVM() { Failed = ex.Message };
+            }
+
         }
         #endregion
 

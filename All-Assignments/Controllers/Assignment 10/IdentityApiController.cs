@@ -337,43 +337,34 @@ namespace All_Assignments.Controllers
             }
         }
 
-        [HttpPatch("edit-password")]
-        [ValidateAntiForgeryToken]
+        [HttpPatch("change-password")]
         public async Task<IActionResult> EditPassword(ChangePassword10 change)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception(ModelState.ToString());
+                }
+
+                var result = await _service.ChangePassword(change);
+
+                if (result.Failed == "")
+                {
+                    return Ok(result);
+                }
+                else if (result.Failed.Contains("found"))
+                {
+                    return NotFound(result.Failed);
+                } 
+                else
+                {
+                    throw new Exception(result.Failed);
+                }
             }
-
-            var user = await _userManager.FindByIdAsync(change.UserId);
-
-            if (change.OldPassword == change.NewPassword)
+            catch (Exception ex)
             {
-                return Content("Your password cannot be the same as your old password. Please try something else.");
-            }
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var verify = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", change.UserToken);
-
-            if (verify == false)
-            {
-                return Content("Something went wrong.");
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, change.OldPassword, change.NewPassword);
-
-            if (result.Succeeded)
-            {
-                return Content("Password was successfully changed.");
-            }
-            else
-            {
-                return Content("Something went wrong when updating password. Please try again.");
+                return BadRequest(ex.Message);
             }
         }
 

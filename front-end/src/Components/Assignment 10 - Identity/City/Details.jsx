@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import * as actionTypes from "../../Actions/Assignment 10/actions/cityActions";
 import Loading from "../../UI/Loading";
@@ -13,7 +13,7 @@ const Details = props => {
         <Title Title={"Details of " + props.city.city.name} />
 
         <button
-          onClick={() => props.history.push("/identity/city")}
+          onClick={() => props.history.goBack()}
           className="btn btn-primary btn-sm mb-3">
           Return
         </button>
@@ -119,4 +119,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Details);
+)(withRouter(Details));

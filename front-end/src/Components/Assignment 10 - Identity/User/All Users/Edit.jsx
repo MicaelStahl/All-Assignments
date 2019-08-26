@@ -15,7 +15,7 @@ class Edit extends Component {
     lastName: null,
     age: null,
     email: null,
-    isAdmin: "",
+    isAdmin: this.props.roles.includes("Administrator") ? true : false,
     error: "",
     redirect: false
   };
@@ -328,7 +328,7 @@ class Edit extends Component {
                     name="isAdmin"
                     onChange={this.handleChange}
                     checked={
-                      this.state.isAdmin === "" ? isAdmin : this.state.isAdmin
+                      this.state.isAdmin === null ? isAdmin : this.state.isAdmin
                     }
                     className="form-inline"
                   />
@@ -337,9 +337,14 @@ class Edit extends Component {
               <div className="form-group">
                 <input
                   type="submit"
-                  value="Register"
+                  value="Submit"
                   className="btn btn-primary btn-sm "
                 />
+                <button
+                  className="btn btn-primary btn-sm float-right"
+                  onClick={() => this.props.history.goBack()}>
+                  Return
+                </button>
               </div>
             </form>
           </div>

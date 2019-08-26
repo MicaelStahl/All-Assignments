@@ -355,11 +355,12 @@ export function EditUserPasswordAsync(user) {
     const changePassword = {
       AdminId: admin.AdminId,
       AdminToken: admin.AdminToken,
-      UserId: user.userId,
-      UserToken: null, // Might need to change this value later.
-      NewPassword: user.newPassword,
-      OldPassword: user.oldPassword,
-      ComparePassword: user.comparePassword
+      UserId: user.UserId,
+      UserToken:
+        (admin.AdminId === user.UserId) === true ? admin.AdminToken : null,
+      NewPassword: user.NewPassword,
+      OldPassword: user.OldPassword,
+      ComparePassword: user.ComparePassword
     };
 
     axios
@@ -371,7 +372,12 @@ export function EditUserPasswordAsync(user) {
       })
       .then(response => {
         if (response.status === 200) {
-          dispatch(actionIdentity.UpdateUser(response.data));
+          const newAdmin = {
+            adminId: response.data.adminId,
+            adminToken: response.data.adminToken,
+            frontEndToken: response.data.frontEndToken
+          };
+          actionOptions.SaveAdminToLocal(newAdmin);
         } else {
           dispatch(actionOptions.ErrorMessageAsync(response.data));
         }
