@@ -56,7 +56,7 @@ export function AdminCreateUserAsync(user10) {
       Password: user10.Password,
       ComparePassword: user10.ComparePassword,
       UserToken: user10.UserToken, // Will always be null.
-      Admin: user10.Admin
+      IsAdmin: user10.IsAdmin
     };
     console.log("[handleAdminSubmit]", user);
 
@@ -330,7 +330,7 @@ export function AdminEditUserAsync(user, users = []) {
 //   };
 // }
 
-export function EditUserPasswordAsync(user, users = []) {
+export function EditUserPasswordAsync(user) {
   return dispatch => {
     // ToDo
     axios.interceptors.request.use(
@@ -348,6 +348,8 @@ export function EditUserPasswordAsync(user, users = []) {
         return Promise.reject(error);
       }
     );
+    dispatch(actionOptions.ItemsAreLoadingAsync(true));
+
     const admin = actionOptions.GetAdmin();
 
     const changePassword = {
@@ -360,6 +362,25 @@ export function EditUserPasswordAsync(user, users = []) {
       ComparePassword: user.comparePassword
     };
 
+    axios
+      .patch(adminUrl + "change-password", changePassword, {
+        cancelToken: actionOptions.CreateCancelToken(),
+        validateStatus: function(status) {
+          return status <= 500;
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(actionIdentity.UpdateUser(response.data));
+        } else {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
+        }
+        dispatch(actionOptions.ItemsAreLoadingAsync(false));
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(actionOptions.ErrorMessageAsync(err));
+      });
     // ToDo
   };
 }
@@ -368,12 +389,12 @@ export function EditUserPasswordAsync(user, users = []) {
 
 //#region DeleteUser
 
-function AdminDeleteUser(userId) {
-  return {
-    type: ADMIN_DELETE_USER,
-    userId
-  };
-}
+// function AdminDeleteUser(userId) {
+//   return {
+//     type: ADMIN_DELETE_USER,
+//     userId
+//   };
+// }
 
 export function AdminDeleteUserAsync(userId) {
   return dispatch => {

@@ -61,7 +61,8 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     LastName = user.LastName,
                     Age = user.Age,
                     Email = user.Email,
-                    SecurityStamp = user.SecurityStamp
+                    SecurityStamp = user.SecurityStamp,
+                    IsAdmin = user.IsAdmin
                 };
 
                 var result = await _userManager.CreateAsync(appUser, user.Password);
@@ -95,7 +96,8 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                             LastName = newUser.LastName,
                             Age = newUser.Age,
                             Email = newUser.Email,
-                            Roles = new List<string>(roleNames)
+                            Roles = new List<string>(roleNames),
+                            IsAdmin = newUser.IsAdmin
                         }
                     };
 
@@ -425,7 +427,9 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
             AdminResultVM resultVM = new AdminResultVM();
             try
             {
-                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || string.IsNullOrWhiteSpace(verificationVM.UserId) || string.IsNullOrWhiteSpace(verificationVM.AdminToken))
+                if (string.IsNullOrWhiteSpace(verificationVM.AdminId) || 
+                    string.IsNullOrWhiteSpace(verificationVM.UserId) || 
+                    string.IsNullOrWhiteSpace(verificationVM.AdminToken))
                 {
                     throw new Exception("Something went wrong.");
                 }

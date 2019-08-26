@@ -4,7 +4,6 @@ import { Link, Redirect, withRouter } from "react-router-dom";
 
 import Title from "../../../UI/Title";
 import Loading from "../../../UI/Loading";
-import * as actionUser from "../../../Actions/Assignment 10/actions/userActions";
 import * as actionAdmin from "../../../Actions/Assignment 10/actions/adminActions";
 
 class Users extends Component {
@@ -70,27 +69,21 @@ class Users extends Component {
                       Edit
                     </Link>
                     <Link
-                      onClick={() =>
-                        this.props.onAdminDetailsLoad(
-                          user.userId,
-                          this.props.users
-                        )
-                      }
-                      to={"/users/details/" + user.userId}
-                      className="btn btn-primary btn-sm ml-1">
-                      Details
-                    </Link>
-                    <Link
                       to={"/users/change-password/" + user.userId}
                       className="btn btn-primary btn-sm ml-1">
                       Change password
                     </Link>
                     <Link
                       onClick={() =>
-                        this.props.onAdminDeleteLoad(
-                          user.userId,
-                          this.props.users
-                        )
+                        this.props.onOptionsClick(user.userId, this.props.users)
+                      }
+                      to={"/users/details/" + user.userId}
+                      className="btn btn-primary btn-sm ml-1">
+                      Details
+                    </Link>
+                    <Link
+                      onClick={() =>
+                        this.props.onOptionsClick(user.userId, this.props.users)
                       }
                       to={"/users/delete/" + user.userId}
                       className="btn btn-danger btn-sm ml-1">
@@ -119,11 +112,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSideLoad: () => dispatch(actionAdmin.AdminGetUsersAsync()),
-    onAdminDetailsLoad: (userId, users) =>
-      dispatch(actionUser.UserDetailsAsync(userId, users)),
-    // onAdminEditLoad: (userId, users) => dispatch(),
-    onAdminDeleteLoad: (userId, users) =>
-      dispatch(actionAdmin.AdminDeleteUserAsync(userId, users))
+    onOptionsClick: (userId, users) =>
+      dispatch(actionAdmin.AdminGetUserAsync(userId, users))
   };
 };
 

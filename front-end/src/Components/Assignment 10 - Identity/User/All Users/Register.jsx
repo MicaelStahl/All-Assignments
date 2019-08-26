@@ -58,10 +58,15 @@ class Register extends Component {
     // At least 8 characters long.
     // And less or exactly 20 characters long.
     // No spaces.
-    return str.match(
-      "^(?=.*?[A-Ö])(?=.*?[a-ö])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
-    );
+
+    return str.match("(.*[a-z].*)(.*[A-Z].*)(.*d.*).{8,20}$");
+    // return str.match(
+    //   "^(?=.*?[A-Ö])(?=.*?[a-ö])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
+    // );
   };
+  //  (.*[a-z].*)       // For lower cases
+  //(.*[A-Z].*)       // For upper cases
+  //(.*\d.*)          // For digits
 
   handleChange = event => {
     // ToDo
@@ -114,33 +119,29 @@ class Register extends Component {
 
   handleValidateSubmit = user => {
     console.log("handleValidateSubmit", user);
-    if (this.validateUserNameInput(user.UserName) === undefined) {
+    if (this.validateUserNameInput(user.UserName) === null) {
       this.setState({ error: "Invalid username" });
-      return;
-    } else if (
-      this.validateFirstAndLastNameInput(user.FirstName) === undefined
-    ) {
+      return "Failed";
+    } else if (this.validateFirstAndLastNameInput(user.FirstName) === null) {
       this.setState({ error: "Invalid firstname" });
-      return;
-    } else if (
-      this.validateFirstAndLastNameInput(user.LastName) === undefined
-    ) {
+      return "Failed";
+    } else if (this.validateFirstAndLastNameInput(user.LastName) === null) {
       this.setState({ error: "Invalid lastname" });
-      return;
-    } else if (this.validatePasswordInput(user.Password) === undefined) {
+      return "Failed";
+    } else if (this.validatePasswordInput(user.Password) === null) {
       this.setState({ error: "Invalid password" });
-      return;
+      return "Failed";
     } else if (user.Password !== user.ComparePassword) {
       this.setState({ error: "The passwords does not match." });
-      return;
-    } else if (this.validateEmailInput(user.Email) === undefined) {
+      return "Failed";
+    } else if (this.validateEmailInput(user.Email) === null) {
       this.setState({ error: "Invalid email" });
-      return;
+      return "Failed";
     } else if (Number(user.Age) > 110 || Number(user.Age) < 18) {
       this.setState({
         error: "Invalid age given. Must be between 18 to 110 years old."
       });
-      return;
+      return "Failed";
     }
   };
 
@@ -167,9 +168,9 @@ class Register extends Component {
       Password: password.value,
       ComparePassword: confirmPassword.value
     };
-    this.handleValidateSubmit(user);
+    const verification = this.handleValidateSubmit(user);
 
-    if (this.state.error === "") {
+    if (verification !== "Failed") {
       this.props.onRegistrationSubmit(user);
     }
 
@@ -208,10 +209,10 @@ class Register extends Component {
       ComparePassword: confirmPassword.value
     };
 
-    this.handleValidateSubmit(user);
+    const verification = this.handleValidateSubmit(user);
 
-    if (this.state.error === "") {
-      console.log("[handleAdminSubmit]", "Hello");
+    if (verification !== "Failed") {
+      console.log("[handleAdminSubmit]", user);
       this.props.onAdminRegistrationSubmit(user);
     }
 

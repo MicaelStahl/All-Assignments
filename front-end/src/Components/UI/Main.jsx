@@ -18,6 +18,7 @@ import SignIn from "../Assignment 10 - Identity/User/All Users/SignIn";
 import Users from "../Assignment 10 - Identity/User/Admin Only/Users";
 import Details from "../Assignment 10 - Identity/User/All Users/Details";
 import Edit from "../Assignment 10 - Identity/User/All Users/Edit";
+import ChangePassword from "../Assignment 10 - Identity/User/All Users/Change-password";
 import Delete from "../Assignment 10 - Identity/User/All Users/Delete";
 
 const Main = props => {
@@ -68,7 +69,11 @@ const Main = props => {
         <Route exact path="/users/details/:id" component={Details} />
         <Route exact path="/profile/:id" component={Details} />
         <Route exact path="/users/edit/:id" component={Edit} />
-        <Route exact path="/users/edit-password/:id" component={Details} />
+        <Route
+          exact
+          path="/users/change-password/:id"
+          component={ChangePassword}
+        />
         <Route exact path="/users/delete/:id" component={Delete} />
         <Route exact path="/identity" component={IdentityIndex} />
         <Route

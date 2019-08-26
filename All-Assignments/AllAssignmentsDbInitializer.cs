@@ -43,6 +43,7 @@ namespace All_Assignments
                     Age = 30,
                     Email = "Administrator@Admin.com",
                     PhoneNumber = "123456789",
+                    IsAdmin = true
                 };
                 //user.UserToken = userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication").Result;
 
@@ -67,6 +68,7 @@ namespace All_Assignments
                     Email = "Normal@User.com",
                     Age = 18,
                     PhoneNumber = "987654321",
+                    IsAdmin = false
                 };
 
                 //user.UserToken = userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication").Result;

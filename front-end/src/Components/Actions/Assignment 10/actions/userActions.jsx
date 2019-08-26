@@ -148,6 +148,59 @@ export function UserEditAsync(user, users = []) {
 
 //#endregion
 
+//#region UserEditPassword
+
+export function UserEditPasswordAsync(user) {
+  return dispatch => {
+    axios.interceptors.request.use(
+      config => {
+        const token = actionOptions.BackEndToken();
+
+        if (token !== undefined || token !== null) {
+          config.headers["Authentication"] = `Bearer ${token}`;
+          config.headers["Access-Control-Allow-Origin"] = "*";
+          config.headers["withCredentials"] = true;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    const storedUser = actionOptions.GetUser();
+
+    const changePassword = {
+      UserId: storedUser.UserId,
+      UserToken: storedUser.UserToken,
+      OldPassword: user.OldPassword,
+      NewPassword: user.NewPassword,
+      ComparePassword: user.ComparePassword
+    };
+
+    axios
+      .patch(userUrl + "change-password", changePassword, {
+        cancelToken: actionOptions.CreateCancelToken(),
+        validateStatus: function(status) {
+          return status <= 500;
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          dispatch(actionIdentity.UpdateUser(response.data));
+        } else {
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch(actionOptions.ErrorMessageAsync(err));
+      });
+  };
+}
+
+//#endregion
+
 //#region UserDelete
 
 function UserDelete(userId) {
@@ -157,7 +210,7 @@ function UserDelete(userId) {
   };
 }
 
-export function UserDeleteAsync(userId, users) {
+export function UserDeleteAsync(userId) {
   return dispatch => {
     axios.interceptors.request.use(
       config => {

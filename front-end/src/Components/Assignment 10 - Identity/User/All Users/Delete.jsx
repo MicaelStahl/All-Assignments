@@ -7,6 +7,17 @@ import * as actionUser from "../../../Actions/Assignment 10/actions/userActions"
 import Loading from "../../../UI/Loading";
 
 const Delete = props => {
+  const onDeleteClick = userId => {
+    if (props.roles.includes("Administrator")) {
+      props.onAdminDeleteClick(userId);
+
+      props.history.push("/users");
+    } else {
+      props.onUserDeleteClick(userId);
+
+      props.history.push("/");
+    }
+  };
   if (!props.isLoading) {
     return (
       <React.Fragment>
@@ -58,12 +69,12 @@ const Delete = props => {
           ) : null}
           <div className="form-group">
             <button
-              onClick={() => props.onAdminDeleteClick(props.user.userId)}
+              onClick={() => onDeleteClick(props.user.userId)}
               className="btn btn-danger btn-sm ">
               Delete
             </button>
             <button
-              onClick={() => props.onUserDeleteClick(props.user.userId)}
+              onClick={() => onDeleteClick(props.user.userId)}
               className="btn btn-primary btn-sm float-right">
               Return
             </button>
