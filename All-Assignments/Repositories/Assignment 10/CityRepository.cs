@@ -125,7 +125,7 @@ namespace All_Assignments.Repositories.Assignment_10
 
             CityEditVM cityVM = new CityEditVM
             {
-                Countries = await _db.Countries?.ToListAsync() ?? null,
+                Countries = await _db.Countries?.ToListAsync(),
                 CountryName = city.Country?.Name ?? "Stateless",
                 CountryId = city.Country?.Id ?? null
             };

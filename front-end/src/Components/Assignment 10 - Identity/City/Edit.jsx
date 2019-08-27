@@ -75,14 +75,16 @@ class Edit extends Component {
     if (this.state.redirect) {
       return <Redirect push to="/identity/cities" />;
     }
+
     if (!this.props.isLoading) {
-      const { city } = this.props;
+      console.log(this.props.isLoading);
+      const { city, countries } = this.props;
       const userChoice =
         city.countryId !== null ? (
           <option value={city.countryId}>{city.countryName}</option>
         ) : null;
 
-      const options = city.countries.map(country =>
+      const options = countries.map(country =>
         country.name === city.countryName ? null : (
           <option key={country.id} value={country.id}>
             {country.name}
@@ -127,7 +129,7 @@ class Edit extends Component {
                 maxLength="9"
                 value={
                   this.state.population === null
-                    ? city.city.population.replace(" ", "")
+                    ? city.city.population.replace(/\s/g, "")
                     : this.state.population
                 }
                 onChange={this.handleChange}
@@ -147,7 +149,7 @@ class Edit extends Component {
                 onChange={this.handleCountryChange}>
                 {userChoice}
                 <option value={null}>None</option>
-                {options}
+                {options === undefined ? null : options}
               </select>
             </div>
             <div className="form-group">
@@ -169,7 +171,7 @@ class Edit extends Component {
 const mapStateToProps = state => {
   return {
     city: state.city.oneCity,
-    countries: state.city.cities,
+    countries: state.city.countries,
     isLoading: state.options.isLoading
   };
 };

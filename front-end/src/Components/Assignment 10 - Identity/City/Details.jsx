@@ -58,7 +58,8 @@ const Details = props => {
         <hr />
 
         <div className="active container text-center col-8">
-          {props.city.people.length > 0 ? (
+          {console.log(props.city.people)}
+          {props.city.people !== undefined && props.city.people.length > 0 ? (
             <React.Fragment>
               <p>
                 <ins>Current citizens living in {props.city.city.name}</ins>
@@ -111,7 +112,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onEditLoad: id => dispatch(actionTypes.EditCityPrepAsync(id)),
+    onEditLoad: id => dispatch(actionTypes.FindCityForEditAsync(id)),
     onDeleteLoad: id => dispatch(actionTypes.FindCityAsync(id))
   };
 };

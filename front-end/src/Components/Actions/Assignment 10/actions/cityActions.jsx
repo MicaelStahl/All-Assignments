@@ -36,8 +36,8 @@ export function AllCitiesAsync() {
         .then(response => {
           if (response.status === 200) {
             dispatch(AllCities(response.data, response.status));
-            dispatch(actionOptions.ItemsAreLoadingAsync(false));
           }
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         })
         .catch(err => {
           console.error(err);
@@ -55,7 +55,6 @@ function GetCountries(countries) {
 
 export function GetCountriesAsync() {
   return dispatch => {
-    // dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get("http://localhost:50691/api/countryApi/simple", {
         "Content-Type": "application/json",
@@ -65,7 +64,6 @@ export function GetCountriesAsync() {
         if (response.status === 200) {
           dispatch(GetCountries(response.data));
         }
-        // dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
@@ -107,53 +105,72 @@ function FindCity(city) {
   };
 }
 
-export function FindCityAsync(id) {
+export function FindCityAsync(id, cities = []) {
   return dispatch => {
-    dispatch(actionOptions.ItemsAreLoadingAsync(true));
-    axios
-      .get(apiUrl + id, {
-        "Content-Type": "application/json",
-        cancelToken: actionOptions.CreateCancelToken()
-      })
-      .then(response => {
-        if (response.status === 200) {
-          dispatch(FindCity(response.data));
-        }
-        dispatch(actionOptions.ItemsAreLoadingAsync(false));
-      })
-      .catch(err => {
-        console.error(err);
-        // ToDo
-      });
+    const city = cities.find(x => x.city.id === id);
+    if (city !== undefined) {
+      dispatch(FindCity(city));
+    } else {
+      dispatch(actionOptions.ItemsAreLoadingAsync(true));
+      axios
+        .get(apiUrl + id, {
+          "Content-Type": "application/json",
+          cancelToken: actionOptions.CreateCancelToken()
+        })
+        .then(response => {
+          if (response.status === 200) {
+            dispatch(FindCity(response.data));
+          }
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
+        })
+        .catch(err => {
+          console.error(err);
+          // ToDo
+        });
+    }
   };
 }
 
-export function FindCityNoApiAsync(city) {
-  return dispatch => {
-    dispatch(actionOptions.ItemsAreLoadingAsync(true));
-    dispatch(FindCity(city));
-    dispatch(actionOptions.ItemsAreLoadingAsync(false));
-  };
-}
+// export function FindCityNoApiAsync(city) {
+//   return dispatch => {
+//     dispatch(actionOptions.ItemsAreLoadingAsync(true));
+//     dispatch(FindCity(city));
+//     dispatch(actionOptions.ItemsAreLoadingAsync(false));
+//   };
+// }
 
-export function FindCityForEditAsync(id) {
+export function FindCityForEditAsync(id, cities = []) {
   return dispatch => {
-    dispatch(actionOptions.ItemsAreLoadingAsync(true));
-    axios
-      .get(apiUrl + "city/" + id, {
-        "Content-Type": "application/json",
-        cancelToken: actionOptions.CreateCancelToken()
-      })
-      .then(response => {
-        if (response.status === 200) {
-          dispatch(FindCity(response.data));
-        }
-        dispatch(actionOptions.ItemsAreLoadingAsync(false));
-      })
-      .catch(err => {
-        console.error(err);
-        // ToDo
-      });
+    const city = cities.find(x => x.city.id === id);
+
+    if (city !== undefined) {
+      const fullCity = {
+        city: city.city,
+        countryId: city.countryId,
+        countryName: city.countryName,
+        people: city.people,
+        countries: dispatch(GetCountriesAsync())
+      };
+
+      dispatch(FindCity(fullCity));
+    } else {
+      dispatch(actionOptions.ItemsAreLoadingAsync(true));
+      axios
+        .get(apiUrl + "city/" + id, {
+          "Content-Type": "application/json",
+          cancelToken: actionOptions.CreateCancelToken()
+        })
+        .then(response => {
+          if (response.status === 200) {
+            dispatch(FindCity(response.data));
+          }
+          dispatch(actionOptions.ItemsAreLoadingAsync(false));
+        })
+        .catch(err => {
+          console.error(err);
+          // ToDo
+        });
+    }
   };
 }
 
@@ -181,13 +198,6 @@ export function EditCityAsync(city) {
         console.error(err);
         // ToDo
       });
-  };
-}
-
-export function EditCityPrepAsync(id) {
-  return dispatch => {
-    dispatch(GetCountriesAsync());
-    dispatch(FindCityForEditAsync(id));
   };
 }
 

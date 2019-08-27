@@ -42,19 +42,28 @@ class AllCities extends Component {
                   <td className="d-table-cell">{city.countryName}</td>
                   <td className="d-table-cell">
                     <Link
-                      onClick={() => this.props.onEditLoad(city.city.id)}
+                      onClick={() =>
+                        this.props.onEditLoad(city.city.id, this.props.cities)
+                      }
                       className="btn btn-warning btn-sm"
                       to={"/identity/city/edit/" + city.city.id}>
                       Edit
                     </Link>
                     <Link
-                      onClick={() => this.props.onDetailsLoad(city.city.id)}
+                      onClick={() =>
+                        this.props.onDetailsLoad(
+                          city.city.id,
+                          this.props.cities
+                        )
+                      }
                       className="btn btn-primary btn-sm ml-1"
                       to={"/identity/city/details/" + city.city.id}>
                       Details
                     </Link>
                     <Link
-                      onClick={() => this.props.onDeleteLoad(city.city.id)}
+                      onClick={() =>
+                        this.props.onDeleteLoad(city.city.id, this.props.cities)
+                      }
                       className="btn btn-danger btn-sm ml-1"
                       to={"/identity/city/delete/" + city.city.id}>
                       Delete
@@ -83,9 +92,12 @@ const mapDispatchToProps = dispatch => {
   return {
     onSiteLoad: () => dispatch(actionTypes.AllCitiesAsync()),
     onCreateLoad: () => dispatch(actionTypes.GetCountriesAsync()),
-    onDetailsLoad: id => dispatch(actionTypes.FindCityAsync(id)),
-    onEditLoad: id => dispatch(actionTypes.EditCityPrepAsync(id)),
-    onDeleteLoad: id => dispatch(actionTypes.FindCityAsync(id))
+    onDetailsLoad: (id, cities) =>
+      dispatch(actionTypes.FindCityAsync(id, cities)),
+    onEditLoad: (id, cities) =>
+      dispatch(actionTypes.FindCityForEditAsync(id, cities)),
+    onDeleteLoad: (id, cities) =>
+      dispatch(actionTypes.FindCityAsync(id, cities))
   };
 };
 
