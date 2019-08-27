@@ -8,8 +8,16 @@ export const SIGN_OUT = "SIGN_OUT";
 export const UPDATE_USERLIST = "UPDATE_USERLIST";
 export const UPDATE_USER = "UPDATE_USER";
 export const DELETE_USER = "DELETE_USER";
+export const ADMIN_DELETE_USER = "ADMIN_DELETE_USER";
 
 const apiUrl = "http://localhost:50691/api/identityApi/";
+
+export function AdminDeleteUser(userId) {
+  return {
+    type: ADMIN_DELETE_USER,
+    userId
+  };
+}
 
 export function DeleteUser(userId) {
   return {
@@ -32,10 +40,10 @@ export function UpdateUserList(users) {
   };
 }
 
-function Register(user) {
+function Register(success) {
   return {
     type: REGISTER,
-    user
+    success
   };
 }
 export function RegisterAsync(user) {
@@ -52,24 +60,20 @@ export function RegisterAsync(user) {
       .then(response => {
         console.log(response);
         if (response.status === 200) {
-          dispatch(Register(user));
+          dispatch(Register(response.data));
         } else if (response.status === 204) {
-          dispatch(
-            actionOptions.ErrorMessageAsync(
-              "Something went wrong. Please try again"
-            )
-          );
+          dispatch(actionOptions.ErrorMessageAsync(response.data));
         } else if (response.status === 400) {
           dispatch(actionOptions.ErrorMessageAsync(response.data));
         } else {
-          throw Error("Something went wrong.");
+          throw Error(response.data);
         }
 
         dispatch(actionOptions.ItemsAreLoadingAsync(false));
       })
       .catch(err => {
         console.error(err);
-        // ToDo
+        dispatch(actionOptions.ErrorMessageAsync(err));
       });
   };
 }

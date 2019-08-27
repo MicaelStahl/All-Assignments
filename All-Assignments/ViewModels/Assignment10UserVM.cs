@@ -95,6 +95,16 @@ namespace All_Assignments.ViewModels
     }
 
     /// <summary>
+    /// A simple ViewModel used for the user to delete his/her own account.
+    /// </summary>
+    public class DeleteUserVM
+    {
+        public string UserId { get; set; }
+
+        public string UserToken { get; set; }
+    }
+
+    /// <summary>
     /// A ViewModel that contains the basic information about a user. Used for regular users and to inherit for admin.
     /// </summary>
     public class DetailsVM

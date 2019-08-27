@@ -38,7 +38,7 @@ import NoMatch from "./NoMatch";
 
 const countryUrl = "/identity/country";
 const personUrl = "/identity/person";
-const cityUrl = "identity/city";
+const cityUrl = "/identity/city";
 
 const Main = props => {
   // This is what I'd like to call organized chaos.
@@ -94,6 +94,7 @@ const Main = props => {
           component={ChangePassword}
         />
         <Route exact path="/users/delete/:id" component={Delete} />
+
         <Route exact path="/identity" component={IdentityIndex} />
 
         {/* ------------------------------ Person ------------------------------ */}
@@ -122,7 +123,7 @@ const Main = props => {
         />
         <Route
           exact
-          path={personUrl}
+          path="/identity/people"
           render={() => (props.isAuthenticated ? <AllPeople /> : <SignIn />)}
         />
 
@@ -161,13 +162,23 @@ const Main = props => {
             )
           }
         />
-        <Route exact path={`${cityUrl}/delete/:id`} component={Delete} />
         <Route
           exact
-          path={cityUrl}
+          path={`${cityUrl}/delete/:id`}
           render={() =>
             props.roles.includes("Administrator") ? (
               <DeleteCity />
+            ) : (
+              <IdentityIndex />
+            )
+          }
+        />
+        <Route
+          exact
+          path="/identity/cities"
+          render={() =>
+            props.roles.includes("Administrator") ? (
+              <AllCities />
             ) : (
               <IdentityIndex />
             )
@@ -226,7 +237,7 @@ const Main = props => {
 
         <Route
           exact
-          path={countryUrl}
+          path="/identity/countries"
           render={() =>
             props.roles.includes("Administrator") ? (
               <AllCountries />

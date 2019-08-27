@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 import Title from "../../../UI/Title";
@@ -8,7 +8,6 @@ import * as actionAdmin from "../../../Actions/Assignment 10/actions/adminAction
 
 class Register extends Component {
   state = {
-    redirect: false,
     userName: "",
     firstName: "",
     lastName: "",
@@ -17,8 +16,9 @@ class Register extends Component {
     password: "",
     confirmPassword: "",
     error: "",
-    success: "",
-    admin: false
+    admin: false,
+    success: this.props.success,
+    visible: false
   };
 
   validateUserNameInput = str => {
@@ -46,7 +46,10 @@ class Register extends Component {
     // .x@test.com
     // x.@test.com
     // x@.test.com
-    return str.match("^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,4})+$");
+    // return str.match("^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,4})+$");
+    return str.match(
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+    );
   };
 
   validatePasswordInput = str => {
@@ -59,10 +62,10 @@ class Register extends Component {
     // And less or exactly 20 characters long.
     // No spaces.
 
-    return str.match("(.*[a-z].*)(.*[A-Z].*)(.*d.*).{8,20}$");
-    // return str.match(
-    //   "^(?=.*?[A-Ö])(?=.*?[a-ö])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
-    // );
+    // return str.match("(.*[a-z].*)(.*[A-Z].*)(.*d.*).{8,20}$");
+    return str.match(
+      "^(?=.*?[A-Ö])(?=.*?[a-ö])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
+    );
   };
   //  (.*[a-z].*)       // For lower cases
   //(.*[A-Z].*)       // For upper cases
@@ -172,10 +175,8 @@ class Register extends Component {
 
     if (verification !== "Failed") {
       this.props.onRegistrationSubmit(user);
-    }
-
-    if (this.props.isAuthenticated) {
-      this.setState({ success: "User was successfully signed in" });
+      this.setState({ visible: true });
+      setTimeout(() => this.setState({ visible: false }), 3000);
     }
 
     // Temporary setTimeout to make sure everything works properly.
@@ -214,30 +215,16 @@ class Register extends Component {
     if (verification !== "Failed") {
       console.log("[handleAdminSubmit]", user);
       this.props.onAdminRegistrationSubmit(user);
-    }
-
-    if (this.props.isAuthenticated) {
-      this.setState({ success: "User was successfully registered" });
+      this.setState({ visible: true });
+      setTimeout(() => this.setState({ visible: false }), 3000);
     }
   };
 
-  handleRedirect = () => {
-    this.setState({ redirect: true });
-  };
+  // componentDidUpdate() {
+  //   setTimeout(() => this.setState({ visible: false }), 5000);
+  // }
 
   render() {
-    if (this.state.redirect === true) {
-      return (
-        <Redirect
-          push
-          to={
-            this.props.history.goBack() === undefined
-              ? "/"
-              : this.props.history.goBack()
-          }
-        />
-      );
-    }
     const {
       userName,
       firstName,
@@ -251,13 +238,13 @@ class Register extends Component {
     return (
       <React.Fragment>
         <Title Title="Register" />
-        <button
-          onClick={this.handleRedirect}
-          className="btn btn-primary btn-sm mb-3 float-left">
-          Return
-        </button>
+
         <div className="mt-3 col-3 AlignCenter border box-shadow shadow">
-          <h3 className="text-center">Register user</h3>
+          <button
+            onClick={() => this.props.history.goBack()}
+            className="btn btn-primary btn-sm mt-2 float-right">
+            Return
+          </button>
           <form
             className="form"
             onSubmit={
@@ -265,16 +252,21 @@ class Register extends Component {
                 ? this.handleAdminSubmit
                 : this.handleSubmit
             }>
-            {this.props.error === "" ? null : (
+            <h3>Register</h3>
+            {this.state.error === "" ? null : (
               <p className="text-danger font-weight-bold text-center">
                 {this.props.error}
               </p>
             )}
 
-            {this.state.success === "" ? null : (
-              <p className="text-success font-weight-bold text-center">
-                {this.props.success}
-              </p>
+            {!this.state.visible ? null : (
+              <div id="regSuccess">
+                {this.props.success.split("\n").map((s, index) => (
+                  <p key={index} className="text-success font-weight-bold">
+                    {s}
+                  </p>
+                ))}
+              </div>
             )}
 
             {error === "" ? null : (
@@ -286,6 +278,8 @@ class Register extends Component {
                 ))}
               </ul>
             )}
+
+            <hr />
 
             <div className="form-group">
               <label className="col-form-label">
@@ -422,7 +416,7 @@ class Register extends Component {
 const mapStateToProps = state => {
   return {
     error: state.identity.error,
-    success: state.identity.success,
+    success: state.identity.registered,
     roles: state.identity.roles,
     isAuthenticated: state.identity.isAuthenticated
   };
@@ -439,4 +433,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Register);
+)(withRouter(Register));

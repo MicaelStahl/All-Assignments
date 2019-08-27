@@ -28,10 +28,8 @@ namespace All_Assignments.Repositories.Assignment_10
         /// <summary>
         /// Also Referred as Register in coding world.
         /// </summary>
-        public async Task<ReturnedUserVM> Create(RegisterUser10 user)
+        public async Task<ResultVM> Create(RegisterUser10 user)
         {
-            ReturnedUserVM userVM = new ReturnedUserVM();
-
             try
             {
                 if (_userManager.FindByNameAsync(user.UserName).Result != null)
@@ -46,7 +44,6 @@ namespace All_Assignments.Repositories.Assignment_10
 
                 // Potentially create a method that will handle all validations for username, firstname etc.?
 
-                user.UserToken = await _userManager.GenerateUserTokenAsync(user, "Default", "Authentication-backend");
 
                 var result = await _userManager.CreateAsync(user, user.Password);
 
@@ -59,15 +56,11 @@ namespace All_Assignments.Repositories.Assignment_10
                         throw new Exception("Something went wrong.");
                     }
 
-                    var createdUser = await _userManager.FindByNameAsync(user.UserName);
-
-                    userVM.UserId = createdUser.Id;
-                    userVM.UserToken = createdUser.UserToken;
 
                     // Do I need this line?
                     //userVM.Roles = await _userManager.GetRolesAsync(user);
 
-                    return userVM;
+                    return new ResultVM() { Success = "User was successfully created! \nYou can now sign in." };
                 }
                 else
                 {
@@ -76,8 +69,7 @@ namespace All_Assignments.Repositories.Assignment_10
             }
             catch (Exception ex)
             {
-                userVM.ErrorMessage = ex.Message;
-                return userVM;
+                return new ResultVM() { Failed = ex.Message };
             }
         }
         #endregion
@@ -302,10 +294,69 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Update
-        public async Task<AppUser10> Edit(AppUser10 user)
+        public async Task<UserDetailsVM> Edit(UserDetailsVM user)
         {
-            _ = await _userManager.Users.ToListAsync();
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(user.UserId) || string.IsNullOrWhiteSpace(user.UserToken))
+                {
+                    throw new Exception("Something went wrong.");
+                }
+                if (string.IsNullOrWhiteSpace(user.UserName) || string.IsNullOrWhiteSpace(user.FirstName) ||
+                    string.IsNullOrWhiteSpace(user.LastName) || string.IsNullOrWhiteSpace(user.Email) ||
+                    user.Age < 18 || user.Age > 110)
+                {
+                    throw new Exception("Not all fields were filled correctly.");
+                }
+
+                var original = await _userManager.FindByIdAsync(user.UserId);
+
+                if (original == null)
+                {
+                    throw new Exception("Cannot find the active user.");
+                }
+
+                var originalResult = await _userManager.VerifyUserTokenAsync(original, "Default", "authentication-backend", user.UserToken);
+
+                if (!originalResult)
+                {
+                    throw new Exception("Cannot verify the active user");
+                }
+
+                original.UserName = user.UserName;
+                original.FirstName = user.FirstName;
+                original.LastName = user.LastName;
+                original.Age = user.Age;
+                original.Email = user.Email;
+
+                var result = await _userManager.UpdateAsync(original);
+
+                if (result.Succeeded)
+                {
+                    return new UserDetailsVM()
+                    {
+                        UserId = user.UserId,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Age = user.Age,
+                        Email = user.Email,
+                        VerificationToken = VerificationToken(),
+
+                        UserToken = await UserToken(original),
+                        Roles = await _userManager.GetRolesAsync(original)
+                    };
+                }
+                else
+                {
+                    throw new Exception("Something went wrong.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new UserDetailsVM() { ErrorMessage = ex.Message };
+                throw;
+            }
         }
 
         public async Task<UserFrontUpdateVM> ChangePassword(ChangePassword10 changePassword)
@@ -374,10 +425,44 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Delete
-        public async Task<bool> DeleteUser(string userId, string userToken)
+        public async Task<ResultVM> DeleteUser(DeleteUserVM userVM)
         {
-            _ = await _userManager.Users.ToListAsync();
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userVM.UserId) || string.IsNullOrWhiteSpace(userVM.UserToken))
+                {
+                    throw new Exception("Something went wrong.");
+                }
+
+                var user = await _userManager.FindByIdAsync(userVM.UserId);
+
+                if (user == null)
+                {
+                    throw new Exception("Cannot find the active user.");
+                }
+
+                var userResult = await _userManager.VerifyUserTokenAsync(user, "Default", "authentication-backend", userVM.UserToken);
+
+                if (!userResult)
+                {
+                    throw new Exception("Cannot verify the active user");
+                }
+
+                var result = await _userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return new ResultVM() { Success = "User was successfully deleted." };
+                }
+                else
+                {
+                    throw new Exception("Something went wrong!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResultVM() { Failed = ex.Message };
+            }
         }
         #endregion
 

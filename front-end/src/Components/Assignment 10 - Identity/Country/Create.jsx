@@ -83,7 +83,7 @@ class Create extends Component {
 
   render() {
     if (this.state.redirect) {
-      return <Redirect push to="/identity/country" />;
+      return <Redirect push to="/identity/countries" />;
     }
     return (
       <React.Fragment>

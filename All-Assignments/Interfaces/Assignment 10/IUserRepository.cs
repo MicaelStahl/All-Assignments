@@ -13,7 +13,7 @@ namespace All_Assignments.Interfaces.Assignment_10
     {
         // Create
         #region Create
-        Task<ReturnedUserVM> Create(RegisterUser10 user);
+        Task<ResultVM> Create(RegisterUser10 user);
         #endregion
 
         // Read
@@ -30,14 +30,14 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Update
         #region Update
-        Task<AppUser10> Edit(AppUser10 user);
+        Task<UserDetailsVM> Edit(UserDetailsVM user);
 
         Task<UserFrontUpdateVM> ChangePassword(ChangePassword10 changePassword);
         #endregion
 
         // Delete
         #region Delete
-        Task<bool> DeleteUser(string userId, string userToken);
+        Task<ResultVM> DeleteUser(DeleteUserVM userVM);
         #endregion
     }
 }

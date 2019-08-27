@@ -59,7 +59,7 @@ class Create extends Component {
 
   render() {
     if (this.state.redirect) {
-      return <Redirect push="/identity/person" />;
+      return <Redirect push to="/identity/people" />;
     }
     if (!this.props.isLoading) {
       const options = this.props.cities.map((city, index) => (
@@ -71,7 +71,7 @@ class Create extends Component {
         <React.Fragment>
           <Title Title="Create new person" />
           <button
-            className="btn btn-primary btn-sm mb-2"
+            className="btn btn-primary btn-sm mb-3"
             onClick={() => this.props.history.goBack()}>
             Return
           </button>
@@ -82,8 +82,12 @@ class Create extends Component {
             </div>
           )}
 
-          <form className="form col-6" onSubmit={this.handleSubmit}>
-            <div className="float-left">
+          <form
+            className="form col-6 shadow box-shadow border mb-3 AlignCenter"
+            onSubmit={this.handleSubmit}>
+            <h3>Create person</h3>
+            <hr />
+            <div className="float-left clearfix">
               <p>Required fields are marked with *</p>
               <div className="form-group col-4">
                 <label className="col-form-label">Firstname*</label>
@@ -132,7 +136,7 @@ class Create extends Component {
               </div>
             </div>
 
-            <div className=" float-right">
+            <div className="float-right">
               <div className="form-group">
                 <label className="col-form-label">Gender*</label>
                 <select name="gender" className="form-inline">
@@ -165,16 +169,16 @@ class Create extends Component {
                   {options}
                 </select>
               </div>
-
-              <div className="form-group">
-                <input
-                  type="submit"
-                  value="Submit"
-                  className="btn btn-success btn-sm"
-                />
-              </div>
+            </div>
+            <div className="form-group clearFloats">
+              <input
+                type="submit"
+                value="Submit"
+                className="btn btn-success btn-sm"
+              />
             </div>
           </form>
+          <hr />
         </React.Fragment>
       );
     } else {

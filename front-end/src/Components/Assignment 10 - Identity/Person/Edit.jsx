@@ -80,7 +80,7 @@ class Edit extends Component {
 
   render() {
     if (this.state.redirect) {
-      return <Redirect push to="/identity/persons" />;
+      return <Redirect push to="/identity/people" />;
     }
     if (!this.props.isLoading) {
       const userChoice =

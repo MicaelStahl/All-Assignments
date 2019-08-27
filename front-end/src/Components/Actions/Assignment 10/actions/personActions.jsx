@@ -261,14 +261,12 @@ function DeletePerson(id) {
 
 export function DeletePersonAsync(id) {
   return dispatch => {
-    dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .delete(apiUrl + id, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         console.log("[Response]", response);
         if (response.status === 200) {
           dispatch(DeletePerson(id));
-          dispatch(actionOptions.ItemsAreLoadingAsync(false));
         } else {
           dispatch(
             Error404("Could not remove the requested person. Please try again.")

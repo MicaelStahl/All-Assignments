@@ -297,11 +297,10 @@ export function AdminEditUserAsync(user, users = []) {
       .then(response => {
         if (response.status === 200) {
           const index = users.findIndex(x => x.userId === userVM.UserId);
-          console.log("[userVM]", userVM);
-          console.log(users, userVM);
           if (index !== -1) {
             users.splice(index, 1, userVM);
             dispatch(actionIdentity.UpdateUserList(users));
+            dispatch(actionIdentity.UpdateUser(response.data));
           } else {
             dispatch(AdminGetUsersAsync());
           }
@@ -443,7 +442,7 @@ export function AdminDeleteUserAsync(userId) {
       })
       .then(response => {
         if (response.status === 200) {
-          dispatch(actionIdentity.DeleteUser(userId));
+          dispatch(AdminGetUsersAsync());
         } else {
           dispatch(actionOptions.ErrorMessageAsync(response.data));
         }

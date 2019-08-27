@@ -20,7 +20,7 @@ class Delete extends Component {
 
   render() {
     if (this.state.redirect) {
-      return <Redirect push to="/identity/city" />;
+      return <Redirect push to="/identity/cities" />;
     }
     if (!this.props.isLoading) {
       return (

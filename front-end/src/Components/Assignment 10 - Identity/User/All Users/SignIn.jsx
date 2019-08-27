@@ -10,7 +10,8 @@ class LoginScreen extends Component {
     userName: "",
     password: "",
     error: "",
-    errorMessage: this.props.error
+    errorMessage: this.props.error,
+    visible: false
   };
 
   validateUserNameInput = str => {
@@ -106,6 +107,8 @@ class LoginScreen extends Component {
     };
 
     this.props.onSigninSubmit(user10);
+    this.setState({ visible: true });
+    setTimeout(() => this.setState({ visible: false }), 3000);
   };
 
   render() {
@@ -114,18 +117,21 @@ class LoginScreen extends Component {
       <React.Fragment>
         <Title Title="Sign In" />
         <div className="mt-5 mb-5 col-3 AlignCenter border box-shadow shadow">
-          <h3 className="text-center">Login</h3>
           <form className="form" onSubmit={this.handleSubmit}>
+            <h3 className="text-center">Login</h3>
+            <hr />
+
             {this.props.error === "" ? null : (
               <p id="errorText" className="text-danger font-weight-bold">
                 {this.props.error}
               </p>
             )}
-            {this.props.isAuthenticated ? (
+            {this.props.isAuthenticated && this.state.visible ? (
               <p className="text-success font-weight-bold">
                 User was successfully signed in.
               </p>
             ) : null}
+
             {error === "" ? null : (
               <ul className="list-unstyled">
                 {error.split("\n").map((err, index) => (

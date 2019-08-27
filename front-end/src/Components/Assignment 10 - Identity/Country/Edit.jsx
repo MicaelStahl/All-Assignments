@@ -117,7 +117,7 @@ class Edit extends Component {
     const { name, population, redirect, error } = this.state;
 
     if (redirect) {
-      return <Redirect push to="/identity/country" />;
+      return <Redirect push to="/identity/countries" />;
     }
 
     if (!this.props.isLoading) {

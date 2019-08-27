@@ -10,7 +10,7 @@ namespace All_Assignments.Interfaces.Assignment_10
     public interface ICityRepository
     {
         // Create
-        Task<City> Create(City city, Guid? countryId);
+        Task<CityWithCountryVM> Create(City city, Guid? countryId);
 
         // Read
         Task<CityWithCountryVM> FindCity(Guid id);

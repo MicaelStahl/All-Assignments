@@ -90,13 +90,13 @@ class Create extends Component {
 
       this.props.onCreateSubmit(submittedCity);
 
-      setTimeout(this.setState({ redirect: true }), 100);
+      this.setState({ redirect: true });
     }
   };
 
   render() {
     if (this.state.redirect) {
-      return <Redirect push to="/identity/city" />;
+      return <Redirect push to="/identity/cities" />;
     }
     if (!this.props.isLoading) {
       const options = this.props.countries.map(country => (

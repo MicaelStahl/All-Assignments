@@ -97,29 +97,32 @@ class Edit extends Component {
     this.setState({ [name]: value, error: "" });
   };
 
+  // This function goes through every value given (except for IsAdmin for admin-editing)
+  // And verifies if it's following a valid format. If it doesn't, it returns a "Failed" and
+  // The submit never gets sent to the backend.
   handleValidateSubmit = user => {
     console.log("handleValidateSubmit", user);
     if (this.validateUserNameInput(user.UserName) === undefined) {
       this.setState({ error: "Invalid username" });
-      return;
+      return "Failed";
     } else if (
       this.validateFirstAndLastNameInput(user.FirstName) === undefined
     ) {
       this.setState({ error: "Invalid firstname" });
-      return;
+      return "Failed";
     } else if (
       this.validateFirstAndLastNameInput(user.LastName) === undefined
     ) {
       this.setState({ error: "Invalid lastname" });
-      return;
+      return "Failed";
     } else if (this.validateEmailInput(user.Email) === undefined) {
       this.setState({ error: "Invalid email" });
-      return;
+      return "Failed";
     } else if (Number(user.Age) > 110 || Number(user.Age) < 18) {
       this.setState({
         error: "Invalid age given. Must be between 18 to 110 years old."
       });
-      return;
+      return "Failed";
     }
   };
 
@@ -137,17 +140,11 @@ class Edit extends Component {
       Email: email.value,
       Roles: this.props.roles
     };
-    this.handleValidateSubmit(user);
+    const verification = this.handleValidateSubmit(user);
 
-    if (this.state.error === "") {
+    if (verification !== "Failed") {
       this.props.onUserSubmit(user, this.props.users);
     }
-
-    // Temporary setTimeout to make sure everything works properly.
-    // Currently inactive due to me testing Registration.
-    // setTimeout(this.setState({ redirect: true }), 100);
-
-    // ToDo
   };
 
   handleAdminSubmit = event => {
@@ -169,10 +166,9 @@ class Edit extends Component {
       Roles: this.props.roles
     };
 
-    this.handleValidateSubmit(user);
+    const verification = this.handleValidateSubmit(user);
 
-    if (this.state.error === "") {
-      console.log("[handleAdminSubmit]", "Hello");
+    if (verification !== "Failed") {
       this.props.onAdminSubmit(user, this.props.users);
     }
   };
@@ -215,7 +211,11 @@ class Edit extends Component {
           <Title Title={"Editing " + userName} />
 
           <div className="mt-3 AlignCenter col-3 border shadow box-shadow">
-            <h3>Edit {userName}</h3>
+            <button
+              className="btn btn-primary btn-sm float-right mt-2"
+              onClick={() => this.props.history.goBack()}>
+              Return
+            </button>
             <form
               className="form"
               onSubmit={
@@ -223,6 +223,8 @@ class Edit extends Component {
                   ? this.handleAdminSubmit
                   : this.handleSubmit
               }>
+              <h3>Editing</h3>
+              <hr />
               {this.props.error === "" ? null : (
                 <p className="text-danger font-weight-bold text-center">
                   {this.props.error}
@@ -340,11 +342,6 @@ class Edit extends Component {
                   value="Submit"
                   className="btn btn-primary btn-sm "
                 />
-                <button
-                  className="btn btn-primary btn-sm float-right"
-                  onClick={() => this.props.history.goBack()}>
-                  Return
-                </button>
               </div>
             </form>
           </div>
@@ -371,7 +368,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onAdminSubmit: (user, users) =>
       dispatch(actionAdmin.AdminEditUserAsync(user, users)),
-    onUserSubmit: (user, users) => dispatch(actionUser)
+    onUserSubmit: (user, users) =>
+      dispatch(actionUser.UserEditAsync(user, users))
   };
 };
 

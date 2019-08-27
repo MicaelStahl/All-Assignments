@@ -22,7 +22,7 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Create
-        public async Task<City> Create(City city, Guid? countryId)
+        public async Task<CityWithCountryVM> Create(City city, Guid? countryId)
         {
             if (string.IsNullOrWhiteSpace(city.Name) || string.IsNullOrWhiteSpace(city.Population))
             {
@@ -51,16 +51,25 @@ namespace All_Assignments.Repositories.Assignment_10
                 Country = country
             };
 
-            if (newCity == null)
+            var cityVM = new CityWithCountryVM()
+            {
+                City = newCity,
+                CountryId = country.Id,
+                CountryName = country.Name,
+            };
+
+            if (cityVM == null)
             {
                 return null;
             }
 
-            await _db.Cities.AddAsync(newCity);
+            await _db.Cities.AddAsync(cityVM.City);
 
             await _db.SaveChangesAsync();
 
-            return newCity;
+            cityVM.City.Country = null;
+
+            return cityVM;
         }
         #endregion
 
@@ -73,8 +82,8 @@ namespace All_Assignments.Repositories.Assignment_10
             }
 
             var city = await _db.Cities
-                .Include(x=>x.Country)
-                .Include(x=>x.People)
+                .Include(x => x.Country)
+                .Include(x => x.People)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
 
@@ -144,8 +153,8 @@ namespace All_Assignments.Repositories.Assignment_10
         public async Task<List<CityWithCountryVM>> AllCitiesWithCountry()
         {
             var cities = await _db.Cities
-                .Include(x=>x.People)
-                .Include(x=>x.Country)
+                .Include(x => x.People)
+                .Include(x => x.Country)
                 .ToListAsync();
 
 
@@ -154,7 +163,7 @@ namespace All_Assignments.Repositories.Assignment_10
                 return null;
             }
 
-            List<CityWithCountryVM>citiesVM = new List<CityWithCountryVM>();
+            List<CityWithCountryVM> citiesVM = new List<CityWithCountryVM>();
 
             foreach (var item in cities)
             {
@@ -245,8 +254,8 @@ namespace All_Assignments.Repositories.Assignment_10
             }
 
             var city = await _db.Cities
-                .Include(x=>x.Country)
-                .Include(x=>x.People)
+                .Include(x => x.Country)
+                .Include(x => x.People)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (city == null)

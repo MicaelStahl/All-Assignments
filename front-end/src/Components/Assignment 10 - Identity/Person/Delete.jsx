@@ -17,7 +17,7 @@ class Delete extends Component {
   };
   render() {
     if (this.state.redirect) {
-      return <Redirect push="/identity/person" />;
+      return <Redirect push to="/identity/people" />;
     }
     if (!this.props.isLoading) {
       return (
@@ -47,7 +47,7 @@ class Delete extends Component {
               ?
             </p>
             <Link
-              to="/identity/person"
+              to="/identity/people"
               onClick={() => this.onDeleteSubmit(this.props.person.person.id)}
               className="btn btn-danger btn-sm float-right">
               Delete

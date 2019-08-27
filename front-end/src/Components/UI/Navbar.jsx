@@ -74,24 +74,6 @@ class Navbar extends Component {
                           Profile
                         </NavLink>
                       )}
-                      {/* <NavLink
-                        onClick={
-                          this.props.roles.includes("Administrator")
-                            ? () =>
-                                this.props.onAdminProfileClick(
-                                  localStorage.getItem("userId"),
-                                  this.props.users
-                                )
-                            : () =>
-                                this.props.onProfileClick(
-                                  localStorage.getItem("userId"),
-                                  this.props.users
-                                )
-                        }
-                        className="nav-link text-light btn btn-dark"
-                        to={"/profile/" + localStorage.getItem("userId")}>
-                        Profile
-                      </NavLink> */}
                     </li>
                     <li className="nav-item">
                       <Link
@@ -171,24 +153,22 @@ class Navbar extends Component {
                           className="btn btn-secondary dropdown-item">
                           Person
                         </NavLink>
-                        {this.props.roles.includes(
-                          "Administrator" ? (
-                            <React.Fragment>
-                              <div className="dropdown-divider" />
-                              <NavLink
-                                to="/identity/cities"
-                                className="btn btn-secondary dropdown-item">
-                                City
-                              </NavLink>
-                              <div className="dropdown-divider" />
-                              <NavLink
-                                to="/identity/countries"
-                                className="btn btn-secondary dropdown-item">
-                                Country
-                              </NavLink>
-                            </React.Fragment>
-                          ) : null
-                        )}
+                        {this.props.roles.includes("Administrator") ? (
+                          <React.Fragment>
+                            <div className="dropdown-divider" />
+                            <NavLink
+                              to="/identity/cities"
+                              className="btn btn-secondary dropdown-item">
+                              City
+                            </NavLink>
+                            <div className="dropdown-divider" />
+                            <NavLink
+                              to="/identity/countries"
+                              className="btn btn-secondary dropdown-item">
+                              Country
+                            </NavLink>
+                          </React.Fragment>
+                        ) : null}
                       </div>
                     </li>
                   </ul>

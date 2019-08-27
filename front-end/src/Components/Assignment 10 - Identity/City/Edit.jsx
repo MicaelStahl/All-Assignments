@@ -73,7 +73,7 @@ class Edit extends Component {
 
   render() {
     if (this.state.redirect) {
-      return <Redirect push to="/identity/city" />;
+      return <Redirect push to="/identity/cities" />;
     }
     if (!this.props.isLoading) {
       const { city } = this.props;
@@ -127,7 +127,7 @@ class Edit extends Component {
                 maxLength="9"
                 value={
                   this.state.population === null
-                    ? city.city.population
+                    ? city.city.population.replace(" ", "")
                     : this.state.population
                 }
                 onChange={this.handleChange}

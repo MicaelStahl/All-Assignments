@@ -44,19 +44,19 @@ class AllCities extends Component {
                     <Link
                       onClick={() => this.props.onEditLoad(city.city.id)}
                       className="btn btn-warning btn-sm"
-                      to={this.props.match.url + "/edit/" + city.city.id}>
+                      to={"/identity/city/edit/" + city.city.id}>
                       Edit
                     </Link>
                     <Link
                       onClick={() => this.props.onDetailsLoad(city.city.id)}
                       className="btn btn-primary btn-sm ml-1"
-                      to={this.props.match.url + "/details/" + city.city.id}>
+                      to={"/identity/city/details/" + city.city.id}>
                       Details
                     </Link>
                     <Link
                       onClick={() => this.props.onDeleteLoad(city.city.id)}
                       className="btn btn-danger btn-sm ml-1"
-                      to={this.props.match.url + "/delete/" + city.city.id}>
+                      to={"/identity/city/delete/" + city.city.id}>
                       Delete
                     </Link>
                   </td>

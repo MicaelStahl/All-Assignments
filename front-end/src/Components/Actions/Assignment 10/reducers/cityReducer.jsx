@@ -45,7 +45,7 @@ const reducer = (state = initialState, action) => {
       cities = state.cities;
 
       cities.push(action.city);
-
+      console.log(action.city);
       return {
         ...state,
         oneCity: action.city,
@@ -64,6 +64,7 @@ const reducer = (state = initialState, action) => {
           status: action.status
         };
       }
+      console.log(action.city);
       return {
         ...state,
         oneCity: action.city,

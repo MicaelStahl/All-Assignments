@@ -49,58 +49,31 @@ namespace All_Assignments.Controllers
 
         #region (C)REATE
 
-        /// <summary>
-        /// Is this one necessary considering I already have a Register method?
-        /// </summary>
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateUser(AppUser10 user)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (_userManager.FindByNameAsync(user.UserName).Result != null)
-            {
-                return Content("The requested Username is already in use. Please try something else.", contentType: user.UserName);
-            }
-
-            user.UserToken = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-
-            // testing.
-            await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", user.UserToken);
-
-            var result = await _userManager.CreateAsync(user);
-
-            if (result.Succeeded)
-            {
-                return CreatedAtAction(nameof(CreateUser), user);
-            }
-            else
-            {
-                return Content("Something went wrong when creating the user. Please try again");
-            }
-        }
-
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterUser10 user)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var createdUser = await _service.Create(user);
+                var createdUser = await _service.Create(user);
 
-            if (createdUser.ErrorMessage == null)
-            {
-                return Ok("User was successfully created! \nYou can now sign in.");
+                if (string.IsNullOrWhiteSpace(createdUser.Failed))
+                {
+                    return Ok(createdUser.Success);
+                }
+                else
+                {
+                    throw new Exception(createdUser.Failed);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(createdUser.ErrorMessage);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -297,43 +270,33 @@ namespace All_Assignments.Controllers
         #region (U)PDATE
 
         [HttpPut("edit-user")]
-        public async Task<IActionResult> EditUser(AppUser10 user10)
+        public async Task<IActionResult> EditUser(UserDetailsVM user)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    throw new Exception("Not all fields were filled correctly.");
+                }
+
+                var result = await _service.Edit(user);
+
+                if (string.IsNullOrWhiteSpace(result.ErrorMessage))
+                {
+                    return Ok(result);
+                }
+                else if (result.ErrorMessage.Contains("found"))
+                {
+                    return NotFound(result.ErrorMessage);
+                }
+                else
+                {
+                    throw new Exception(result.ErrorMessage);
+                }
             }
-            var verify = await _userManager.VerifyUserTokenAsync(user10, TokenOptions.DefaultAuthenticatorProvider, "Authentication", user10.UserToken);
-
-            if (verify == false)
+            catch (Exception ex)
             {
-                return BadRequest();
-            }
-
-            var user = await _userManager.FindByIdAsync(user10.Id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-
-            user.UserName = user10.UserName;
-            user.FirstName = user10.FirstName;
-            user.LastName = user10.LastName;
-            user.Age = user10.Age;
-            user.Email = user10.Email;
-            user.PhoneNumber = user10.PhoneNumber;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(GetUser), "Assignment10Identity", new { userId = user.Id });
-            }
-            else
-            {
-                return Content("Something went wrong when updating user. Please try again.");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -349,14 +312,14 @@ namespace All_Assignments.Controllers
 
                 var result = await _service.ChangePassword(change);
 
-                if (result.Failed == "")
+                if (string.IsNullOrWhiteSpace(result.Failed))
                 {
                     return Ok(result);
                 }
                 else if (result.Failed.Contains("found"))
                 {
                     return NotFound(result.Failed);
-                } 
+                }
                 else
                 {
                     throw new Exception(result.Failed);
@@ -405,45 +368,35 @@ namespace All_Assignments.Controllers
 
         #region (D)ELETE
 
-        [HttpDelete("delete-user/{userId}/{userToken}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteUser(string userId, string userToken)
+        [HttpPost("delete-user")]
+        public async Task<IActionResult> DeleteUser(DeleteUserVM user)
         {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userToken))
+            try
             {
-                return BadRequest();
+                if (string.IsNullOrWhiteSpace(user.UserId) || string.IsNullOrWhiteSpace(user.UserToken))
+                {
+                    throw new Exception("Something went wrong.");
+                }
+
+                var result = await _service.DeleteUser(user);
+
+                if (string.IsNullOrWhiteSpace(result.Failed))
+                {
+                    return Ok(result.Success);
+                }
+                else if (result.Failed.Contains("found"))
+                {
+                    return NotFound(result.Failed);
+                }
+                else
+                {
+                    throw new Exception(result.Failed);
+                }
+
             }
-
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-
-
-            var verify = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, "Authentication", userToken);
-
-            if (verify == false)
-            {
-                return BadRequest();
-            }
-            var test = User.Identity.Name;
-
-            if (test != user.UserName && !User.IsInRole("Admin"))
-            {
-                return Content("Cannot delete user.");
-            }
-
-            var result = await _userManager.DeleteAsync(user);
-
-            if (result.Succeeded)
-            {
-                return Content("User was successfully deleted.");
-            }
-            else
-            {
-                return Content("Something went wrong when deleting user. Please try again");
+                return BadRequest(ex.Message);
             }
         }
 

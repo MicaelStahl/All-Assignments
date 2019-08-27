@@ -23,6 +23,11 @@ const Delete = props => {
       <React.Fragment>
         <Title Title={"Delete " + props.user.userName + "?"} />
         <div className="col-4 border shadow box-shadow AlignCenter">
+          <button
+            onClick={() => this.props.history.goBack()}
+            className="btn btn-primary btn-sm float-right">
+            Return
+          </button>
           <h3>Delete {props.user.userName}?</h3>
           <hr />
           <div className=" form-group">
@@ -72,11 +77,6 @@ const Delete = props => {
               onClick={() => onDeleteClick(props.user.userId)}
               className="btn btn-danger btn-sm ">
               Delete
-            </button>
-            <button
-              onClick={() => onDeleteClick(props.user.userId)}
-              className="btn btn-primary btn-sm float-right">
-              Return
             </button>
           </div>
         </div>

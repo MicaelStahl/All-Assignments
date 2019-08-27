@@ -4,7 +4,8 @@ const initialState = {
   users: [],
   user: "",
   roles: [],
-  isAuthenticated: false
+  isAuthenticated: false,
+  registered: ""
 };
 
 export function reducer(state = initialState, action) {
@@ -13,15 +14,14 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         isAuthenticated: true,
-        roles: action.roles
+        roles: action.roles,
+        registered: ""
       };
 
     case actionTypes.REGISTER:
-      const { users } = state;
-      users.push(action.user);
       return {
         ...state,
-        users
+        registered: action.success
       };
 
     case actionTypes.SIGN_OUT:
@@ -30,25 +30,37 @@ export function reducer(state = initialState, action) {
         userToken: "",
         isAuthenticated: false,
         success: "",
-        roles: []
+        roles: [],
+        registered: ""
       };
 
     case actionTypes.UPDATE_USERLIST:
       return {
         ...state,
-        users: action.users
+        users: action.users,
+        registered: ""
       };
 
     case actionTypes.UPDATE_USER:
       return {
         ...state,
-        user: action.user
+        user: action.user,
+        registered: ""
       };
 
     case actionTypes.DELETE_USER:
       return {
         ...state,
-        users: state.users.filter(x => x.userId !== action.userId)
+        users: state.users.filter(x => x.userId !== action.userId),
+        registered: "",
+        isAuthenticated: false
+      };
+
+    case actionTypes.ADMIN_DELETE_USER:
+      return {
+        ...state,
+        users: state.users.filter(x => x.userId !== action.userId),
+        registered: ""
       };
 
     default:

@@ -203,13 +203,6 @@ export function UserEditPasswordAsync(user) {
 
 //#region UserDelete
 
-function UserDelete(userId) {
-  return {
-    type: USER_DELETE,
-    userId
-  };
-}
-
 export function UserDeleteAsync(userId) {
   return dispatch => {
     axios.interceptors.request.use(
@@ -235,8 +228,9 @@ export function UserDeleteAsync(userId) {
     if (user.UserId !== userId) {
       throw new Error("Something went wrong. Please try again");
     } else {
+      // .delete(userUrl + "delete-user/" + userId + "/" + user.UserToken, {
       axios
-        .delete(userUrl + "delete-user/" + userId + "/" + user.UserToken, {
+        .post(userUrl + "delete-user", user, {
           cancelToken: actionOptions.CreateCancelToken(),
           validateStatus: function(status) {
             return status <= 500;
@@ -244,7 +238,7 @@ export function UserDeleteAsync(userId) {
         })
         .then(response => {
           if (response.status === 200) {
-            dispatch(UserDelete(userId));
+            dispatch(actionIdentity.DeleteUser(userId));
           } else if ((response.status === 404) | 400) {
             dispatch(actionOptions.ErrorMessageAsync(response.data));
           } else {

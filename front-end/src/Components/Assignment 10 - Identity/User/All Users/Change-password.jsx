@@ -105,6 +105,12 @@ class ChangePassword extends Component {
       <React.Fragment>
         <Title Title="Change password" />
         <div className="col-4 shadow box-shadow border AlignCenter">
+          <button
+            onClick={() => this.props.history.goBack()}
+            className="float-right btn btn-primary btn-sm mt-2">
+            Return
+          </button>
+
           <form
             className="form"
             onSubmit={
@@ -178,11 +184,6 @@ class ChangePassword extends Component {
                 value="Submit"
                 className="btn btn-success btn-sm"
               />
-              <button
-                onClick={() => this.props.history.goBack()}
-                className="float-right btn btn-primary btn-sm">
-                Return
-              </button>
             </div>
           </form>
         </div>
