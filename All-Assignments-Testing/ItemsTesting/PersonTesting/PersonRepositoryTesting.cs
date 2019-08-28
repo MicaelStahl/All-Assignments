@@ -199,7 +199,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region ValidPerson
 
         [Fact]
-        [Trait("PersonCreateNoCity", "Repository")]
+        [Trait("Repository", "PersonCreate")]
         public async Task Create_CreateValidPersonWithoutCity_ReturnsCreatedPersonAsync()
         {
             var person = OneValidPersonWithoutCity();
@@ -211,7 +211,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonCreateWithCity", "Repository")]
+        [Trait("Repository", "PersonCreate")]
         public async Task Create_CreateValidPersonWithCity_ReturnsCreatedPersonAsync()
         {
             var person = OneValidPersonWithCity();
@@ -223,7 +223,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonCreateTwoWithCity", "Repository")]
+        [Trait("Repository", "PersonCreate")]
         public async Task Create_CreateTwoValidPeopleWithoutCities_ReturnsListOfTwoPeopleAsync()
         {
             var people = TwoValidPeopleWithoutCities();
@@ -237,7 +237,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonCreateTwoWithoutCity", "Repository")]
+        [Trait("Repository", "PersonCreate")]
         public async Task Create_CreateTwoValidPeopleWIthCities_ReturnsListOfTwoPeopleAsync()
         {
             var people = TwoValidPeopleWithCities();
@@ -255,7 +255,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region InvalidPerson
 
         [Fact]
-        [Trait("PersonCreateInvalidPersonNoCity", "Repository")]
+        [Trait("Repository", "PersonCreate")]
         public async Task Create_CreateOneInvalidPersonWithoutCity_ReturnsNullValueAsync()
         {
             _service.Setup(x => x.Create(OneInvalidPersonWithoutCity(), null)).Returns(Task.FromResult<Person>(null));
@@ -266,7 +266,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonCreateInvalidPersonWithCity", "Repository")]
+        [Trait("Repository", "PersonCreate")]
         public async Task Create_CreateOneInvalidPersonWithCity_ReturnsNullValueAsync()
         {
             var person = OneInvalidPersonWithCity();
@@ -286,7 +286,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region OnePerson
 
         [Fact]
-        [Trait("PersonFindOneNoCity", "Repository")]
+        [Trait("Repository", "PersonFindOne")]
         public async Task Find_FindOnePersonNoCity_ReturnsCorrectPersonAsync()
         {
             var personOne = OneValidPersonWithCity();
@@ -303,7 +303,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonFindOneWithCity", "Repository")]
+        [Trait("Repository", "PersonFindOne")]
         public async Task Find_FindOnePersonWithCity_ReturnsCorrectPersonAsync()
         {
             var personOne = OneValidPersonWithoutCity();
@@ -320,7 +320,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonFindOneInvalidNoCity", "Repository")]
+        [Trait("Repository", "PersonFindOne")]
         public async Task Find_FindOneInvalidPersonNoCity_ReturnsNullValueAsync()
         {
             var person = new PersonWithCityVM { Person = OneInvalidPersonWithoutCity() };
@@ -333,7 +333,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonFindOneInvalidWithCity", "Repository")]
+        [Trait("Repository", "PersonFindOne")]
         public async Task Find_FindOneInvalidPersonWithCity_ReturnsNullValueAsync()
         {
             var person = new PersonWithCityVM { Person = OneInvalidPersonWithCity() };
@@ -350,7 +350,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region AllPeople
 
         [Fact]
-        [Trait("PersonFindAllPeople", "Repository")]
+        [Trait("Repository", "PersonFindAll")]
         public async Task Find_FindAllPeople_ReturnsAllPeopleAsync()
         {
             var people = TwoValidPeopleWithCities();
@@ -364,7 +364,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonFindAllPeople", "Repository")]
+        [Trait("Repository", "PersonFindAll")]
         public async Task Find_FindAllPeople_ReturnsNullIfListIsEmptyAsync()
         {
             _service.Setup(x => x.AllPeople()).Returns(Task.FromResult<List<PersonWithCityVM>>(null));
@@ -383,7 +383,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region UpdateValid
 
         [Fact]
-        [Trait("PersonUpdateToValidNoCity", "Repository")]
+        [Trait("Repository", "PersonUpdateValid")]
         public async Task Update_UpdateToValidWithNoCity_ReturnsUpdatedPersonAsync()
         {
             var person = OneValidPersonWithoutCity();
@@ -398,7 +398,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonUpdateToValidWithCity", "Repository")]
+        [Trait("Repository", "PersonUpdateValid")]
         public async Task Update_UpdateToValidWithCity_ReturnsUpdatedPersonAsync()
         {
             var person = OneValidPersonWithCity();
@@ -417,7 +417,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region UpdateInvalid
 
         [Fact]
-        [Trait("PersonUpdateToInvalidWithCity", "Repository")]
+        [Trait("Repository", "PersonUpdateInValid")]
         public async Task Update_UpdateToInvalidWithCity_ReturnsNullValueAsync()
         {
             var person = OneValidPersonWithCity();
@@ -432,7 +432,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         [Fact]
-        [Trait("PersonUpdateToInvalidNoChange", "Repository")]
+        [Trait("Repository", "PersonUpdateInValid")]
         public async Task Update_UpdateToInvalidWithCity_ReturnsNullValueAndDoesNotChangeOriginalPersonAsync()
         {
             var person = OneValidPersonWithCity();
@@ -459,7 +459,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region DeleteCorrect
 
         [Fact]
-        [Trait("PersonDeleteCorrectPerson", "Repository")]
+        [Trait("Repository", "PersonDeleteCorrect")]
         public async Task Delete_DeleteCorrectPerson_ReturnsTrueValueAsync()
         {
             var people = TwoValidPeopleWithCities();
@@ -480,7 +480,7 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         #region DeleteWrongId
 
         [Fact]
-        [Trait("PersonDeleteWrongId", "Repository")]
+        [Trait("Repository", "PersonDeleteWrong")]
         public async Task Delete_DeleteWrongId_ReturnsFalseValueAsync()
         {
             var people = TwoValidPeopleWithCities();

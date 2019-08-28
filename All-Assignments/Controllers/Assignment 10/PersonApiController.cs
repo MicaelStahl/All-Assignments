@@ -46,7 +46,7 @@ namespace All_Assignments.Controllers
 
             if (person == null)
             {
-                return Content("The requested person was not found. Please try again");
+                return NotFound("The requested person could not be found.");
             }
 
             return Ok(person);
