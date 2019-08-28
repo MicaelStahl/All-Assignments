@@ -31,6 +31,7 @@ export function AllCountriesAsync() {
         })
         .then(response => {
           if (response.status === 200) {
+            console.log(response);
             dispatch(AllCountries(response.data));
           }
           dispatch(actionOptions.ItemsAreLoadingAsync(false));
@@ -43,12 +44,12 @@ export function AllCountriesAsync() {
   };
 }
 
-function CreateCountry(country) {
-  return {
-    type: CREATE_COUNTRY,
-    country: country
-  };
-}
+// function CreateCountry(country) {
+//   return {
+//     type: CREATE_COUNTRY,
+//     country: country
+//   };
+// }
 
 export function CreateCountryAsync(country) {
   return dispatch => {
@@ -56,7 +57,7 @@ export function CreateCountryAsync(country) {
       .post(apiUrl, country, { cancelToken: actionOptions.CreateCancelToken() })
       .then(response => {
         if (response.status === 200) {
-          dispatch(CreateCountry(country));
+          // dispatch(CreateCountry(country));
         }
       })
       .catch(err => {
@@ -73,8 +74,21 @@ function FindCountry(country) {
   };
 }
 
-export function FindCountryAsync(id) {
+export function FindCountryAsync(id, countries = []) {
   return dispatch => {
+    const country = countries.find(x => x.id === id);
+
+    if (country !== undefined) {
+      const fullCountry = {
+        country: {
+          id: country.country.id,
+          name: country.country.name,
+          population: country.country.population
+        },
+        cities: country.cities
+      };
+      dispatch(FindCountry(fullCountry));
+    }
     dispatch(actionOptions.ItemsAreLoadingAsync(true));
     axios
       .get(apiUrl + id, {
@@ -94,20 +108,12 @@ export function FindCountryAsync(id) {
   };
 }
 
-export function FindCountryForEditAsync(country) {
-  return dispatch => {
-    dispatch(actionOptions.ItemsAreLoadingAsync(true));
-    dispatch(FindCountry(country));
-    dispatch(actionOptions.ItemsAreLoadingAsync(false));
-  };
-}
-
-function EditCountry(country) {
-  return {
-    type: EDIT_COUNTRY,
-    country: country
-  };
-}
+// function EditCountry(country) {
+//   return {
+//     type: EDIT_COUNTRY,
+//     country: country
+//   };
+// }
 
 export function EditCountryAsync(country) {
   return dispatch => {
@@ -117,7 +123,7 @@ export function EditCountryAsync(country) {
       })
       .then(response => {
         if (response.status === 200) {
-          dispatch(EditCountry(country));
+          // dispatch(EditCountry(country));
         }
       })
       .catch(err => {

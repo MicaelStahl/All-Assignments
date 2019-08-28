@@ -16,6 +16,9 @@ class Edit extends Component {
   };
 
   numberWithSpaces = str => {
+    // This is so that the spaces are always lined up correctly corresponding to the number.
+    // It removes all existing spaces in the string and then adds new spaces in the correct places.
+    str = str.replace(/\s/g, "");
     return str.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 

@@ -18,6 +18,9 @@ class Edit extends Component {
   }
 
   numberWithSpaces = str => {
+    // This is so that the spaces are always lined up correctly corresponding to the number.
+    // It removes all existing spaces in the string and then adds new spaces in the correct places.
+    str = str.replace(/\s/g, "");
     return str.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
@@ -121,7 +124,7 @@ class Edit extends Component {
     }
 
     if (!this.props.isLoading) {
-      const { country } = this.props;
+      const { country } = this.props.country;
 
       return (
         <React.Fragment>
@@ -132,45 +135,48 @@ class Edit extends Component {
             Return
           </button>
 
-          {error === "" ? null : (
-            <p className="font-weight-bold text-danger">{error}</p>
-          )}
-
-          <form className="form border-dark" onSubmit={this.handleSubmit}>
-            <input type="hidden" name="id" value={country.id} />
-            <div className="form-group">
-              <label className="col-form-label">Name</label>
-              <input
-                type="text"
-                name="name"
-                className="form-inline"
-                maxLength="80"
-                value={name === null ? country.name : name}
-                onChange={this.handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Population</label>
-              <input
-                type="text"
-                name="population"
-                className="form-inline"
-                min="10"
-                maxLength="10"
-                value={population === null ? country.population : population}
-                onChange={this.handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="submit"
-                value="Submit"
-                className="btn btn-success btn-sm"
-              />
-            </div>
-          </form>
+          <div className="col-3 shadow border AlignCenter">
+            <h3>Editting {country.name}</h3>
+            <hr />
+            {error === "" ? null : (
+              <p className="font-weight-bold text-danger">{error}</p>
+            )}
+            <form className="form border-dark" onSubmit={this.handleSubmit}>
+              <input type="hidden" name="id" value={country.id} />
+              <div className="form-group">
+                <label className="col-form-label">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  className="form-inline"
+                  maxLength="80"
+                  value={name === null ? country.name : name}
+                  onChange={this.handleChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="col-form-label">Population</label>
+                <input
+                  type="text"
+                  name="population"
+                  className="form-inline"
+                  min="11"
+                  maxLength="11"
+                  value={population === null ? country.population : population}
+                  onChange={this.handleChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <input
+                  type="submit"
+                  value="Submit"
+                  className="btn btn-success btn-sm"
+                />
+              </div>
+            </form>
+          </div>
         </React.Fragment>
       );
     } else {

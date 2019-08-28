@@ -2,7 +2,8 @@ import * as actionTypes from "../actions/optionsActions";
 
 const initialState = {
   isLoading: false,
-  errorMessage: ""
+  errorMessage: "",
+  success: ""
 };
 
 export default function reducer(state = initialState, action) {

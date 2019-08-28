@@ -141,14 +141,6 @@ class Create extends Component {
   }
 }
 
-// // Potential use later when I might make it possible
-// // to add cities that aren't in an already existing city.
-// const mapStateToProps = state => {
-//   return {
-//     // ToDo
-//   }
-// }
-
 const mapDispatchToProps = dispatch => {
   return {
     onCreateSubmit: country => dispatch(actionTypes.CreateCountryAsync(country))

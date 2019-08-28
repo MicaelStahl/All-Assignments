@@ -78,7 +78,6 @@ const reducer = (state = initialState, action) => {
         countries: countries.filter(x => x.id !== action.id),
         error: ""
       };
-
     default:
       return state;
   }

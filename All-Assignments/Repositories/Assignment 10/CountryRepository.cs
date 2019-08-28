@@ -76,16 +76,59 @@ namespace All_Assignments.Repositories.Assignment_10
             return countryVM;
         }
 
-        public async Task<List<Country>> AllCountries()
+        public async Task<List<CountryWithCitiesVM>> AllCountries()
         {
-            var countries = await _db.Countries.ToListAsync();
+            //List<CityWithCountryVM> citiesVM = new List<CityWithCountryVM>();
 
-            if (countries == null || countries.Count == 0)
+            //foreach (var item in cities)
+            //{
+            //    CityWithCountryVM city = new CityWithCountryVM()
+            //    {
+            //        CountryId = item.Country?.Id,
+            //        CountryName = item.Country?.Name ?? "Stateless",
+            //        People = item.People ?? null
+            //    };
+
+            //    item.People = null;
+            //    item.Country = null;
+            //    city.City = item;
+
+            //    citiesVM.Add(city);
+
+            try
+            {
+                var countries = await _db.Countries
+                    .Include(x => x.Cities)
+                    .ToListAsync();
+
+                if (countries == null || countries.Count == 0)
+                {
+                    throw new Exception();
+                }
+
+                List<CountryWithCitiesVM> countriesVM = new List<CountryWithCitiesVM>();
+
+                foreach (var item in countries)
+                {
+                    var country = new CountryWithCitiesVM
+                    {
+                        Cities = item.Cities
+                    };
+
+                    item.Cities = null;
+                    country.Country = item;
+
+                    countriesVM.Add(country);
+
+                    //countriesVM.Countries.Add(new CountryWithCitiesVM() { Country = item, Cities = item.Cities });
+                }
+
+                return countriesVM;
+            }
+            catch
             {
                 return null;
             }
-
-            return countries;
         }
         #endregion
 

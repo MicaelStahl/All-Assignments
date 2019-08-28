@@ -14,7 +14,7 @@ namespace All_Assignments.Interfaces.Assignment_10
 
         // Read
         Task<CountryWithCitiesVM> FindCountry(Guid id);
-        Task<List<Country>> AllCountries();
+        Task<List<CountryWithCitiesVM>> AllCountries();
 
         // Update
         Task<Country> Edit(Country country);

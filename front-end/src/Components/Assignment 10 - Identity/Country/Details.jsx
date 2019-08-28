@@ -11,17 +11,6 @@ class Details extends Component {
     redirect: false
   };
 
-  // A test I wanted to do to see what the effects would be.
-  componentDidMount() {
-    let id = localStorage.getItem("oneCountryId");
-    console.log(id);
-    if (id === undefined || id === null) {
-      this.setState({ redirect: true });
-    } else {
-      this.props.onFindCountryLoad(id);
-    }
-  }
-
   render() {
     if (this.state.redirect) {
       return <Redirect push to="/identity/country" />;
@@ -37,57 +26,51 @@ class Details extends Component {
           </button>
 
           <div className="container row resetRow mt-3">
-            <div className="col-5">
-              <React.Fragment>
-                <h3 className="border-bottom">
-                  Details of {this.props.country.country.name}
-                </h3>
-                <table className="table table-active table-striped table-hover rounded">
-                  <caption>
-                    Details of {this.props.country.country.name}
-                  </caption>
-                  <thead>
-                    <tr className="d-table-row">
-                      <th className="d-table-cell">Name</th>
-                      <th className="d-table-cell">Population</th>
-                      <th className="d-table-cell">Options</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="d-table-row">
-                      <td className="d-table-cell">
-                        {this.props.country.country.name}
-                      </td>
-                      <td className="d-table-cell">
-                        {this.props.country.country.population}
-                      </td>
-                      <td className="d-table-cell">
-                        <Link
-                          className="btn btn-warning btn-sm"
-                          to={
-                            "/identity/country/edit/" +
-                            this.props.country.country.id
-                          }>
-                          Edit
-                        </Link>
-                        <Link
-                          className="btn btn-danger btn-sm ml-1"
-                          to={
-                            "/identity/country/delete/" +
-                            this.props.country.country.id
-                          }>
-                          Delete
-                        </Link>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </React.Fragment>
+            <div className="col-5 border shadow box-shadow h-50">
+              <h3>Details of {this.props.country.country.name}</h3>
+              <hr />
+              <table className="table table-active table-striped table-hover rounded border shadow">
+                <caption>Details of {this.props.country.country.name}</caption>
+                <thead>
+                  <tr className="d-table-row">
+                    <th className="d-table-cell">Name</th>
+                    <th className="d-table-cell">Population</th>
+                    <th className="d-table-cell">Options</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="d-table-row">
+                    <td className="d-table-cell">
+                      {this.props.country.country.name}
+                    </td>
+                    <td className="d-table-cell">
+                      {this.props.country.country.population}
+                    </td>
+                    <td className="d-table-cell">
+                      <Link
+                        className="btn btn-warning btn-sm"
+                        to={
+                          "/identity/country/edit/" +
+                          this.props.country.country.id
+                        }>
+                        Edit
+                      </Link>
+                      <Link
+                        className="btn btn-danger btn-sm ml-1"
+                        to={
+                          "/identity/country/delete/" +
+                          this.props.country.country.id
+                        }>
+                        Delete
+                      </Link>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div className="float-right offset-1 col-5">
-              <h3 className="border-bottom">
-                Cities in {this.props.country.country.name}
-              </h3>
+            <div className="float-right offset-1 col-5 shadow box-shadow border mb-3">
+              <h3>Cities in {this.props.country.country.name}</h3>
+              <hr />
               {this.props.country.cities === null ||
               this.props.country.cities.length === 0 ? (
                 <div className="font-weight-bold">
@@ -95,7 +78,7 @@ class Details extends Component {
                 </div>
               ) : (
                 <React.Fragment>
-                  <table className="table table-active table-striped table-hover rounded">
+                  <table className="table table-active table-striped table-hover rounded border shadow">
                     <caption>
                       Existing cities in {this.props.country.country.name}
                     </caption>

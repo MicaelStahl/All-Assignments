@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace All_Assignments.ViewModels
 {
+
+    // -------------------- Person -------------------- \\
     public class PersonWithCityVM
     {
         public Person Person { get; set; }
@@ -21,6 +23,8 @@ namespace All_Assignments.ViewModels
 
         public Guid? CityId { get; set; }
     }
+
+    // -------------------- City -------------------- \\
 
     public class CityWithCountryVM
     {
@@ -53,10 +57,19 @@ namespace All_Assignments.ViewModels
         public List<Country> Countries { get; set; }
     }
 
+    // -------------------- Country -------------------- \\
+
     public class CountryWithCitiesVM
     {
         public Country Country { get; set; }
 
         public List<City> Cities { get; set; }
+    }
+
+    public class ListOfCountriesWithCitiesVM
+    {
+        public List<Country> Countries { get; set; } = new List<Country>();
+
+        public string Failed { get; set; }
     }
 }
