@@ -39,13 +39,17 @@ const Details = props => {
               </td>
               <td className="d-table-cell">
                 <Link
-                  onClick={() => props.onEditLoad(props.city.city.id)}
+                  onClick={() =>
+                    props.onEditLoad(props.city.city.id, props.cities)
+                  }
                   className="btn btn-warning btn-sm"
                   to={"/identity/city/edit/" + props.city.city.id}>
                   Edit
                 </Link>
                 <Link
-                  onClick={() => props.onDeleteLoad(props.city.city.id)}
+                  onClick={() =>
+                    props.onDeleteLoad(props.city.city.id, props.cities)
+                  }
                   className="btn btn-danger btn-sm"
                   to={"/identity/city/delete/" + props.city.city.id}>
                   Delete
@@ -106,14 +110,17 @@ const Details = props => {
 const mapStateToProps = state => {
   return {
     city: state.city.oneCity,
+    cities: state.city.cities,
     isLoading: state.options.isLoading
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onEditLoad: id => dispatch(actionTypes.FindCityForEditAsync(id)),
-    onDeleteLoad: id => dispatch(actionTypes.FindCityAsync(id))
+    onEditLoad: (id, cities) =>
+      dispatch(actionTypes.FindCityForEditAsync(id, cities)),
+    onDeleteLoad: (id, cities) =>
+      dispatch(actionTypes.FindCityAsync(id, cities))
   };
 };
 

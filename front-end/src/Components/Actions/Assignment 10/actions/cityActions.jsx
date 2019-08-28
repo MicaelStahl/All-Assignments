@@ -109,6 +109,7 @@ export function FindCityAsync(id, cities = []) {
   return dispatch => {
     const city = cities.find(x => x.city.id === id);
     if (city !== undefined) {
+      console.log(city);
       dispatch(FindCity(city));
     } else {
       dispatch(actionOptions.ItemsAreLoadingAsync(true));
@@ -142,7 +143,6 @@ export function FindCityAsync(id, cities = []) {
 export function FindCityForEditAsync(id, cities = []) {
   return dispatch => {
     const city = cities.find(x => x.city.id === id);
-
     if (city !== undefined) {
       const fullCity = {
         city: city.city,

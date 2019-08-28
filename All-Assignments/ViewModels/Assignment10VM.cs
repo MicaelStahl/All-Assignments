@@ -48,7 +48,7 @@ namespace All_Assignments.ViewModels
 
         public string CountryName { get; set; }
 
-        //public List<Person> People { get; set; }
+        public List<Person> People { get; set; }
 
         public List<Country> Countries { get; set; }
     }

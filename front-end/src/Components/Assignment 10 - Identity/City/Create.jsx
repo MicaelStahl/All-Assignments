@@ -116,7 +116,11 @@ class Create extends Component {
           {this.state.error === "" ? null : (
             <p className=" font-weight-bold text-danger">{this.state.error}</p>
           )}
-          <form className="form col-6" onSubmit={this.handleSubmit}>
+          <form
+            className="form col-3 shadow box-shadow border AlignCenter"
+            onSubmit={this.handleSubmit}>
+            <h3>Create City</h3>
+            <hr />
             <p>Required fields are marked with *</p>
             <div className="form-group">
               <label className="col-form-label">Name*</label>

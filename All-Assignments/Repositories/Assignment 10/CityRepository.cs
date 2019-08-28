@@ -114,7 +114,8 @@ namespace All_Assignments.Repositories.Assignment_10
             }
 
             var city = await _db.Cities
-                //.Include(x => x.People) <= Exclude this one for now. Might add it in later.
+                // Exclude this one for now. Might add it in later.
+                .Include(x => x.People)
                 .Include(x => x.Country)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
@@ -127,12 +128,21 @@ namespace All_Assignments.Repositories.Assignment_10
             {
                 Countries = await _db.Countries?.ToListAsync(),
                 CountryName = city.Country?.Name ?? "Stateless",
-                CountryId = city.Country?.Id ?? null
+                CountryId = city.Country?.Id ?? null,
+                People = city.People,
+
+                City = new City
+                {
+                    Id = city.Id,
+                    Name = city.Name,
+                    Population = city.Population,
+                    Country = null,
+                }
             };
 
-            city.Country = null;
-            city.People = null;
-            cityVM.City = city;
+            //city.Country = null;
+            //////city.People = null;
+            //cityVM.City = city;
 
             return cityVM;
         }

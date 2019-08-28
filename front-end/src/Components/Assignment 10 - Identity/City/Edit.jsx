@@ -77,8 +77,8 @@ class Edit extends Component {
     }
 
     if (!this.props.isLoading) {
-      console.log(this.props.isLoading);
-      const { city, countries } = this.props;
+      let { city, countries } = this.props;
+      console.log(this.props.city);
       const userChoice =
         city.countryId !== null ? (
           <option value={city.countryId}>{city.countryName}</option>
