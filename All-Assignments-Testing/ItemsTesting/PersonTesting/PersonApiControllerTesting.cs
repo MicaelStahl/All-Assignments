@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -228,6 +229,8 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
 
         #region Find
 
+        #region FindOne
+
         [Fact]
         [Trait("Category", "PersonApiFindOne")]
         public async Task Find_SubmitValidId_ReturnsCorrectPersonAndOkObjectResultWith200Status()
@@ -260,6 +263,10 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
             Assert.Contains("Not be found".ToLower(), notFound.Value.ToString().ToLower());
         }
 
+        #endregion
+
+        #region FindALl
+
         [Fact]
         [Trait("Category", "PersonApiFindAll")]
         public async Task Find_CallMethod_ReturnsOkObjectResultAndListOfTwoPeople()
@@ -275,7 +282,145 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
             Assert.Equal(200, okResult.StatusCode);
             Assert.Equal(2, model.Count);
         }
+
+        [Fact]
+        [Trait("Category", "PersonApiFindAll")]
+        public async Task Find_CallMethod_ReturnsNotFoundResultIfListIsNull()
+        {
+            var people = TwoValidPeopleWithCities();
+            people.ForEach(x => _service.Setup(c => c.Create(x.Person, x.CityId)));
+            _service.Setup(x => x.AllPeople()).Returns(Task.FromResult<List<PersonWithCityVM>>(null));
+
+            var result = await _controller.GetAll();
+
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
         #endregion
 
+        #endregion
+
+        #region Update
+
+        #region EditSuccess
+
+        [Fact]
+        [Trait("Category", "PersonUpdateValidModelState")]
+        public async Task Update_UpdateWithValidModelState_ReturnsOkResultAndUpdatedPerson()
+        {
+            var person = OneValidPersonWithCity();
+            var editPerson = new PersonWithCityVM { Person = person, CityId = person.City.Id, CityName = person.City.Name };
+            // Originally "Micael"
+            editPerson.Person.FirstName = "Test";
+            _service.Setup(x => x.Create(person, person.City.Id));
+            _service.Setup(x => x.Edit(editPerson.Person, editPerson.CityId)).ReturnsAsync(editPerson.Person);
+
+            var result = await _controller.Edit(editPerson);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<PersonWithCityVM>(okResult.Value);
+            Assert.Equal(editPerson.Person, model.Person);
+        }
+
+        #endregion
+
+        #region EditFailed
+
+        [Fact]
+        [Trait("Category", "PersonUpdateInvalidModelState")]
+        public async Task Update_UpdateWithInVaalidModelState_ReturnsBadRequestObjectResult()
+        {
+            var person = OneValidPersonWithCity();
+            var editPerson = new PersonWithCityVM { Person = person, CityId = person.City.Id, CityName = person.City.Name };
+            editPerson.Person.FirstName = "";
+            _service.Setup(x => x.Create(person, person.City.Id));
+            _service.Setup(x => x.Edit(editPerson.Person, editPerson.CityId)).Returns(Task.FromResult<Person>(null));
+            _controller.ModelState.AddModelError("Invalid FirstName", "Invalid FirstName given");
+
+            var result = await _controller.Edit(editPerson);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Delete
+
+        #region DeleteSuccess
+
+        [Fact]
+        [Trait("Category", "PersonDeleteValidId")]
+        public async Task Delete_DeleteWithValidId_ReturnsOkObjectResult()
+        {
+            var person = OneValidPersonWithCity();
+            _service.Setup(x => x.Create(person, person.City.Id));
+            _service.Setup(x => x.Delete(person.Id)).ReturnsAsync(true);
+
+            var result = await _controller.Delete(person.Id);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        [Trait("Category", "PersonDeleteValidId")]
+        public async Task Delete_DeleteCorrectPerson_ReturnsListOfOnePerson()
+        {
+            var people = TwoValidPeopleWithCities();
+            var person = people.SingleOrDefault(x => x.Person.FirstName == "Micael");
+            people.ForEach(x => _service.Setup(c => c.Create(x.Person, x.CityId)));
+            _service.Setup(x => x.Delete(person.Person.Id)).ReturnsAsync(true);
+            _service.Setup(x => x.AllPeople()).ReturnsAsync(people.Where(x => x.Person.Id != person.Person.Id).ToList());
+
+            var deleteResult = await _controller.Delete(person.Person.Id);
+            var result = await _controller.GetAll();
+
+            Assert.IsType<OkObjectResult>(deleteResult);
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<List<PersonWithCityVM>>(okObjectResult.Value);
+            Assert.Single(model);
+        }
+
+        #endregion
+
+        #region DeleteFailed
+
+        [Fact]
+        [Trait("Category", "PersonDeleteInvalidId")]
+        public async Task Delete_DeleteWithInValidId_ReturnsBadRequestObjectResult()
+        {
+            var person = OneValidPersonWithCity();
+            var fakeId = IdGeneration();
+            _service.Setup(x => x.Create(person, person.City.Id));
+            _service.Setup(x => x.Delete(fakeId)).Returns(Task.FromResult(false));
+
+            var result = await _controller.Delete(fakeId);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        [Trait("Category", "PersonDeleteInvalidId")]
+        public async Task Delete_DeleteWithInValidId_ReturnsNoDeletedPeople()
+        {
+            var people = TwoValidPeopleWithCities();
+            var fakeId = IdGeneration();
+            people.ForEach(x => _service.Setup(c => c.Create(x.Person, x.CityId)));
+            _service.Setup(x => x.Delete(fakeId)).Returns(Task.FromResult(false));
+            _service.Setup(x => x.AllPeople()).ReturnsAsync(people);
+
+            var falseResult = await _controller.Delete(fakeId);
+            var result = await _controller.GetAll();
+
+            Assert.IsType<BadRequestObjectResult>(falseResult);
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<List<PersonWithCityVM>>(okObjectResult.Value);
+            Assert.Equal(2, model.Count);
+        }
+
+        #endregion
+
+        #endregion
     }
 }

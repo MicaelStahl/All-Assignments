@@ -28,7 +28,7 @@ namespace All_Assignments.Controllers
 
             if (people == null)
             {
-                return Content("There's no people available. Please either create some or contact administration");
+                return NotFound("There's no people available. Please either create some or contact administration");
             }
 
             return Ok(people);
@@ -65,7 +65,7 @@ namespace All_Assignments.Controllers
 
             if (newPerson == null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
             //return Ok(newPerson);
@@ -75,7 +75,7 @@ namespace All_Assignments.Controllers
 
         [HttpPut("{id}")]
         //[AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> Edit(PersonWithCityIdVM person)
+        public async Task<IActionResult> Edit(PersonWithCityVM person)
         {
             if (!ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace All_Assignments.Controllers
 
             if (newPerson == null)
             {
-                return Content("Something went wrong while updating the person. Please try again");
+                return BadRequest("Something went wrong while updating the person. Please try again");
             }
 
             PersonWithCityVM personVM = new PersonWithCityVM
@@ -116,7 +116,7 @@ namespace All_Assignments.Controllers
                 return Ok("The person was successfully removed.");
             }
 
-            return Content("Something went wrong when removing person. Please try again");
+            return BadRequest("Something went wrong when removing person. Please try again");
         }
     }
 }
