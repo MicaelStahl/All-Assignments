@@ -370,5 +370,28 @@ namespace All_Assignments_Testing.ItemsTesting.CityTesting
         #endregion
 
         #endregion
+
+        #region Edit
+
+        #region EditCity
+
+        [Fact]
+        [Trait("Repository", "CityEditValidData")]
+        public async Task Edit_SubmitValidEditData_ReturnsCorrectlyEditedCity()
+        {
+            var city = OneValidCity();
+            var editCity = city;
+            editCity.Name = "Stockholm";
+            _service.Setup(x => x.Create(city, city.Country.Id));
+            _service.Setup(x => x.Edit(editCity, editCity.Country.Id)).ReturnsAsync(editCity);
+
+            var result = await _service.Object.Edit(editCity, editCity.Country.Id);
+
+            Assert.Equal(editCity, result);
+        }
+
+        #endregion
+
+        #endregion
     }
 }
