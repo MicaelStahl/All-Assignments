@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="ItemsTesting\CountryTesting\" />
-    <Folder Include="ItemsTesting\CityTesting\" />
     <Folder Include="UserTesting\" />
   </ItemGroup>
 

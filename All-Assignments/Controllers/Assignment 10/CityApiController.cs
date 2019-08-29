@@ -30,7 +30,7 @@ namespace All_Assignments.Controllers
 
             if (cities == null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
             return Ok(cities);
@@ -43,7 +43,7 @@ namespace All_Assignments.Controllers
 
             if (cities == null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
             return Ok(cities);
@@ -62,7 +62,7 @@ namespace All_Assignments.Controllers
 
             if (city == null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
             return Ok(city);
@@ -80,7 +80,7 @@ namespace All_Assignments.Controllers
 
             if (city == null)
             {
-                return NoContent();
+                return BadRequest();
             }
 
             return Ok(city);
@@ -98,7 +98,7 @@ namespace All_Assignments.Controllers
 
             if (newCity == null)
             {
-                return Content("Something went wrong when creating the city. Please try again");
+                return BadRequest("Something went wrong when creating the city. Please try again");
             }
 
             return Ok(newCity);
@@ -116,7 +116,7 @@ namespace All_Assignments.Controllers
 
             if (newCity == null)
             {
-                return Content("Something went wrong when updating the city. Please try again.");
+                return BadRequest("Something went wrong when updating the city. Please try again.");
             }
 
             return Ok(newCity);
@@ -134,7 +134,7 @@ namespace All_Assignments.Controllers
 
             if (city == null)
             {
-                return Content("Something went wrong. Please try again.");
+                return BadRequest("Something went wrong. Please try again.");
             }
 
             return Ok(city);
@@ -152,7 +152,7 @@ namespace All_Assignments.Controllers
 
             if (result == false)
             {
-                return Content("Something went wrong when trying to delete city. Please try again.");
+                return BadRequest("Something went wrong when trying to delete city. Please try again.");
             }
 
             return Ok(result);
