@@ -31,6 +31,33 @@ namespace All_Assignments_Testing.ItemsTesting.CityTesting
             return Guid.NewGuid();
         }
 
+        private List<Person> TwoPeople()
+        {
+            return new List<Person>
+            {
+                new Person
+                {
+                    Id = IdGeneration(),
+                    FirstName = "Micael",
+                    LastName = "Ståhl",
+                    Age = 23,
+                    Email = "Micael_Stahl96@hotmail.com",
+                    Gender = "Male",
+                    PhoneNumber = "0725539574",
+                },
+                new Person
+                {
+                    Id= IdGeneration(),
+                    FirstName = "Test",
+                    LastName = "Testsson",
+                    Age = 24,
+                    Email = "Test.Testsson@Testing.com",
+                    Gender = "Apache",
+                    PhoneNumber = "123456789"
+                }
+            };
+        }
+
         private City OneValidCity()
         {
             return new City
@@ -388,6 +415,152 @@ namespace All_Assignments_Testing.ItemsTesting.CityTesting
             var result = await _service.Object.Edit(editCity, editCity.Country.Id);
 
             Assert.Equal(editCity, result);
+        }
+
+        [Fact]
+        [Trait("Repository", "CityEditInvalidData")]
+        public async Task Edit_SubmitInvalidData_ReturnsNullValue()
+        {
+            var city = OneValidCity();
+            var editCity = city;
+            editCity.Name = "";
+            _service.Setup(x => x.Create(city, city.Country.Id));
+            _service.Setup(x => x.Edit(editCity, editCity.Country.Id)).Returns(Task.FromResult<City>(null));
+
+            var result = await _service.Object.Edit(editCity, editCity.Country.Id);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        [Trait("Repository", "CityEditInvalidData")]
+        public async Task Edit_SubmitInvalidData_OriginalWasNotChanged()
+        {
+            var city = OneValidCity();
+            var editCity = city;
+            editCity.Name = "";
+            _service.Setup(x => x.Create(city, city.Country.Id));
+            _service.Setup(x => x.Edit(editCity, editCity.Country.Id)).Returns(Task.FromResult<City>(null));
+            _service.Setup(x => x.FindCity(city.Id)).ReturnsAsync(new CityWithCountryVM { City = city, CountryId = city.Country.Id, CountryName = city.Country.Name, People = city.People });
+
+            var nullResult = await _service.Object.Edit(editCity, editCity.Country.Id);
+            var result = await _service.Object.FindCity(city.Id);
+
+            Assert.Null(nullResult);
+            Assert.Equal(city, result.City);
+        }
+
+        #endregion
+
+        #region AddPeopleToCity
+
+        /// <summary>
+        /// Returns to this one at a later time. Don't know how to write this test.
+        /// </summary>
+        [Fact]
+        [Trait("Repository", "CityAddPeopleToCity")]
+        public async Task Edit_AddTwoPeople_ReturnsCityWithTwoPeople()
+        {
+            var city = OneValidCity();
+            var people = TwoPeople();
+            city.People = people;
+            _service.Setup(x => x.Create(city, city.Country.Id));
+            _service.Setup(x => x.AddPeople(city.Id, people)).ReturnsAsync(city);
+
+            var result = await _service.Object.AddPeople(city.Id, people);
+
+            Assert.Equal(2, result.People.Count);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Delete
+
+        #region DeleteSuccess
+
+        [Fact]
+        [Trait("Repository", "CityDeleteValidId")]
+        public async Task Delete_SubmitValidId_RemovesValueAndReturnsTrue()
+        {
+            var cities = TwoValidCities();
+            var city = cities.LastOrDefault();
+            cities.ForEach(x => _service.Setup(c => c.Create(x, x.Country.Id)));
+            _service.Setup(x => x.Delete(city.Id)).ReturnsAsync(true);
+
+            var result = await _service.Object.Delete(city.Id);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        [Trait("Repository", "CityDeleteValidId")]
+        public async Task Delete_SubmitValidId_ReturnsListOfOneCity()
+        {
+            var cities = TwoValidCities();
+            var city = cities.LastOrDefault();
+            cities.ForEach(x => _service.Setup(c => c.Create(x, x.Country.Id)));
+            _service.Setup(x => x.Delete(city.Id)).ReturnsAsync(true);
+            _service.Setup(x => x.AllCities()).ReturnsAsync(cities.Where(x => x.Id != city.Id).ToList());
+
+            var trueResult = await _service.Object.Delete(city.Id);
+            var result = await _service.Object.AllCities();
+
+            Assert.True(trueResult);
+            Assert.Single(result);
+        }
+
+        [Fact]
+        [Trait("Repository", "CityDeleteValidId")]
+        public async Task Delete_SubmitValidId_RemovesCorrectCity()
+        {
+            var cities = TwoValidCities();
+            var city = cities.LastOrDefault();
+            cities.ForEach(x => _service.Setup(c => c.Create(x, x.Country.Id)));
+            _service.Setup(x => x.Delete(city.Id)).ReturnsAsync(true);
+            _service.Setup(x => x.FindCity(city.Id)).Returns(Task.FromResult<CityWithCountryVM>(null));
+
+            var trueResult = await _service.Object.Delete(city.Id);
+            var result = await _service.Object.FindCity(city.Id);
+
+            Assert.True(trueResult);
+            Assert.Null(result);
+        }
+
+        #endregion
+
+        #region DeleteFailed
+
+        [Fact]
+        [Trait("Repository", "CityDeleteInvalidId")]
+        public async Task Delete_SubmitInvalidId_ReturnsFalseValue()
+        {
+            var cities = TwoValidCities();
+            var fakeId = IdGeneration();
+            cities.ForEach(x => _service.Setup(c => c.Create(x, x.Country.Id)));
+            _service.Setup(x => x.Delete(fakeId)).Returns(Task.FromResult(false));
+
+            var result = await _service.Object.Delete(fakeId);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        [Trait("Repository", "CityDeleteInvalidId")]
+        public async Task Delete_SubmitInvalidId_ReturnsListOfTwoCitiesWhenCalled()
+        {
+            var cities = TwoValidCities();
+            var fakeId = IdGeneration();
+            cities.ForEach(x => _service.Setup(c => c.Create(x, x.Country.Id)));
+            _service.Setup(x => x.Delete(fakeId)).Returns(Task.FromResult(false));
+            _service.Setup(x => x.AllCities()).ReturnsAsync(cities);
+
+            var falseResult = await _service.Object.Delete(fakeId);
+            var result = await _service.Object.AllCities();
+
+            Assert.False(falseResult);
+            Assert.Equal(cities, result);
         }
 
         #endregion

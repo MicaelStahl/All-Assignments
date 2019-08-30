@@ -39,23 +39,6 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
         }
 
         /// <summary>
-        /// Returns one valid person without a city.
-        /// </summary>
-        private Person OneValidPersonWithoutCity()
-        {
-            return new Person
-            {
-                Id = IdGeneration(),
-                FirstName = "Micael",
-                LastName = "Ståhl",
-                Age = 23,
-                Email = "Micael_Stahl96@hotmail.com",
-                Gender = "Male",
-                PhoneNumber = "0725539574",
-            };
-        }
-
-        /// <summary>
         /// Returns one valid person with a city.
         /// </summary>
         private Person OneValidPersonWithCity()
@@ -117,59 +100,6 @@ namespace All_Assignments_Testing.ItemsTesting.PersonTesting
                         PhoneNumber = "123456789",
                     }
                 }
-            };
-        }
-
-        /// <summary>
-        /// Returns a list of two people without cities.
-        /// </summary>
-        private List<PersonWithCityVM> TwoValidPeopleWithoutCities()
-        {
-            return new List<PersonWithCityVM>
-            {
-                new PersonWithCityVM
-                {
-                    Person = new Person
-                    {
-                        Id = IdGeneration(),
-                        FirstName = "Micael",
-                        LastName = "Ståhl",
-                        Age = 23,
-                        Email = "Micael_Stahl96@hotmail.com",
-                        Gender = "Male",
-                        PhoneNumber = "0725539574",
-                    }
-                },
-                new PersonWithCityVM
-                {
-                    Person = new Person
-                    {
-                        Id = IdGeneration(),
-                        FirstName = "Test",
-                        LastName = "Testsson",
-                        Age = 76,
-                        Email = "TestTestsson@hotmail.com",
-                        Gender = "Female",
-                        PhoneNumber = "123456789",
-                    }
-                }
-            };
-        }
-
-        /// <summary>
-        /// Returns one invalid person without a city.
-        /// </summary>
-        private Person OneInvalidPersonWithoutCity()
-        {
-            return new Person
-            {
-                Id = IdGeneration(),
-                FirstName = "",
-                LastName = "",
-                Age = 15,
-                Gender = "Male",
-                PhoneNumber = "123456789",
-                Email = "",
             };
         }
 
