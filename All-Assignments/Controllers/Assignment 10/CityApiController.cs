@@ -143,7 +143,7 @@ namespace All_Assignments.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
+            if (id == Guid.Empty || string.IsNullOrWhiteSpace(id.ToString()))
             {
                 return BadRequest();
             }
