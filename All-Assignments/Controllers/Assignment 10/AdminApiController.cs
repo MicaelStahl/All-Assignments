@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.Interfaces.Assignment_10.Admin;
 using All_Assignments.ViewModels;
@@ -8,18 +6,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace All_Assignments.Controllers.Assignment_10
 {
     /// <summary>
     /// This api exists ONLY for the admin and is not accessible for anyone that does not have the Administrator role.
-    /// In the future at least...
     /// </summary>
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    //[Authorize(Roles = "Administrator")]
     public class AdminApiController : Controller
     {
         private readonly IAdminRepository _service;
@@ -59,8 +53,6 @@ namespace All_Assignments.Controllers.Assignment_10
             {
                 var users = await _service.GetUsers(admin);
 
-                // Doing this since in the repository I create 1 user if something goes wrong.
-                // So I verify if the user is the "error" user created, or a normal user.
                 if (users.ErrorMessage == null)
                 {
                     return Ok(users);
@@ -154,7 +146,6 @@ namespace All_Assignments.Controllers.Assignment_10
             }
         }
 
-        //[HttpDelete("delete-user/{userId}/{adminId}/{adminToken}")]
         [HttpPost("delete-user")]
         public async Task<IActionResult> DeleteUser(AdminVerificationForUserVM verificationVM)
         {

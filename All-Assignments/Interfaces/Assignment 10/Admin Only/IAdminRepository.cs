@@ -1,7 +1,4 @@
 ﻿using All_Assignments.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace All_Assignments.Interfaces.Assignment_10.Admin
@@ -23,8 +20,6 @@ namespace All_Assignments.Interfaces.Assignment_10.Admin
         #region Update
         Task<AdminUserDetailsVM> EditUser(AdminEditUserVM user);
         Task<AdminResultVM> ChangeUserPassword(AdminChangeUserPassword10 changePassword);
-
-        // ToDo: Add a method to change users roles here later.
         #endregion
 
         #region Delete

@@ -1,5 +1,4 @@
-﻿using All_Assignments.Database;
-using All_Assignments.Interfaces.Assignment_10.Admin;
+﻿using All_Assignments.Interfaces.Assignment_10.Admin;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,15 +71,12 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
 
                     List<string> roleNames = new List<string>();
 
-                    // This is here because I didn't know how else to only get the name of the roles to use in AddToRolesAsync.
                     roles.ForEach(x => roleNames.Add(x.Name));
 
                     var newUser = await _userManager.FindByNameAsync(user.UserName);
 
-                    // This checks if the Admin boolean is true, if it is, it adds the user to all roles. otherwise only to NormalUser.
                     _ = user.IsAdmin == true ? await _userManager.AddToRolesAsync(newUser, roleNames)
                         : await _userManager.AddToRoleAsync(newUser, "NormalUser");
-
 
                     AdminUserDetailsVM userVM = new AdminUserDetailsVM
                     {
@@ -104,13 +99,12 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     return userVM;
                 }
                 else
-                { // Unsure if I'll keep this.
-                    throw new Exception(result.Errors.ToString());
+                { 
+                    throw new Exception("Something went wrong. Please check all inputs and then try again.");
                 }
-
             }
             catch (Exception ex)
-            { // Doing this for a more versatile error-handling, and to not send down unnecessary information if something fails.
+            { 
                 AdminUserDetailsVM userVM = new AdminUserDetailsVM
                 {
                     ErrorMessage = ex.Message
@@ -175,14 +169,6 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                     AdminToken = await UserToken(admin),
                     
                 };
-
-                //var roleNames = await _userManager.GetRolesAsync(user);
-
-                //foreach (var item in roleNames)
-                //{
-                //    userVM.User.Roles.Add(item);
-                //}
-
 
                 return userVM;
             }
@@ -302,26 +288,13 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                 original.Age = user.User.Age;
                 original.Email = user.User.Email;
 
-                // This big text of chaos represents a if - else if format, 
-                // which checks whether the IsAdmin value was changed, and if it was, changes the users role correctly.
-
+                // This checks whether the IsAdmin was changed or not, and if it was it changes the role corresponding to the change.
                 _ = user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == true
                     ? await _userManager.AddToRoleAsync(original, "Administrator")
                     : user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == false
                     ? await _userManager.RemoveFromRoleAsync(original, "Administrator") : null;
 
                 original.IsAdmin = user.User.IsAdmin;
-
-                // // This code right here does exactly the same thing as the code above.
-
-                //if (user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == true)
-                //{
-                //    await _userManager.AddToRoleAsync(original, "Administrator");
-                //}
-                //else if (user.User.IsAdmin != original.IsAdmin && user.User.IsAdmin == false)
-                //{
-                //    await _userManager.RemoveFromRoleAsync(original, "Administrator");
-                //}
 
                 var result = await _userManager.UpdateAsync(original);
 
@@ -401,7 +374,6 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
 
                 if (result.Succeeded)
                 {
-
                     return new AdminResultVM()
                     {
                         AdminId = admin.Id,
@@ -414,13 +386,11 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                 {
                     throw new Exception(result.Errors.ToString());
                 }
-
             }
             catch (Exception ex)
             {
                 return new AdminResultVM() { Failed = ex.Message };
             }
-
         }
         #endregion
 
@@ -495,7 +465,6 @@ namespace All_Assignments.Repositories.Assignment_10.Admin
                 issuer: "http://localhost:3000",
                 audience: "http://localhost:3000",
                 claims: new List<Claim>(),
-                // Change this timer later to 15 min (Standard). It's 60 min atm for developing purposes.
                 expires: DateTime.Now.AddMinutes(60),
                 signingCredentials: signingCredentials
                 );

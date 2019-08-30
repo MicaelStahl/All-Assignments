@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using All_Assignments.Database;
-using All_Assignments.Interfaces;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.Interfaces.Assignment_10.Admin;
 using All_Assignments.Repositories.Assignment_10;
 using All_Assignments.Repositories.Assignment_10.Admin;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +28,6 @@ namespace All_Assignments
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AllAssignmentsDbContext>(options =>
@@ -43,9 +36,6 @@ namespace All_Assignments
             services.AddIdentity<AppUser10, IdentityRole>()
                 .AddEntityFrameworkStores<AllAssignmentsDbContext>()
                 .AddDefaultTokenProviders();
-
-            //.AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Authentication")
-            //.AddTokenProvider<DataProtectorTokenProvider<AppUser10>>("Verification")
 
             services.AddCors(options =>
             {
@@ -103,36 +93,6 @@ namespace All_Assignments
                 options.Cookie.IsEssential = true;
             });
 
-            #region Jwt Creation by https://bit.ly/31FTeUp
-
-            //// configure strongly typed settings objects
-            //var tokenManagement = Configuration.GetSection("TokenManagement");
-            //services.Configure<TokenManagement>(tokenManagement);
-
-            //// configure jwt authentication
-            //var tokenSettings = tokenManagement.Get<TokenManagement>();
-            //var key = Encoding.ASCII.GetBytes(tokenSettings.Secret);
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //    .AddJwtBearer(options =>
-            //    {
-            //        options.RequireHttpsMetadata = false;
-            //        options.SaveToken = true;
-            //        options.TokenValidationParameters = new TokenValidationParameters
-            //        {
-            //            ValidateIssuerSigningKey = true,
-            //            IssuerSigningKey = new SymmetricSecurityKey(key),
-            //            ValidateIssuer = false,
-            //            ValidateAudience = false,
-            //        };
-            //    });
-
-            #endregion
-
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -149,43 +109,9 @@ namespace All_Assignments
                     };
                 });
 
-
-            //services.AddAuthentication(
-            //    //JwtBearerDefaults.AuthenticationScheme
-            //    options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}
-            //)
-            //    .AddJwtBearer(options =>
-            //    { // "http://localhost:50691" "http://localhost:44399"
-            //        options.SaveToken = true;
-            //        //options.Audience = "http://localhost:3000";
-            //        //options.Authority = "http://localhost:3000";
-            //        ////// Only disabled in Development. \\
-            //        //options.RequireHttpsMetadata = false;
-            //        //options.TokenValidationParameters = new TokenValidationParameters
-            //        //{
-            //        //    SaveSigninToken = true,
-            //        //    //ValidateLifetime = true,
-            //        //    //ValidateIssuer = false,
-            //        //    //ValidateAudience = false
-            //        //};
-            //    });
-
-            //services.AddAuthorization(options =>
-            //{
-            //    var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
-            //        JwtBearerDefaults.AuthenticationScheme);
-            //    defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
-            //   options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
-            //});
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -203,13 +129,9 @@ namespace All_Assignments
 
             app.UseCookiePolicy();
 
-            //app.UseHttpsRedirection();
-
             app.UseSession();
 
             app.UseCors();
-
-            //app.UseCors("AllowSpecificHosts");
 
             app.UseAuthentication();
 

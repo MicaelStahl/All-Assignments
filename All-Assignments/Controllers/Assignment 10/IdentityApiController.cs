@@ -1,22 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using All_Assignments.Interfaces.Assignment_10;
 using All_Assignments.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace All_Assignments.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class IdentityApiController : Controller
@@ -37,15 +31,10 @@ namespace All_Assignments.Controllers
             _service = service;
         }
 
-        /// <summary>
-        /// Will this even be used?
-        /// </summary>
         public IActionResult Index()
         {
             return View();
         }
-
-        // (C)REATE
 
         #region (C)REATE
 
@@ -87,8 +76,8 @@ namespace All_Assignments.Controllers
             }
 
             if (await _roleManager.RoleExistsAsync(role))
-            { // Is this really smart? Might be a giveaway for bad users that this role exists.
-                return Content("This role already exists.");
+            { 
+                return BadRequest("This role already exists.");
             }
             var newRole = new IdentityRole(role);
 
@@ -104,38 +93,13 @@ namespace All_Assignments.Controllers
             }
             else
             {
-                return Content("Something went wrong when creating role. Please try again.");
+                return BadRequest("Something went wrong when creating role. Please try again.");
             }
         }
 
         #endregion
 
-        // (R)EAD
-
         #region (R)EAD
-
-        [HttpPost("users")]
-        // Make this only for admin later.
-        public async Task<IActionResult> GetUsers(ReturnedUserVM userVM)
-        {
-            if (string.IsNullOrWhiteSpace(userVM.UserToken) || string.IsNullOrWhiteSpace(userVM.UserId))
-            {
-                return BadRequest("Something went wrong. Please try again.");
-            }
-
-            var users = await _service.AllUsers(userVM.UserId, userVM.UserToken);
-
-            if (users == null)
-            {
-                return BadRequest("No users found.");
-            }
-
-            return Ok(users);
-        }
-
-        /// <summary>
-        /// For admin only
-        /// </summary>
 
         [HttpPost("get-user")]
         public async Task<IActionResult> GetUser(ReturnedUserVM userVM)
@@ -190,7 +154,6 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> FindRole(string roleId)
         {
@@ -216,10 +179,8 @@ namespace All_Assignments.Controllers
 
         #endregion
 
-        // SignIn / SignOut
         #region SignIn / SignOut
 
-        //[HttpPost]
         [HttpPost("signin")]
         [AllowAnonymous]
         public async Task<IActionResult> SignIn(LoginUser10 user10)
@@ -242,15 +203,8 @@ namespace All_Assignments.Controllers
         }
 
         [HttpPost("signout")]
-        // Remove AllowAnonymous at a later stage.
-        [AllowAnonymous]
         public async Task<IActionResult> SignOut(ReturnedUserVM userVM)
         {
-            // These two lines are here for developing purposes only and will be removed at a later stage.
-            //await _signInManager.SignOutAsync();
-
-            //return Ok("You successfully signed out!");
-
             var result = await _service.LogOutUser(userVM.UserId, userVM.UserToken);
 
             if (result.Success != null)
@@ -264,8 +218,6 @@ namespace All_Assignments.Controllers
         }
 
         #endregion
-
-        // (U)PDATE
 
         #region (U)PDATE
 
@@ -358,13 +310,11 @@ namespace All_Assignments.Controllers
             }
             else
             {
-                return Content("Something went wrong when updating the role, please try again.");
+                return BadRequest("Something went wrong when updating the role, please try again.");
             }
         }
 
         #endregion
-
-        // (D)ELETE
 
         #region (D)ELETE
 
@@ -414,18 +364,18 @@ namespace All_Assignments.Controllers
 
             if (verifyRole == null)
             {
-                return Content("Role does not exist.");
+                return BadRequest("Role does not exist.");
             }
 
             var result = await _roleManager.DeleteAsync(verifyRole);
 
             if (result.Succeeded)
             {
-                return Content("Role was successfully deleted.");
+                return Ok("Role was successfully deleted.");
             }
             else
             {
-                return Content("Something went wrong when deleting role.");
+                return BadRequest("Something went wrong when deleting role.");
             }
         }
 

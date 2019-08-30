@@ -25,9 +25,7 @@ namespace All_Assignments.Repositories.Assignment_10
         }
 
         #region Create
-        /// <summary>
-        /// Also Referred as Register in coding world.
-        /// </summary>
+
         public async Task<ResultVM> Create(RegisterUser10 user)
         {
             try
@@ -42,8 +40,6 @@ namespace All_Assignments.Repositories.Assignment_10
                     throw new Exception("The passwords does not match");
                 }
 
-                // Potentially create a method that will handle all validations for username, firstname etc.?
-
 
                 var result = await _userManager.CreateAsync(user, user.Password);
 
@@ -55,10 +51,6 @@ namespace All_Assignments.Repositories.Assignment_10
                     {
                         throw new Exception("Something went wrong.");
                     }
-
-
-                    // Do I need this line?
-                    //userVM.Roles = await _userManager.GetRolesAsync(user);
 
                     return new ResultVM() { Success = "User was successfully created! \nYou can now sign in." };
                 }
@@ -75,6 +67,7 @@ namespace All_Assignments.Repositories.Assignment_10
         #endregion
 
         #region Read
+
         /// <summary>
         /// Used for, for example checking details on user or when you want to update the information.
         /// </summary>
