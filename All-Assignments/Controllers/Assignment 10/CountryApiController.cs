@@ -27,7 +27,7 @@ namespace All_Assignments.Controllers
 
             if (countries == null)
             {
-                return null;
+                return BadRequest();
             }
 
             return Ok(countries);
@@ -45,7 +45,7 @@ namespace All_Assignments.Controllers
 
             if (countries == null)
             {
-                return Content("There are no cities available in the database. Please add some.");
+                return BadRequest("There are no cities available in the database. Please add some.");
             }
 
             return Ok(countries);
@@ -54,7 +54,7 @@ namespace All_Assignments.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
+            if (id == Guid.Empty || string.IsNullOrWhiteSpace(id.ToString()))
             {
                 return BadRequest();
             }
@@ -63,7 +63,7 @@ namespace All_Assignments.Controllers
 
             if (country == null)
             {
-                return NotFound("The requested city was not found. Please try again.");
+                return BadRequest("The requested city was not found. Please try again.");
             }
 
             return Ok(country);
@@ -81,7 +81,7 @@ namespace All_Assignments.Controllers
 
             if (newCountry == null)
             {
-                return Content("Something went wrong when creating the city. Please try again");
+                return BadRequest("Something went wrong when creating the city. Please try again");
             }
 
             return Ok(newCountry);
@@ -99,7 +99,7 @@ namespace All_Assignments.Controllers
 
             if (newCountry == null)
             {
-                return Content("Something went wrong when updating the city. Please try again.");
+                return BadRequest("Something went wrong when updating the city. Please try again.");
             }
 
             return Ok(newCountry);
@@ -117,7 +117,7 @@ namespace All_Assignments.Controllers
 
             if (country == null)
             {
-                return Content("Something went wrong. Please try again.");
+                return BadRequest("Something went wrong. Please try again.");
             }
 
             return Ok(country);
@@ -126,7 +126,7 @@ namespace All_Assignments.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null || string.IsNullOrWhiteSpace(id.ToString()))
+            if (id == Guid.Empty || string.IsNullOrWhiteSpace(id.ToString()))
             {
                 return BadRequest();
             }
@@ -135,7 +135,7 @@ namespace All_Assignments.Controllers
 
             if (result == false)
             {
-                return Content("Something went wrong when trying to delete city. Please try again.");
+                return BadRequest("Something went wrong when trying to delete city. Please try again.");
             }
 
             return Ok(result);
